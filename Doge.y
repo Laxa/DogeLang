@@ -1041,29 +1041,30 @@ ListExp reverseListExp(ListExp l)
 %token _SYMB_72    /*   not   */
 %token _SYMB_73    /*   register   */
 %token _SYMB_74    /*   sizeof   */
-%token _SYMB_75    /*   static   */
-%token _SYMB_76    /*   struct   */
-%token _SYMB_77    /*   such   */
-%token _SYMB_78    /*   switch   */
-%token _SYMB_79    /*   union   */
-%token _SYMB_80    /*   very   */
-%token _SYMB_81    /*   volatile   */
-%token _SYMB_82    /*   while   */
-%token _SYMB_83    /*   wow   */
-%token<string_> _SYMB_84    /*   Unsigned   */
-%token<string_> _SYMB_85    /*   Long   */
-%token<string_> _SYMB_86    /*   UnsignedLong   */
-%token<string_> _SYMB_87    /*   Hexadecimal   */
-%token<string_> _SYMB_88    /*   HexUnsigned   */
-%token<string_> _SYMB_89    /*   HexLong   */
-%token<string_> _SYMB_90    /*   HexUnsLong   */
-%token<string_> _SYMB_91    /*   Octal   */
-%token<string_> _SYMB_92    /*   OctalUnsigned   */
-%token<string_> _SYMB_93    /*   OctalLong   */
-%token<string_> _SYMB_94    /*   OctalUnsLong   */
-%token<string_> _SYMB_95    /*   CDouble   */
-%token<string_> _SYMB_96    /*   CFloat   */
-%token<string_> _SYMB_97    /*   CLongDouble   */
+%token _SYMB_75    /*   stahp   */
+%token _SYMB_76    /*   static   */
+%token _SYMB_77    /*   struct   */
+%token _SYMB_78    /*   such   */
+%token _SYMB_79    /*   switch   */
+%token _SYMB_80    /*   union   */
+%token _SYMB_81    /*   very   */
+%token _SYMB_82    /*   volatile   */
+%token _SYMB_83    /*   while   */
+%token _SYMB_84    /*   wow   */
+%token<string_> _SYMB_85    /*   Unsigned   */
+%token<string_> _SYMB_86    /*   Long   */
+%token<string_> _SYMB_87    /*   UnsignedLong   */
+%token<string_> _SYMB_88    /*   Hexadecimal   */
+%token<string_> _SYMB_89    /*   HexUnsigned   */
+%token<string_> _SYMB_90    /*   HexLong   */
+%token<string_> _SYMB_91    /*   HexUnsLong   */
+%token<string_> _SYMB_92    /*   Octal   */
+%token<string_> _SYMB_93    /*   OctalUnsigned   */
+%token<string_> _SYMB_94    /*   OctalLong   */
+%token<string_> _SYMB_95    /*   OctalUnsLong   */
+%token<string_> _SYMB_96    /*   CDouble   */
+%token<string_> _SYMB_97    /*   CFloat   */
+%token<string_> _SYMB_98    /*   CLongDouble   */
 
 %type <external_declaration_> External_declaration
 %type <extends_> Extends
@@ -1147,11 +1148,11 @@ External_declaration : _SYMB_63 _IDENT_ Extends _SYMB_0 ListExternal_declaration
   | Function_def { $$ = make_Afunc($1);  }
   | Dec { $$ = make_Global($1);  }
 ;
-Extends : _SYMB_80 _IDENT_ { $$ = make_Inheritance($2);  } 
+Extends : _SYMB_81 _IDENT_ { $$ = make_Inheritance($2);  } 
   | /* empty */ { $$ = make_NoInheritance();  }
 ;
-Jump_stm : _SYMB_83 _SYMB_2 { $$ = make_SjumpFour();  } 
-  | _SYMB_83 Exp _SYMB_2 { $$ = make_SjumpFive($2);  }
+Jump_stm : _SYMB_84 _SYMB_2 { $$ = make_SjumpFour();  } 
+  | _SYMB_84 Exp _SYMB_2 { $$ = make_SjumpFive($2);  }
   | _SYMB_68 _IDENT_ _SYMB_2 { $$ = make_SjumpOne($2);  }
   | _SYMB_60 _SYMB_2 { $$ = make_SjumpTwo();  }
   | _SYMB_58 _SYMB_2 { $$ = make_SjumpThree();  }
@@ -1171,12 +1172,12 @@ Type_specifier : _SYMB_3 { $$ = make_Tvoid();  }
 ;
 Storage_class_specifier : _SYMB_12 { $$ = make_MyType();  } 
   | _SYMB_66 { $$ = make_GlobalPrograms();  }
-  | _SYMB_75 { $$ = make_LocalProgram();  }
+  | _SYMB_76 { $$ = make_LocalProgram();  }
   | _SYMB_57 { $$ = make_LocalBlock();  }
   | _SYMB_73 { $$ = make_LocalReg();  }
 ;
 Type_qualifier : _SYMB_13 { $$ = make_Const();  } 
-  | _SYMB_81 { $$ = make_NoOptim();  }
+  | _SYMB_82 { $$ = make_NoOptim();  }
 ;
 Unary_operator : _SYMB_72 { $$ = make_Logicalneg();  } 
   | _SYMB_27 { $$ = make_Address();  }
@@ -1204,11 +1205,12 @@ Enumerator : _IDENT_ _SYMB_70 Constant_expression { $$ = make_EnumInit($1, $3); 
   | _IDENT_ { $$ = make_Plain($1);  }
 ;
 Exp2 : Exp15 Assignment_op _SYMB_71 _IDENT_ { $$ = make_InitClass($1, $2, $4);  } 
+  | _SYMB_75 _IDENT_ { $$ = make_DestroyClass($2);  }
   | Exp15 Assignment_op Exp2 { $$ = make_Eassign($1, $2, $3);  }
   | Exp3 { $$ = $1;  }
 ;
-Declaration_specifier : _SYMB_77 _IDENT_ Pointer _IDENT_ { $$ = make_DecClass($2, $3, $4);  } 
-  | _SYMB_77 _IDENT_ _IDENT_ { $$ = make_DecClassNoPoiter($2, $3);  }
+Declaration_specifier : _SYMB_78 _IDENT_ Pointer _IDENT_ { $$ = make_DecClass($2, $3, $4);  } 
+  | _SYMB_78 _IDENT_ _IDENT_ { $$ = make_DecClassNoPoiter($2, $3);  }
   | Type_specifier { $$ = make_Type($1);  }
   | Storage_class_specifier { $$ = make_Storage($1);  }
   | Type_qualifier { $$ = make_SpecProp($1);  }
@@ -1239,8 +1241,8 @@ Struct_or_union_spec : Struct_or_union _IDENT_ _SYMB_0 ListStruct_dec _SYMB_1 { 
   | Struct_or_union _SYMB_0 ListStruct_dec _SYMB_1 { $$ = make_Unique($1, $3);  }
   | Struct_or_union _IDENT_ { $$ = make_TagType($1, $2);  }
 ;
-Struct_or_union : _SYMB_76 { $$ = make_Struct();  } 
-  | _SYMB_79 { $$ = make_Union();  }
+Struct_or_union : _SYMB_77 { $$ = make_Struct();  } 
+  | _SYMB_80 { $$ = make_Union();  }
 ;
 ListStruct_dec : Struct_dec { $$ = make_ListStruct_dec($1, 0);  } 
   | Struct_dec ListStruct_dec { $$ = make_ListStruct_dec($1, $2);  }
@@ -1344,10 +1346,10 @@ Expression_stm : _SYMB_2 { $$ = make_SexprOne();  }
 ;
 Selection_stm : _SYMB_69 _SYMB_16 Exp _SYMB_17 Stm { $$ = make_SselOne($3, $5);  } 
   | _SYMB_69 _SYMB_16 Exp _SYMB_17 Stm _SYMB_64 Stm { $$ = make_SselTwo($3, $5, $7);  }
-  | _SYMB_78 _SYMB_16 Exp _SYMB_17 Stm { $$ = make_SselThree($3, $5);  }
+  | _SYMB_79 _SYMB_16 Exp _SYMB_17 Stm { $$ = make_SselThree($3, $5);  }
 ;
-Iter_stm : _SYMB_82 _SYMB_16 Exp _SYMB_17 Stm { $$ = make_SiterOne($3, $5);  } 
-  | _SYMB_62 Stm _SYMB_82 _SYMB_16 Exp _SYMB_17 _SYMB_2 { $$ = make_SiterTwo($2, $5);  }
+Iter_stm : _SYMB_83 _SYMB_16 Exp _SYMB_17 Stm { $$ = make_SiterOne($3, $5);  } 
+  | _SYMB_62 Stm _SYMB_83 _SYMB_16 Exp _SYMB_17 _SYMB_2 { $$ = make_SiterTwo($2, $5);  }
   | _SYMB_67 _SYMB_16 Expression_stm Expression_stm _SYMB_17 Stm { $$ = make_SiterThree($3, $4, $6);  }
   | _SYMB_67 _SYMB_16 Expression_stm Expression_stm Exp _SYMB_17 Stm { $$ = make_SiterFour($3, $4, $5, $7);  }
 ;
@@ -1424,20 +1426,20 @@ Exp17 : _IDENT_ { $$ = make_Evar($1);  }
 ;
 Constant : _DOUBLE_ { $$ = make_Efloat($1);  } 
   | _CHAR_ { $$ = make_Echar($1);  }
-  | _SYMB_84 { $$ = make_Eunsigned($1);  }
-  | _SYMB_85 { $$ = make_Elong($1);  }
-  | _SYMB_86 { $$ = make_Eunsignlong($1);  }
-  | _SYMB_87 { $$ = make_Ehexadec($1);  }
-  | _SYMB_88 { $$ = make_Ehexaunsign($1);  }
-  | _SYMB_89 { $$ = make_Ehexalong($1);  }
-  | _SYMB_90 { $$ = make_Ehexaunslong($1);  }
-  | _SYMB_91 { $$ = make_Eoctal($1);  }
-  | _SYMB_92 { $$ = make_Eoctalunsign($1);  }
-  | _SYMB_93 { $$ = make_Eoctallong($1);  }
-  | _SYMB_94 { $$ = make_Eoctalunslong($1);  }
-  | _SYMB_95 { $$ = make_Ecdouble($1);  }
-  | _SYMB_96 { $$ = make_Ecfloat($1);  }
-  | _SYMB_97 { $$ = make_Eclongdouble($1);  }
+  | _SYMB_85 { $$ = make_Eunsigned($1);  }
+  | _SYMB_86 { $$ = make_Elong($1);  }
+  | _SYMB_87 { $$ = make_Eunsignlong($1);  }
+  | _SYMB_88 { $$ = make_Ehexadec($1);  }
+  | _SYMB_89 { $$ = make_Ehexaunsign($1);  }
+  | _SYMB_90 { $$ = make_Ehexalong($1);  }
+  | _SYMB_91 { $$ = make_Ehexaunslong($1);  }
+  | _SYMB_92 { $$ = make_Eoctal($1);  }
+  | _SYMB_93 { $$ = make_Eoctalunsign($1);  }
+  | _SYMB_94 { $$ = make_Eoctallong($1);  }
+  | _SYMB_95 { $$ = make_Eoctalunslong($1);  }
+  | _SYMB_96 { $$ = make_Ecdouble($1);  }
+  | _SYMB_97 { $$ = make_Ecfloat($1);  }
+  | _SYMB_98 { $$ = make_Eclongdouble($1);  }
   | _INTEGER_ { $$ = make_Eint($1);  }
 ;
 Constant_expression : Exp3 { $$ = make_Especial($1);  } 

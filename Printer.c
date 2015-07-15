@@ -629,6 +629,14 @@ void ppExp(Exp _p_, int _i_)
     if (_i_ > 2) renderC(_R_PAREN);
     break;
 
+  case is_DestroyClass:
+    if (_i_ > 2) renderC(_L_PAREN);
+    renderS("stahp");
+    ppIdent(_p_->u.destroyclass_.ident_, 0);
+
+    if (_i_ > 2) renderC(_R_PAREN);
+    break;
+
   case is_Eassign:
     if (_i_ > 2) renderC(_L_PAREN);
     ppExp(_p_->u.eassign_.exp_1, 15);
@@ -3199,6 +3207,21 @@ void shExp(Exp _p_)
   bufAppendC(' ');
     bufAppendC('[');
     shIdent(_p_->u.initclass_.ident_);
+    bufAppendC(']');
+
+  bufAppendC(')');
+
+    break;
+
+  case is_DestroyClass:
+  bufAppendC('(');
+
+    bufAppendS("DestroyClass");
+
+  bufAppendC(' ');
+
+    bufAppendC('[');
+    shIdent(_p_->u.destroyclass_.ident_);
     bufAppendC(']');
 
   bufAppendC(')');

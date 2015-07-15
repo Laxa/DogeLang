@@ -291,10 +291,11 @@ Enumerator make_Plain(Ident p0);
 
 struct Exp_
 {
-  enum { is_InitClass, is_Ecomma, is_Eassign, is_Econdition, is_Elor, is_Eland, is_Ebitor, is_Ebitexor, is_Ebitand, is_Eeq, is_Eneq, is_Elthen, is_Egrthen, is_Ele, is_Ege, is_Eleft, is_Eright, is_Eplus, is_Eminus, is_Etimes, is_Ediv, is_Emod, is_Etypeconv, is_Epreinc, is_Epredec, is_Epreop, is_Ebytesexpr, is_Ebytestype, is_Earray, is_Efunk, is_Efunkpar, is_Eselect, is_Epoint, is_Epostinc, is_Epostdec, is_Evar, is_Econst, is_Estring } kind;
+  enum { is_InitClass, is_DestroyClass, is_Ecomma, is_Eassign, is_Econdition, is_Elor, is_Eland, is_Ebitor, is_Ebitexor, is_Ebitand, is_Eeq, is_Eneq, is_Elthen, is_Egrthen, is_Ele, is_Ege, is_Eleft, is_Eright, is_Eplus, is_Eminus, is_Etimes, is_Ediv, is_Emod, is_Etypeconv, is_Epreinc, is_Epredec, is_Epreop, is_Ebytesexpr, is_Ebytestype, is_Earray, is_Efunk, is_Efunkpar, is_Eselect, is_Epoint, is_Epostinc, is_Epostdec, is_Evar, is_Econst, is_Estring } kind;
   union
   {
     struct { Assignment_op assignment_op_; Exp exp_; Ident ident_; } initclass_;
+    struct { Ident ident_; } destroyclass_;
     struct { Exp exp_1, exp_2; } ecomma_;
     struct { Assignment_op assignment_op_; Exp exp_1, exp_2; } eassign_;
     struct { Exp exp_1, exp_2, exp_3; } econdition_;
@@ -336,6 +337,7 @@ struct Exp_
 };
 
 Exp make_InitClass(Exp p0, Assignment_op p1, Ident p2);
+Exp make_DestroyClass(Ident p0);
 Exp make_Ecomma(Exp p0, Exp p1);
 Exp make_Eassign(Exp p0, Assignment_op p1, Exp p2);
 Exp make_Econdition(Exp p0, Exp p1, Exp p2);

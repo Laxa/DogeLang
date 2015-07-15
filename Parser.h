@@ -161,11 +161,12 @@ typedef union
 #define _SYMB_95 354
 #define _SYMB_96 355
 #define _SYMB_97 356
-#define _STRING_ 357
-#define _CHAR_ 358
-#define _INTEGER_ 359
-#define _DOUBLE_ 360
-#define _IDENT_ 361
+#define _SYMB_98 357
+#define _STRING_ 358
+#define _CHAR_ 359
+#define _INTEGER_ 360
+#define _DOUBLE_ 361
+#define _IDENT_ 362
 
 extern YYSTYPE yylval;
 Program pProgram(FILE *inp);

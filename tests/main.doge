@@ -8,6 +8,8 @@ such int main() {
   attribute1 iz 9;
   test iz new class1;
 
+  stahp test;
+
   wow 1;
 }
 

@@ -33,6 +33,7 @@ EnumInit.        Enumerator ::= Ident "iz" Constant_expression ;
 
 -- initialization
 InitClass.     Exp2  ::= Exp15 Assignment_op "new" Ident;
+DestroyClass.  Exp2  ::= "stahp" Ident;
 
 -- class Declaration
 DecClass.           Declaration_specifier ::= "such" Ident Pointer Ident ;

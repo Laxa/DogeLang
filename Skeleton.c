@@ -246,6 +246,9 @@ void visitExp(Exp _p_)
     visitExp(_p_->u.initclass_.exp_);
     visitAssignment_op(_p_->u.initclass_.assignment_op_);
     visitIdent(_p_->u.initclass_.ident_);
+    break;  case is_DestroyClass:
+    /* Code for DestroyClass Goes Here */
+    visitIdent(_p_->u.destroyclass_.ident_);
     break;  case is_Eassign:
     /* Code for Eassign Goes Here */
     visitExp(_p_->u.eassign_.exp_1);

@@ -639,6 +639,19 @@ Exp make_InitClass(Exp p1, Assignment_op p2, Ident p3)
     tmp->u.initclass_.ident_ = p3;
     return tmp;
 }
+/********************   DestroyClass    ********************/
+Exp make_DestroyClass(Ident p1)
+{
+    Exp tmp = (Exp) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating DestroyClass!\n");
+        exit(1);
+    }
+    tmp->kind = is_DestroyClass;
+    tmp->u.destroyclass_.ident_ = p1;
+    return tmp;
+}
 /********************   Ecomma    ********************/
 Exp make_Ecomma(Exp p1, Exp p2)
 {
