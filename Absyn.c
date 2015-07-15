@@ -34,7 +34,7 @@ External_declaration make_Namespace(Ident p1)
     return tmp;
 }
 /********************   Afunc    ********************/
-External_declaration make_Afunc(Permission p1, Function_def p2)
+External_declaration make_Afunc(Function_def p1)
 {
     External_declaration tmp = (External_declaration) malloc(sizeof(*tmp));
     if (!tmp)
@@ -43,12 +43,11 @@ External_declaration make_Afunc(Permission p1, Function_def p2)
         exit(1);
     }
     tmp->kind = is_Afunc;
-    tmp->u.afunc_.permission_ = p1;
-    tmp->u.afunc_.function_def_ = p2;
+    tmp->u.afunc_.function_def_ = p1;
     return tmp;
 }
 /********************   Global    ********************/
-External_declaration make_Global(Permission p1, Dec p2)
+External_declaration make_Global(Dec p1)
 {
     External_declaration tmp = (External_declaration) malloc(sizeof(*tmp));
     if (!tmp)
@@ -57,8 +56,7 @@ External_declaration make_Global(Permission p1, Dec p2)
         exit(1);
     }
     tmp->kind = is_Global;
-    tmp->u.global_.permission_ = p1;
-    tmp->u.global_.dec_ = p2;
+    tmp->u.global_.dec_ = p1;
     return tmp;
 }/********************   Inheritance    ********************/
 Extends make_Inheritance(Ident p1)
@@ -83,41 +81,6 @@ Extends make_NoInheritance()
         exit(1);
     }
     tmp->kind = is_NoInheritance;
-    return tmp;
-}/********************   Public    ********************/
-Permission make_Public()
-{
-    Permission tmp = (Permission) malloc(sizeof(*tmp));
-    if (!tmp)
-    {
-        fprintf(stderr, "Error: out of memory when allocating Public!\n");
-        exit(1);
-    }
-    tmp->kind = is_Public;
-    return tmp;
-}
-/********************   Protected    ********************/
-Permission make_Protected()
-{
-    Permission tmp = (Permission) malloc(sizeof(*tmp));
-    if (!tmp)
-    {
-        fprintf(stderr, "Error: out of memory when allocating Protected!\n");
-        exit(1);
-    }
-    tmp->kind = is_Protected;
-    return tmp;
-}
-/********************   Private    ********************/
-Permission make_Private()
-{
-    Permission tmp = (Permission) malloc(sizeof(*tmp));
-    if (!tmp)
-    {
-        fprintf(stderr, "Error: out of memory when allocating Private!\n");
-        exit(1);
-    }
-    tmp->kind = is_Private;
     return tmp;
 }/********************   SjumpFour    ********************/
 Jump_stm make_SjumpFour()

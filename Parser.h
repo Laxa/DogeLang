@@ -11,7 +11,6 @@ typedef union
   char* string_;
   External_declaration external_declaration_;
   Extends extends_;
-  Permission permission_;
   Jump_stm jump_stm_;
   Type_specifier type_specifier_;
   Storage_class_specifier storage_class_specifier_;
@@ -162,14 +161,11 @@ typedef union
 #define _SYMB_95 354
 #define _SYMB_96 355
 #define _SYMB_97 356
-#define _SYMB_98 357
-#define _SYMB_99 358
-#define _SYMB_100 359
-#define _STRING_ 360
-#define _CHAR_ 361
-#define _INTEGER_ 362
-#define _DOUBLE_ 363
-#define _IDENT_ 364
+#define _STRING_ 357
+#define _CHAR_ 358
+#define _INTEGER_ 359
+#define _DOUBLE_ 360
+#define _IDENT_ 361
 
 extern YYSTYPE yylval;
 Program pProgram(FILE *inp);

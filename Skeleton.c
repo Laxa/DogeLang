@@ -22,11 +22,9 @@ void visitExternal_declaration(External_declaration _p_)
     visitIdent(_p_->u.namespace_.ident_);
     break;  case is_Afunc:
     /* Code for Afunc Goes Here */
-    visitPermission(_p_->u.afunc_.permission_);
     visitFunction_def(_p_->u.afunc_.function_def_);
     break;  case is_Global:
     /* Code for Global Goes Here */
-    visitPermission(_p_->u.global_.permission_);
     visitDec(_p_->u.global_.dec_);
     break;
   default:
@@ -47,23 +45,6 @@ void visitExtends(Extends _p_)
     break;
   default:
     fprintf(stderr, "Error: bad kind field when printing Extends!\n");
-    exit(1);
-  }
-}
-
-void visitPermission(Permission _p_)
-{
-  switch(_p_->kind)
-  {
-  case is_Public:
-    /* Code for Public Goes Here */
-    break;  case is_Protected:
-    /* Code for Protected Goes Here */
-    break;  case is_Private:
-    /* Code for Private Goes Here */
-    break;
-  default:
-    fprintf(stderr, "Error: bad kind field when printing Permission!\n");
     exit(1);
   }
 }

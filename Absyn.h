@@ -55,8 +55,6 @@ struct External_declaration_;
 typedef struct External_declaration_ *External_declaration;
 struct Extends_;
 typedef struct Extends_ *Extends;
-struct Permission_;
-typedef struct Permission_ *Permission;
 struct Jump_stm_;
 typedef struct Jump_stm_ *Jump_stm;
 struct Type_specifier_;
@@ -144,15 +142,15 @@ struct External_declaration_
   {
     struct { Extends extends_; Ident ident_; ListExternal_declaration listexternal_declaration_; } class_;
     struct { Ident ident_; } namespace_;
-    struct { Function_def function_def_; Permission permission_; } afunc_;
-    struct { Dec dec_; Permission permission_; } global_;
+    struct { Function_def function_def_; } afunc_;
+    struct { Dec dec_; } global_;
   } u;
 };
 
 External_declaration make_Class(Ident p0, Extends p1, ListExternal_declaration p2);
 External_declaration make_Namespace(Ident p0);
-External_declaration make_Afunc(Permission p0, Function_def p1);
-External_declaration make_Global(Permission p0, Dec p1);
+External_declaration make_Afunc(Function_def p0);
+External_declaration make_Global(Dec p0);
 
 struct Extends_
 {
@@ -165,18 +163,6 @@ struct Extends_
 
 Extends make_Inheritance(Ident p0);
 Extends make_NoInheritance();
-
-struct Permission_
-{
-  enum { is_Public, is_Protected, is_Private } kind;
-  union
-  {
-  } u;
-};
-
-Permission make_Public();
-Permission make_Protected();
-Permission make_Private();
 
 struct Jump_stm_
 {

@@ -23,7 +23,6 @@ char* printExp(Exp p);
 
 void ppExternal_declaration(External_declaration p, int i);
 void ppExtends(Extends p, int i);
-void ppPermission(Permission p, int i);
 void ppJump_stm(Jump_stm p, int i);
 void ppType_specifier(Type_specifier p, int i);
 void ppStorage_class_specifier(Storage_class_specifier p, int i);
@@ -81,7 +80,6 @@ char* showExp(Exp p);
 
 void shExternal_declaration(External_declaration p);
 void shExtends(Extends p);
-void shPermission(Permission p);
 void shJump_stm(Jump_stm p);
 void shType_specifier(Type_specifier p);
 void shStorage_class_specifier(Storage_class_specifier p);

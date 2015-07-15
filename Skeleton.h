@@ -7,7 +7,6 @@
 
 void visitExternal_declaration(External_declaration p);
 void visitExtends(Extends p);
-void visitPermission(Permission p);
 void visitJump_stm(Jump_stm p);
 void visitType_specifier(Type_specifier p);
 void visitStorage_class_specifier(Storage_class_specifier p);

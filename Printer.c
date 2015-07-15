@@ -157,7 +157,6 @@ void ppExternal_declaration(External_declaration _p_, int _i_)
 
   case is_Afunc:
     if (_i_ > 0) renderC(_L_PAREN);
-    ppPermission(_p_->u.afunc_.permission_, 0);
     ppFunction_def(_p_->u.afunc_.function_def_, 0);
 
     if (_i_ > 0) renderC(_R_PAREN);
@@ -165,7 +164,6 @@ void ppExternal_declaration(External_declaration _p_, int _i_)
 
   case is_Global:
     if (_i_ > 0) renderC(_L_PAREN);
-    ppPermission(_p_->u.global_.permission_, 0);
     ppDec(_p_->u.global_.dec_, 0);
 
     if (_i_ > 0) renderC(_R_PAREN);
@@ -199,38 +197,6 @@ void ppExtends(Extends _p_, int _i_)
 
   default:
     fprintf(stderr, "Error: bad kind field when printing Extends!\n");
-    exit(1);
-  }
-}
-
-void ppPermission(Permission _p_, int _i_)
-{
-  switch(_p_->kind)
-  {
-  case is_Public:
-    if (_i_ > 0) renderC(_L_PAREN);
-    renderS("much public");
-
-    if (_i_ > 0) renderC(_R_PAREN);
-    break;
-
-  case is_Protected:
-    if (_i_ > 0) renderC(_L_PAREN);
-    renderS("much protected");
-
-    if (_i_ > 0) renderC(_R_PAREN);
-    break;
-
-  case is_Private:
-    if (_i_ > 0) renderC(_L_PAREN);
-    renderS("much private");
-
-    if (_i_ > 0) renderC(_R_PAREN);
-    break;
-
-
-  default:
-    fprintf(stderr, "Error: bad kind field when printing Permission!\n");
     exit(1);
   }
 }
@@ -2599,10 +2565,6 @@ void shExternal_declaration(External_declaration _p_)
   bufAppendC(' ');
 
     bufAppendC('[');
-    shPermission(_p_->u.afunc_.permission_);
-    bufAppendC(']');
-  bufAppendC(' ');
-    bufAppendC('[');
     shFunction_def(_p_->u.afunc_.function_def_);
     bufAppendC(']');
 
@@ -2617,10 +2579,6 @@ void shExternal_declaration(External_declaration _p_)
 
   bufAppendC(' ');
 
-    bufAppendC('[');
-    shPermission(_p_->u.global_.permission_);
-    bufAppendC(']');
-  bufAppendC(' ');
     bufAppendC('[');
     shDec(_p_->u.global_.dec_);
     bufAppendC(']');
@@ -2667,44 +2625,6 @@ void shExtends(Extends _p_)
 
   default:
     fprintf(stderr, "Error: bad kind field when showing Extends!\n");
-    exit(1);
-  }
-}
-
-void shPermission(Permission _p_)
-{
-  switch(_p_->kind)
-  {
-  case is_Public:
-
-    bufAppendS("Public");
-
-
-
-
-    break;
-
-  case is_Protected:
-
-    bufAppendS("Protected");
-
-
-
-
-    break;
-
-  case is_Private:
-
-    bufAppendS("Private");
-
-
-
-
-    break;
-
-
-  default:
-    fprintf(stderr, "Error: bad kind field when showing Permission!\n");
     exit(1);
   }
 }

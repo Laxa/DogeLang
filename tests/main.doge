@@ -1,6 +1,6 @@
 amaze some_namespace ;
 
-much public such int main() {
+such int main() {
 
   such class1 * test;
   such int attribute1;
@@ -12,12 +12,12 @@ much public such int main() {
 }
 
 doge class1 very class2 {
-  much public such int attribute1;
-  much private such char attribute2;
+  such int attribute1;
+  such char attribute2;
 
 
 
-  much public such int methode1(such int a , such int b)
+  such int methode1(such int a , such int b)
   {
     this->attribute1 iz 2;
     this->attribute2 iz 'a';
@@ -25,9 +25,9 @@ doge class1 very class2 {
 }
 
 doge class2 {
-  much private such float attribute3;
+  such float attribute3;
 
-  much public such int methode2(such int a , such int b)
+  such int methode2(such int a , such int b)
   {
     this->attribute3 iz 0.5;
   }
