@@ -623,23 +623,23 @@ void ppEnumerator(Enumerator _p_, int _i_)
 
 void ppExp(Exp _p_, int _i_)
 {
+  char buf[512];
+
   switch(_p_->kind)
   {
   case is_InitClass:
     if (_i_ > 2) renderC(_L_PAREN);
     ppExp(_p_->u.initclass_.exp_, 15);
     ppAssignment_op(_p_->u.initclass_.assignment_op_, 0);
-    renderS("malloc(sizeof(");
-    ppIdent(_p_->u.initclass_.ident_, 0);
-    renderS("))");
+    snprintf(buf, 512, "malloc(sizeof(%s))", _p_->u.initclass_.ident_);
+    renderS(buf);
     if (_i_ > 2) renderC(_R_PAREN);
     break;
 
   case is_DestroyClass:
     if (_i_ > 2) renderC(_L_PAREN);
-    renderS("free(");
-    ppIdent(_p_->u.destroyclass_.ident_, 0);
-    renderS(")");
+    snprintf(buf, 512, "free(%s)", _p_->u.destroyclass_.ident_);
+    renderS(buf);
     if (_i_ > 2) renderC(_R_PAREN);
     break;
 
