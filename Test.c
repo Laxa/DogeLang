@@ -40,7 +40,7 @@ int main(int argc, char ** argv)
     printf("\nParse Succesful!\n");
     printf("\n[Abstract Syntax]\n");
     printf("%s\n\n", showProgram(parse_tree));
-    printf("Transforming to doge now...\n");
+    printf("Parsing AST for doge now...\n");
     visitProgram(parse_tree);
     printf("Done!\n");
     str = printProgram(parse_tree);

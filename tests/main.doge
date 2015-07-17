@@ -23,6 +23,8 @@ doge class1 very class2 {
   {
     this->attribute1 iz 2;
     this->attribute2 iz 'a';
+    if (not a)
+    wow b;
   }
 }
 

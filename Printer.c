@@ -26,6 +26,10 @@ void renderC(Char c)
     bufAppendC('\n');
     indent();
   }
+  else if (c == '"')
+  {
+    bufAppendC('"');
+  }
   else if (c == '(' || c == '[')
     bufAppendC(c);
   else if (c == ')' || c == ']')
@@ -65,6 +69,7 @@ void renderC(Char c)
     bufAppendC(' ');
   }
 }
+
 void renderS(String s)
 {
   if(strlen(s) > 0)
@@ -134,11 +139,12 @@ char* showExp(Exp p)
 }
 void ppExternal_declaration(External_declaration _p_, int _i_)
 {
+  char buf[512];
   switch(_p_->kind)
   {
   case is_Class:
     if (_i_ > 0) renderC(_L_PAREN);
-    renderS("doge");
+    renderS("struct");
     ppIdent(_p_->u.class_.ident_, 0);
     ppExtends(_p_->u.class_.extends_, 0);
     renderC('{');
@@ -150,10 +156,8 @@ void ppExternal_declaration(External_declaration _p_, int _i_)
 
   case is_Namespace:
     if (_i_ > 0) renderC(_L_PAREN);
-    renderS("amaze");
-    ppIdent(_p_->u.namespace_.ident_, 0);
-    renderC(';');
-
+    snprintf(buf, 512, "include \"%s.h\"\n", _p_->u.namespace_.ident_);
+    renderS(buf);
     if (_i_ > 0) renderC(_R_PAREN);
     break;
 
@@ -428,7 +432,7 @@ void ppUnary_operator(Unary_operator _p_, int _i_)
   {
   case is_Logicalneg:
     if (_i_ > 0) renderC(_L_PAREN);
-    renderS("not");
+    renderS("!");
 
     if (_i_ > 0) renderC(_R_PAREN);
     break;
@@ -481,7 +485,7 @@ void ppAssignment_op(Assignment_op _p_, int _i_)
   {
   case is_Assign:
     if (_i_ > 0) renderC(_L_PAREN);
-    renderS("iz");
+    renderS("=");
 
     if (_i_ > 0) renderC(_R_PAREN);
     break;
