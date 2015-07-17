@@ -26,6 +26,10 @@ void renderC(Char c)
     bufAppendC('\n');
     indent();
   }
+  else if (c == '!')
+  {
+    bufAppendC('!');
+  }
   else if (c == '"')
   {
     bufAppendC('"');
@@ -213,7 +217,7 @@ void ppJump_stm(Jump_stm _p_, int _i_)
   {
   case is_SjumpFour:
     if (_i_ > 0) renderC(_L_PAREN);
-    renderS("wow");
+    renderS("return");
     renderC(';');
 
     if (_i_ > 0) renderC(_R_PAREN);
@@ -221,7 +225,7 @@ void ppJump_stm(Jump_stm _p_, int _i_)
 
   case is_SjumpFive:
     if (_i_ > 0) renderC(_L_PAREN);
-    renderS("wow");
+    renderS("return");
     ppExp(_p_->u.sjumpfive_.exp_, 0);
     renderC(';');
 
@@ -432,8 +436,7 @@ void ppUnary_operator(Unary_operator _p_, int _i_)
   {
   case is_Logicalneg:
     if (_i_ > 0) renderC(_L_PAREN);
-    renderS("!");
-
+    renderC('!');
     if (_i_ > 0) renderC(_R_PAREN);
     break;
 

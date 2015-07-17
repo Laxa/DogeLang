@@ -1,8 +1,8 @@
-amaze some_namespace ;
+amaze stdlib;
 
 such int main() {
 
-  such class1 * test;
+  such class1 *test;
   such int attribute1;
 
   attribute1 iz 9;
