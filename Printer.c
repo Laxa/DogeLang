@@ -5,6 +5,8 @@
 #include <string.h>
 #include <stdlib.h>
 
+#include "TransformDoge.h"
+
 #define INDENT_WIDTH 2
 
 int _n_;
@@ -17,50 +19,50 @@ void renderC(Char c)
 {
   if (c == '{')
   {
-     bufAppendC('\n');
-     indent();
-     bufAppendC(c);
-     _n_ = _n_ + INDENT_WIDTH;
-     bufAppendC('\n');
-     indent();
+    bufAppendC('\n');
+    indent();
+    bufAppendC(c);
+    _n_ = _n_ + INDENT_WIDTH;
+    bufAppendC('\n');
+    indent();
   }
   else if (c == '(' || c == '[')
-     bufAppendC(c);
+    bufAppendC(c);
   else if (c == ')' || c == ']')
   {
-     backup();
-     bufAppendC(c);
+    backup();
+    bufAppendC(c);
   }
   else if (c == '}')
   {
-     int t;
-     _n_ = _n_ - INDENT_WIDTH;
-     for(t=0; t<INDENT_WIDTH; t++) {
-       backup();
-     }
-     bufAppendC(c);
-     bufAppendC('\n');
-     indent();
+    int t;
+    _n_ = _n_ - INDENT_WIDTH;
+    for(t=0; t<INDENT_WIDTH; t++) {
+      backup();
+    }
+    bufAppendC(c);
+    bufAppendC('\n');
+    indent();
   }
   else if (c == ',')
   {
-     backup();
-     bufAppendC(c);
-     bufAppendC(' ');
+    backup();
+    bufAppendC(c);
+    bufAppendC(' ');
   }
   else if (c == ';')
   {
-     backup();
-     bufAppendC(c);
-     bufAppendC('\n');
-     indent();
+    backup();
+    bufAppendC(c);
+    bufAppendC('\n');
+    indent();
   }
   else if (c == 0) return;
   else
   {
-     bufAppendC(' ');
-     bufAppendC(c);
-     bufAppendC(' ');
+    bufAppendC(' ');
+    bufAppendC(c);
+    bufAppendC(' ');
   }
 }
 void renderS(String s)
@@ -2410,188 +2412,178 @@ void ppListExp(ListExp listexp, int i)
   }
 }
 
-void ppInteger(Integer n, int i)
+void ppInteger(Integer n, int UNUSED i)
 {
   char tmp[16];
   sprintf(tmp, "%d", n);
   bufAppendS(tmp);
 }
-void ppDouble(Double d, int i)
+
+void ppDouble(Double d, int UNUSED i)
 {
   char tmp[16];
   sprintf(tmp, "%g", d);
   bufAppendS(tmp);
 }
-void ppChar(Char c, int i)
+
+void ppChar(Char c, int UNUSED i)
 {
   bufAppendC('\'');
   bufAppendC(c);
   bufAppendC('\'');
 }
-void ppString(String s, int i)
+
+void ppString(String s, int UNUSED i)
 {
   bufAppendC('\"');
   bufAppendS(s);
   bufAppendC('\"');
 }
-void ppIdent(String s, int i)
+
+void ppIdent(String s, int UNUSED i)
 {
   renderS(s);
 }
 
-void ppUnsigned(String s, int i)
+void ppUnsigned(String s, int UNUSED i)
 {
   renderS(s);
 }
 
-
-void ppLong(String s, int i)
+void ppLong(String s, int UNUSED i)
 {
   renderS(s);
 }
 
-
-void ppUnsignedLong(String s, int i)
+void ppUnsignedLong(String s, int UNUSED i)
 {
   renderS(s);
 }
 
-
-void ppHexadecimal(String s, int i)
+void ppHexadecimal(String s, int UNUSED i)
 {
   renderS(s);
 }
 
-
-void ppHexUnsigned(String s, int i)
+void ppHexUnsigned(String s, int UNUSED i)
 {
   renderS(s);
 }
 
-
-void ppHexLong(String s, int i)
+void ppHexLong(String s, int UNUSED i)
 {
   renderS(s);
 }
 
-
-void ppHexUnsLong(String s, int i)
+void ppHexUnsLong(String s, int UNUSED i)
 {
   renderS(s);
 }
 
-
-void ppOctal(String s, int i)
+void ppOctal(String s, int UNUSED i)
 {
   renderS(s);
 }
 
-
-void ppOctalUnsigned(String s, int i)
+void ppOctalUnsigned(String s, int UNUSED i)
 {
   renderS(s);
 }
 
-
-void ppOctalLong(String s, int i)
+void ppOctalLong(String s, int UNUSED i)
 {
   renderS(s);
 }
 
-
-void ppOctalUnsLong(String s, int i)
+void ppOctalUnsLong(String s, int UNUSED i)
 {
   renderS(s);
 }
 
-
-void ppCDouble(String s, int i)
+void ppCDouble(String s, int UNUSED i)
 {
   renderS(s);
 }
 
-
-void ppCFloat(String s, int i)
+void ppCFloat(String s, int UNUSED i)
 {
   renderS(s);
 }
 
-
-void ppCLongDouble(String s, int i)
+void ppCLongDouble(String s, int UNUSED i)
 {
   renderS(s);
 }
-
 
 void shExternal_declaration(External_declaration _p_)
 {
   switch(_p_->kind)
   {
   case is_Class:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("Class");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shIdent(_p_->u.class_.ident_);
     bufAppendC(']');
-  bufAppendC(' ');
+    bufAppendC(' ');
     bufAppendC('[');
     shExtends(_p_->u.class_.extends_);
     bufAppendC(']');
-  bufAppendC(' ');
+    bufAppendC(' ');
     bufAppendC('[');
     shListExternal_declaration(_p_->u.class_.listexternal_declaration_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_Namespace:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("Namespace");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shIdent(_p_->u.namespace_.ident_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_Afunc:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("Afunc");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shFunction_def(_p_->u.afunc_.function_def_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_Global:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("Global");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shDec(_p_->u.global_.dec_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
@@ -2607,17 +2599,17 @@ void shExtends(Extends _p_)
   switch(_p_->kind)
   {
   case is_Inheritance:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("Inheritance");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shIdent(_p_->u.inheritance_.ident_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
@@ -2651,32 +2643,32 @@ void shJump_stm(Jump_stm _p_)
     break;
 
   case is_SjumpFive:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("SjumpFive");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shExp(_p_->u.sjumpfive_.exp_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_SjumpOne:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("SjumpOne");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shIdent(_p_->u.sjumpone_.ident_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
@@ -2791,32 +2783,32 @@ void shType_specifier(Type_specifier _p_)
     break;
 
   case is_Tstruct:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("Tstruct");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shStruct_or_union_spec(_p_->u.tstruct_.struct_or_union_spec_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_Tenum:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("Tenum");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shEnum_specifier(_p_->u.tenum_.enum_specifier_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
@@ -3101,36 +3093,36 @@ void shInit_declarator(Init_declarator _p_)
   switch(_p_->kind)
   {
   case is_InitDecl:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("InitDecl");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shDeclarator(_p_->u.initdecl_.declarator_);
     bufAppendC(']');
-  bufAppendC(' ');
+    bufAppendC(' ');
     bufAppendC('[');
     shInitializer(_p_->u.initdecl_.initializer_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_OnlyDecl:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("OnlyDecl");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shDeclarator(_p_->u.onlydecl_.declarator_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
@@ -3146,36 +3138,36 @@ void shEnumerator(Enumerator _p_)
   switch(_p_->kind)
   {
   case is_EnumInit:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("EnumInit");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shIdent(_p_->u.enuminit_.ident_);
     bufAppendC(']');
-  bufAppendC(' ');
+    bufAppendC(' ');
     bufAppendC('[');
     shConstant_expression(_p_->u.enuminit_.constant_expression_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_Plain:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("Plain");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shIdent(_p_->u.plain_.ident_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
@@ -3191,621 +3183,621 @@ void shExp(Exp _p_)
   switch(_p_->kind)
   {
   case is_InitClass:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("InitClass");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shExp(_p_->u.initclass_.exp_);
     bufAppendC(']');
-  bufAppendC(' ');
+    bufAppendC(' ');
     bufAppendC('[');
     shAssignment_op(_p_->u.initclass_.assignment_op_);
     bufAppendC(']');
-  bufAppendC(' ');
+    bufAppendC(' ');
     bufAppendC('[');
     shIdent(_p_->u.initclass_.ident_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_DestroyClass:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("DestroyClass");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shIdent(_p_->u.destroyclass_.ident_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_Eassign:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("Eassign");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     shExp(_p_->u.eassign_.exp_1);
-  bufAppendC(' ');
+    bufAppendC(' ');
     bufAppendC('[');
     shAssignment_op(_p_->u.eassign_.assignment_op_);
     bufAppendC(']');
-  bufAppendC(' ');
+    bufAppendC(' ');
     shExp(_p_->u.eassign_.exp_2);
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_Ecomma:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("Ecomma");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     shExp(_p_->u.ecomma_.exp_1);
-  bufAppendC(' ');
+    bufAppendC(' ');
     shExp(_p_->u.ecomma_.exp_2);
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_Econdition:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("Econdition");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     shExp(_p_->u.econdition_.exp_1);
-  bufAppendC(' ');
+    bufAppendC(' ');
     shExp(_p_->u.econdition_.exp_2);
-  bufAppendC(' ');
+    bufAppendC(' ');
     shExp(_p_->u.econdition_.exp_3);
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_Elor:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("Elor");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     shExp(_p_->u.elor_.exp_1);
-  bufAppendC(' ');
+    bufAppendC(' ');
     shExp(_p_->u.elor_.exp_2);
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_Eland:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("Eland");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     shExp(_p_->u.eland_.exp_1);
-  bufAppendC(' ');
+    bufAppendC(' ');
     shExp(_p_->u.eland_.exp_2);
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_Ebitor:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("Ebitor");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     shExp(_p_->u.ebitor_.exp_1);
-  bufAppendC(' ');
+    bufAppendC(' ');
     shExp(_p_->u.ebitor_.exp_2);
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_Ebitexor:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("Ebitexor");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     shExp(_p_->u.ebitexor_.exp_1);
-  bufAppendC(' ');
+    bufAppendC(' ');
     shExp(_p_->u.ebitexor_.exp_2);
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_Ebitand:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("Ebitand");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     shExp(_p_->u.ebitand_.exp_1);
-  bufAppendC(' ');
+    bufAppendC(' ');
     shExp(_p_->u.ebitand_.exp_2);
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_Eeq:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("Eeq");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     shExp(_p_->u.eeq_.exp_1);
-  bufAppendC(' ');
+    bufAppendC(' ');
     shExp(_p_->u.eeq_.exp_2);
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_Eneq:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("Eneq");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     shExp(_p_->u.eneq_.exp_1);
-  bufAppendC(' ');
+    bufAppendC(' ');
     shExp(_p_->u.eneq_.exp_2);
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_Elthen:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("Elthen");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     shExp(_p_->u.elthen_.exp_1);
-  bufAppendC(' ');
+    bufAppendC(' ');
     shExp(_p_->u.elthen_.exp_2);
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_Egrthen:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("Egrthen");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     shExp(_p_->u.egrthen_.exp_1);
-  bufAppendC(' ');
+    bufAppendC(' ');
     shExp(_p_->u.egrthen_.exp_2);
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_Ele:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("Ele");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     shExp(_p_->u.ele_.exp_1);
-  bufAppendC(' ');
+    bufAppendC(' ');
     shExp(_p_->u.ele_.exp_2);
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_Ege:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("Ege");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     shExp(_p_->u.ege_.exp_1);
-  bufAppendC(' ');
+    bufAppendC(' ');
     shExp(_p_->u.ege_.exp_2);
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_Eleft:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("Eleft");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     shExp(_p_->u.eleft_.exp_1);
-  bufAppendC(' ');
+    bufAppendC(' ');
     shExp(_p_->u.eleft_.exp_2);
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_Eright:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("Eright");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     shExp(_p_->u.eright_.exp_1);
-  bufAppendC(' ');
+    bufAppendC(' ');
     shExp(_p_->u.eright_.exp_2);
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_Eplus:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("Eplus");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     shExp(_p_->u.eplus_.exp_1);
-  bufAppendC(' ');
+    bufAppendC(' ');
     shExp(_p_->u.eplus_.exp_2);
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_Eminus:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("Eminus");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     shExp(_p_->u.eminus_.exp_1);
-  bufAppendC(' ');
+    bufAppendC(' ');
     shExp(_p_->u.eminus_.exp_2);
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_Etimes:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("Etimes");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     shExp(_p_->u.etimes_.exp_1);
-  bufAppendC(' ');
+    bufAppendC(' ');
     shExp(_p_->u.etimes_.exp_2);
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_Ediv:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("Ediv");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     shExp(_p_->u.ediv_.exp_1);
-  bufAppendC(' ');
+    bufAppendC(' ');
     shExp(_p_->u.ediv_.exp_2);
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_Emod:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("Emod");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     shExp(_p_->u.emod_.exp_1);
-  bufAppendC(' ');
+    bufAppendC(' ');
     shExp(_p_->u.emod_.exp_2);
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_Etypeconv:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("Etypeconv");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shType_name(_p_->u.etypeconv_.type_name_);
     bufAppendC(']');
-  bufAppendC(' ');
+    bufAppendC(' ');
     bufAppendC('[');
     shExp(_p_->u.etypeconv_.exp_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_Epreinc:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("Epreinc");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shExp(_p_->u.epreinc_.exp_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_Epredec:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("Epredec");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shExp(_p_->u.epredec_.exp_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_Epreop:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("Epreop");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shUnary_operator(_p_->u.epreop_.unary_operator_);
     bufAppendC(']');
-  bufAppendC(' ');
+    bufAppendC(' ');
     bufAppendC('[');
     shExp(_p_->u.epreop_.exp_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_Ebytesexpr:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("Ebytesexpr");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shExp(_p_->u.ebytesexpr_.exp_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_Ebytestype:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("Ebytestype");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shType_name(_p_->u.ebytestype_.type_name_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_Earray:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("Earray");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     shExp(_p_->u.earray_.exp_1);
-  bufAppendC(' ');
+    bufAppendC(' ');
     shExp(_p_->u.earray_.exp_2);
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_Efunk:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("Efunk");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shExp(_p_->u.efunk_.exp_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_Efunkpar:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("Efunkpar");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shExp(_p_->u.efunkpar_.exp_);
     bufAppendC(']');
-  bufAppendC(' ');
+    bufAppendC(' ');
     bufAppendC('[');
     shListExp(_p_->u.efunkpar_.listexp_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_Eselect:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("Eselect");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shExp(_p_->u.eselect_.exp_);
     bufAppendC(']');
-  bufAppendC(' ');
+    bufAppendC(' ');
     bufAppendC('[');
     shIdent(_p_->u.eselect_.ident_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_Epoint:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("Epoint");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shExp(_p_->u.epoint_.exp_);
     bufAppendC(']');
-  bufAppendC(' ');
+    bufAppendC(' ');
     bufAppendC('[');
     shIdent(_p_->u.epoint_.ident_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_Epostinc:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("Epostinc");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shExp(_p_->u.epostinc_.exp_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_Epostdec:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("Epostdec");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shExp(_p_->u.epostdec_.exp_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_Evar:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("Evar");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shIdent(_p_->u.evar_.ident_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_Econst:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("Econst");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shConstant(_p_->u.econst_.constant_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_Estring:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("Estring");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shString(_p_->u.estring_.string_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
@@ -3821,81 +3813,81 @@ void shDeclaration_specifier(Declaration_specifier _p_)
   switch(_p_->kind)
   {
   case is_DecClass:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("DecClass");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     shIdent(_p_->u.decclass_.ident_1);
-  bufAppendC(' ');
+    bufAppendC(' ');
     bufAppendC('[');
     shPointer(_p_->u.decclass_.pointer_);
     bufAppendC(']');
-  bufAppendC(' ');
+    bufAppendC(' ');
     shIdent(_p_->u.decclass_.ident_2);
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_DecClassNoPoiter:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("DecClassNoPoiter");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     shIdent(_p_->u.decclassnopoiter_.ident_1);
-  bufAppendC(' ');
+    bufAppendC(' ');
     shIdent(_p_->u.decclassnopoiter_.ident_2);
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_Type:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("Type");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shType_specifier(_p_->u.type_.type_specifier_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_Storage:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("Storage");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shStorage_class_specifier(_p_->u.storage_.storage_class_specifier_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_SpecProp:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("SpecProp");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shType_qualifier(_p_->u.specprop_.type_qualifier_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
@@ -3911,17 +3903,17 @@ void shProgram(Program _p_)
   switch(_p_->kind)
   {
   case is_Progr:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("Progr");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shListExternal_declaration(_p_->u.progr_.listexternal_declaration_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
@@ -3955,94 +3947,94 @@ void shFunction_def(Function_def _p_)
   switch(_p_->kind)
   {
   case is_OldFunc:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("OldFunc");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shListDeclaration_specifier(_p_->u.oldfunc_.listdeclaration_specifier_);
     bufAppendC(']');
-  bufAppendC(' ');
+    bufAppendC(' ');
     bufAppendC('[');
     shDeclarator(_p_->u.oldfunc_.declarator_);
     bufAppendC(']');
-  bufAppendC(' ');
+    bufAppendC(' ');
     bufAppendC('[');
     shListDec(_p_->u.oldfunc_.listdec_);
     bufAppendC(']');
-  bufAppendC(' ');
+    bufAppendC(' ');
     bufAppendC('[');
     shCompound_stm(_p_->u.oldfunc_.compound_stm_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_NewFunc:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("NewFunc");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shListDeclaration_specifier(_p_->u.newfunc_.listdeclaration_specifier_);
     bufAppendC(']');
-  bufAppendC(' ');
+    bufAppendC(' ');
     bufAppendC('[');
     shDeclarator(_p_->u.newfunc_.declarator_);
     bufAppendC(']');
-  bufAppendC(' ');
+    bufAppendC(' ');
     bufAppendC('[');
     shCompound_stm(_p_->u.newfunc_.compound_stm_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_OldFuncInt:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("OldFuncInt");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shDeclarator(_p_->u.oldfuncint_.declarator_);
     bufAppendC(']');
-  bufAppendC(' ');
+    bufAppendC(' ');
     bufAppendC('[');
     shListDec(_p_->u.oldfuncint_.listdec_);
     bufAppendC(']');
-  bufAppendC(' ');
+    bufAppendC(' ');
     bufAppendC('[');
     shCompound_stm(_p_->u.oldfuncint_.compound_stm_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_NewFuncInt:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("NewFuncInt");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shDeclarator(_p_->u.newfuncint_.declarator_);
     bufAppendC(']');
-  bufAppendC(' ');
+    bufAppendC(' ');
     bufAppendC('[');
     shCompound_stm(_p_->u.newfuncint_.compound_stm_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
@@ -4058,36 +4050,36 @@ void shDec(Dec _p_)
   switch(_p_->kind)
   {
   case is_NoDeclarator:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("NoDeclarator");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shListDeclaration_specifier(_p_->u.nodeclarator_.listdeclaration_specifier_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_Declarators:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("Declarators");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shListDeclaration_specifier(_p_->u.declarators_.listdeclaration_specifier_);
     bufAppendC(']');
-  bufAppendC(' ');
+    bufAppendC(' ');
     bufAppendC('[');
     shListInit_declarator(_p_->u.declarators_.listinit_declarator_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
@@ -4157,63 +4149,63 @@ void shStruct_or_union_spec(Struct_or_union_spec _p_)
   switch(_p_->kind)
   {
   case is_Tag:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("Tag");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shStruct_or_union(_p_->u.tag_.struct_or_union_);
     bufAppendC(']');
-  bufAppendC(' ');
+    bufAppendC(' ');
     bufAppendC('[');
     shIdent(_p_->u.tag_.ident_);
     bufAppendC(']');
-  bufAppendC(' ');
+    bufAppendC(' ');
     bufAppendC('[');
     shListStruct_dec(_p_->u.tag_.liststruct_dec_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_Unique:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("Unique");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shStruct_or_union(_p_->u.unique_.struct_or_union_);
     bufAppendC(']');
-  bufAppendC(' ');
+    bufAppendC(' ');
     bufAppendC('[');
     shListStruct_dec(_p_->u.unique_.liststruct_dec_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_TagType:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("TagType");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shStruct_or_union(_p_->u.tagtype_.struct_or_union_);
     bufAppendC(']');
-  bufAppendC(' ');
+    bufAppendC(' ');
     bufAppendC('[');
     shIdent(_p_->u.tagtype_.ident_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
@@ -4276,21 +4268,21 @@ void shStruct_dec(Struct_dec _p_)
   switch(_p_->kind)
   {
   case is_Structen:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("Structen");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shListSpec_qual(_p_->u.structen_.listspec_qual_);
     bufAppendC(']');
-  bufAppendC(' ');
+    bufAppendC(' ');
     bufAppendC('[');
     shListStruct_declarator(_p_->u.structen_.liststruct_declarator_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
@@ -4324,32 +4316,32 @@ void shSpec_qual(Spec_qual _p_)
   switch(_p_->kind)
   {
   case is_TypeSpec:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("TypeSpec");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shType_specifier(_p_->u.typespec_.type_specifier_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_QualSpec:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("QualSpec");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shType_qualifier(_p_->u.qualspec_.type_qualifier_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
@@ -4383,51 +4375,51 @@ void shStruct_declarator(Struct_declarator _p_)
   switch(_p_->kind)
   {
   case is_Decl:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("Decl");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shDeclarator(_p_->u.decl_.declarator_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_Field:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("Field");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shConstant_expression(_p_->u.field_.constant_expression_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_DecField:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("DecField");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shDeclarator(_p_->u.decfield_.declarator_);
     bufAppendC(']');
-  bufAppendC(' ');
+    bufAppendC(' ');
     bufAppendC('[');
     shConstant_expression(_p_->u.decfield_.constant_expression_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
@@ -4443,51 +4435,51 @@ void shEnum_specifier(Enum_specifier _p_)
   switch(_p_->kind)
   {
   case is_EnumDec:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("EnumDec");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shListEnumerator(_p_->u.enumdec_.listenumerator_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_EnumName:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("EnumName");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shIdent(_p_->u.enumname_.ident_);
     bufAppendC(']');
-  bufAppendC(' ');
+    bufAppendC(' ');
     bufAppendC('[');
     shListEnumerator(_p_->u.enumname_.listenumerator_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_EnumVar:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("EnumVar");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shIdent(_p_->u.enumvar_.ident_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
@@ -4521,36 +4513,36 @@ void shDeclarator(Declarator _p_)
   switch(_p_->kind)
   {
   case is_BeginPointer:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("BeginPointer");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shPointer(_p_->u.beginpointer_.pointer_);
     bufAppendC(']');
-  bufAppendC(' ');
+    bufAppendC(' ');
     bufAppendC('[');
     shDirect_declarator(_p_->u.beginpointer_.direct_declarator_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_NoPointer:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("NoPointer");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shDirect_declarator(_p_->u.nopointer_.direct_declarator_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
@@ -4566,119 +4558,119 @@ void shDirect_declarator(Direct_declarator _p_)
   switch(_p_->kind)
   {
   case is_Name:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("Name");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shIdent(_p_->u.name_.ident_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_ParenDecl:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("ParenDecl");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shDeclarator(_p_->u.parendecl_.declarator_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_InnitArray:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("InnitArray");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shDirect_declarator(_p_->u.innitarray_.direct_declarator_);
     bufAppendC(']');
-  bufAppendC(' ');
+    bufAppendC(' ');
     bufAppendC('[');
     shConstant_expression(_p_->u.innitarray_.constant_expression_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_Incomplete:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("Incomplete");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shDirect_declarator(_p_->u.incomplete_.direct_declarator_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_NewFuncDec:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("NewFuncDec");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shDirect_declarator(_p_->u.newfuncdec_.direct_declarator_);
     bufAppendC(']');
-  bufAppendC(' ');
+    bufAppendC(' ');
     bufAppendC('[');
     shParameter_type(_p_->u.newfuncdec_.parameter_type_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_OldFuncDef:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("OldFuncDef");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shDirect_declarator(_p_->u.oldfuncdef_.direct_declarator_);
     bufAppendC(']');
-  bufAppendC(' ');
+    bufAppendC(' ');
     bufAppendC('[');
     shListIdent(_p_->u.oldfuncdef_.listident_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_OldFuncDec:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("OldFuncDec");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shDirect_declarator(_p_->u.oldfuncdec_.direct_declarator_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
@@ -4703,51 +4695,51 @@ void shPointer(Pointer _p_)
     break;
 
   case is_PointQual:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("PointQual");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shListType_qualifier(_p_->u.pointqual_.listtype_qualifier_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_PointPoint:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("PointPoint");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shPointer(_p_->u.pointpoint_.pointer_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_PointQualPoint:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("PointQualPoint");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shListType_qualifier(_p_->u.pointqualpoint_.listtype_qualifier_);
     bufAppendC(']');
-  bufAppendC(' ');
+    bufAppendC(' ');
     bufAppendC('[');
     shPointer(_p_->u.pointqualpoint_.pointer_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
@@ -4781,32 +4773,32 @@ void shParameter_type(Parameter_type _p_)
   switch(_p_->kind)
   {
   case is_AllSpec:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("AllSpec");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shParameter_declarations(_p_->u.allspec_.parameter_declarations_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_More:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("More");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shParameter_declarations(_p_->u.more_.parameter_declarations_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
@@ -4822,36 +4814,36 @@ void shParameter_declarations(Parameter_declarations _p_)
   switch(_p_->kind)
   {
   case is_ParamDec:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("ParamDec");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shParameter_declaration(_p_->u.paramdec_.parameter_declaration_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_MoreParamDec:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("MoreParamDec");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shParameter_declarations(_p_->u.moreparamdec_.parameter_declarations_);
     bufAppendC(']');
-  bufAppendC(' ');
+    bufAppendC(' ');
     bufAppendC('[');
     shParameter_declaration(_p_->u.moreparamdec_.parameter_declaration_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
@@ -4867,55 +4859,55 @@ void shParameter_declaration(Parameter_declaration _p_)
   switch(_p_->kind)
   {
   case is_OnlyType:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("OnlyType");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shListDeclaration_specifier(_p_->u.onlytype_.listdeclaration_specifier_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_TypeAndParam:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("TypeAndParam");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shListDeclaration_specifier(_p_->u.typeandparam_.listdeclaration_specifier_);
     bufAppendC(']');
-  bufAppendC(' ');
+    bufAppendC(' ');
     bufAppendC('[');
     shDeclarator(_p_->u.typeandparam_.declarator_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_Abstract:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("Abstract");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shListDeclaration_specifier(_p_->u.abstract_.listdeclaration_specifier_);
     bufAppendC(']');
-  bufAppendC(' ');
+    bufAppendC(' ');
     bufAppendC('[');
     shAbstract_declarator(_p_->u.abstract_.abstract_declarator_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
@@ -4949,47 +4941,47 @@ void shInitializer(Initializer _p_)
   switch(_p_->kind)
   {
   case is_InitExpr:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("InitExpr");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shExp(_p_->u.initexpr_.exp_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_InitListOne:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("InitListOne");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shInitializers(_p_->u.initlistone_.initializers_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_InitListTwo:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("InitListTwo");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shInitializers(_p_->u.initlisttwo_.initializers_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
@@ -5005,36 +4997,36 @@ void shInitializers(Initializers _p_)
   switch(_p_->kind)
   {
   case is_AnInit:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("AnInit");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shInitializer(_p_->u.aninit_.initializer_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_MoreInit:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("MoreInit");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shInitializers(_p_->u.moreinit_.initializers_);
     bufAppendC(']');
-  bufAppendC(' ');
+    bufAppendC(' ');
     bufAppendC('[');
     shInitializer(_p_->u.moreinit_.initializer_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
@@ -5050,36 +5042,36 @@ void shType_name(Type_name _p_)
   switch(_p_->kind)
   {
   case is_PlainType:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("PlainType");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shListSpec_qual(_p_->u.plaintype_.listspec_qual_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_ExtendedType:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("ExtendedType");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shListSpec_qual(_p_->u.extendedtype_.listspec_qual_);
     bufAppendC(']');
-  bufAppendC(' ');
+    bufAppendC(' ');
     bufAppendC('[');
     shAbstract_declarator(_p_->u.extendedtype_.abstract_declarator_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
@@ -5095,51 +5087,51 @@ void shAbstract_declarator(Abstract_declarator _p_)
   switch(_p_->kind)
   {
   case is_PointerStart:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("PointerStart");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shPointer(_p_->u.pointerstart_.pointer_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_Advanced:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("Advanced");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shDir_abs_dec(_p_->u.advanced_.dir_abs_dec_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_PointAdvanced:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("PointAdvanced");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shPointer(_p_->u.pointadvanced_.pointer_);
     bufAppendC(']');
-  bufAppendC(' ');
+    bufAppendC(' ');
     bufAppendC('[');
     shDir_abs_dec(_p_->u.pointadvanced_.dir_abs_dec_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
@@ -5155,17 +5147,17 @@ void shDir_abs_dec(Dir_abs_dec _p_)
   switch(_p_->kind)
   {
   case is_WithinParentes:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("WithinParentes");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shAbstract_declarator(_p_->u.withinparentes_.abstract_declarator_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
@@ -5179,51 +5171,51 @@ void shDir_abs_dec(Dir_abs_dec _p_)
     break;
 
   case is_InitiatedArray:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("InitiatedArray");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shConstant_expression(_p_->u.initiatedarray_.constant_expression_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_UnInitiated:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("UnInitiated");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shDir_abs_dec(_p_->u.uninitiated_.dir_abs_dec_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_Initiated:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("Initiated");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shDir_abs_dec(_p_->u.initiated_.dir_abs_dec_);
     bufAppendC(']');
-  bufAppendC(' ');
+    bufAppendC(' ');
     bufAppendC('[');
     shConstant_expression(_p_->u.initiated_.constant_expression_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
@@ -5237,51 +5229,51 @@ void shDir_abs_dec(Dir_abs_dec _p_)
     break;
 
   case is_NewFunction:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("NewFunction");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shParameter_type(_p_->u.newfunction_.parameter_type_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_OldFuncExpr:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("OldFuncExpr");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shDir_abs_dec(_p_->u.oldfuncexpr_.dir_abs_dec_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_NewFuncExpr:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("NewFuncExpr");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shDir_abs_dec(_p_->u.newfuncexpr_.dir_abs_dec_);
     bufAppendC(']');
-  bufAppendC(' ');
+    bufAppendC(' ');
     bufAppendC('[');
     shParameter_type(_p_->u.newfuncexpr_.parameter_type_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
@@ -5297,92 +5289,92 @@ void shStm(Stm _p_)
   switch(_p_->kind)
   {
   case is_LabelS:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("LabelS");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shLabeled_stm(_p_->u.labels_.labeled_stm_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_CompS:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("CompS");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shCompound_stm(_p_->u.comps_.compound_stm_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_ExprS:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("ExprS");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shExpression_stm(_p_->u.exprs_.expression_stm_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_SelS:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("SelS");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shSelection_stm(_p_->u.sels_.selection_stm_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_IterS:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("IterS");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shIter_stm(_p_->u.iters_.iter_stm_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_JumpS:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("JumpS");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shJump_stm(_p_->u.jumps_.jump_stm_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
@@ -5398,55 +5390,55 @@ void shLabeled_stm(Labeled_stm _p_)
   switch(_p_->kind)
   {
   case is_SlabelOne:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("SlabelOne");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shIdent(_p_->u.slabelone_.ident_);
     bufAppendC(']');
-  bufAppendC(' ');
+    bufAppendC(' ');
     bufAppendC('[');
     shStm(_p_->u.slabelone_.stm_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_SlabelTwo:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("SlabelTwo");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shConstant_expression(_p_->u.slabeltwo_.constant_expression_);
     bufAppendC(']');
-  bufAppendC(' ');
+    bufAppendC(' ');
     bufAppendC('[');
     shStm(_p_->u.slabeltwo_.stm_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_SlabelThree:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("SlabelThree");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shStm(_p_->u.slabelthree_.stm_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
@@ -5471,51 +5463,51 @@ void shCompound_stm(Compound_stm _p_)
     break;
 
   case is_ScompTwo:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("ScompTwo");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shListStm(_p_->u.scomptwo_.liststm_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_ScompThree:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("ScompThree");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shListDec(_p_->u.scompthree_.listdec_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_ScompFour:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("ScompFour");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shListDec(_p_->u.scompfour_.listdec_);
     bufAppendC(']');
-  bufAppendC(' ');
+    bufAppendC(' ');
     bufAppendC('[');
     shListStm(_p_->u.scompfour_.liststm_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
@@ -5540,17 +5532,17 @@ void shExpression_stm(Expression_stm _p_)
     break;
 
   case is_SexprTwo:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("SexprTwo");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shExp(_p_->u.sexprtwo_.exp_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
@@ -5566,59 +5558,59 @@ void shSelection_stm(Selection_stm _p_)
   switch(_p_->kind)
   {
   case is_SselOne:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("SselOne");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shExp(_p_->u.sselone_.exp_);
     bufAppendC(']');
-  bufAppendC(' ');
+    bufAppendC(' ');
     bufAppendC('[');
     shStm(_p_->u.sselone_.stm_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_SselTwo:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("SselTwo");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shExp(_p_->u.sseltwo_.exp_);
     bufAppendC(']');
-  bufAppendC(' ');
+    bufAppendC(' ');
     shStm(_p_->u.sseltwo_.stm_1);
-  bufAppendC(' ');
+    bufAppendC(' ');
     shStm(_p_->u.sseltwo_.stm_2);
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_SselThree:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("SselThree");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shExp(_p_->u.sselthree_.exp_);
     bufAppendC(']');
-  bufAppendC(' ');
+    bufAppendC(' ');
     bufAppendC('[');
     shStm(_p_->u.sselthree_.stm_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
@@ -5634,82 +5626,82 @@ void shIter_stm(Iter_stm _p_)
   switch(_p_->kind)
   {
   case is_SiterOne:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("SiterOne");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shExp(_p_->u.siterone_.exp_);
     bufAppendC(']');
-  bufAppendC(' ');
+    bufAppendC(' ');
     bufAppendC('[');
     shStm(_p_->u.siterone_.stm_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_SiterTwo:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("SiterTwo");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shStm(_p_->u.sitertwo_.stm_);
     bufAppendC(']');
-  bufAppendC(' ');
+    bufAppendC(' ');
     bufAppendC('[');
     shExp(_p_->u.sitertwo_.exp_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_SiterThree:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("SiterThree");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     shExpression_stm(_p_->u.siterthree_.expression_stm_1);
-  bufAppendC(' ');
+    bufAppendC(' ');
     shExpression_stm(_p_->u.siterthree_.expression_stm_2);
-  bufAppendC(' ');
+    bufAppendC(' ');
     bufAppendC('[');
     shStm(_p_->u.siterthree_.stm_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_SiterFour:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("SiterFour");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     shExpression_stm(_p_->u.siterfour_.expression_stm_1);
-  bufAppendC(' ');
+    bufAppendC(' ');
     shExpression_stm(_p_->u.siterfour_.expression_stm_2);
-  bufAppendC(' ');
+    bufAppendC(' ');
     bufAppendC('[');
     shExp(_p_->u.siterfour_.exp_);
     bufAppendC(']');
-  bufAppendC(' ');
+    bufAppendC(' ');
     bufAppendC('[');
     shStm(_p_->u.siterfour_.stm_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
@@ -5743,263 +5735,263 @@ void shConstant(Constant _p_)
   switch(_p_->kind)
   {
   case is_Efloat:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("Efloat");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shDouble(_p_->u.efloat_.double_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_Echar:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("Echar");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shChar(_p_->u.echar_.char_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_Eunsigned:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("Eunsigned");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     shIdent(_p_->u.eunsigned_.unsigned_);
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_Elong:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("Elong");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     shIdent(_p_->u.elong_.long_);
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_Eunsignlong:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("Eunsignlong");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     shIdent(_p_->u.eunsignlong_.unsignedlong_);
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_Ehexadec:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("Ehexadec");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     shIdent(_p_->u.ehexadec_.hexadecimal_);
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_Ehexaunsign:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("Ehexaunsign");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     shIdent(_p_->u.ehexaunsign_.hexunsigned_);
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_Ehexalong:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("Ehexalong");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     shIdent(_p_->u.ehexalong_.hexlong_);
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_Ehexaunslong:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("Ehexaunslong");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     shIdent(_p_->u.ehexaunslong_.hexunslong_);
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_Eoctal:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("Eoctal");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     shIdent(_p_->u.eoctal_.octal_);
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_Eoctalunsign:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("Eoctalunsign");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     shIdent(_p_->u.eoctalunsign_.octalunsigned_);
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_Eoctallong:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("Eoctallong");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     shIdent(_p_->u.eoctallong_.octallong_);
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_Eoctalunslong:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("Eoctalunslong");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     shIdent(_p_->u.eoctalunslong_.octalunslong_);
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_Ecdouble:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("Ecdouble");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     shIdent(_p_->u.ecdouble_.cdouble_);
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_Ecfloat:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("Ecfloat");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     shIdent(_p_->u.ecfloat_.cfloat_);
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_Eclongdouble:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("Eclongdouble");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     shIdent(_p_->u.eclongdouble_.clongdouble_);
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_Eint:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("Eint");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shInteger(_p_->u.eint_.integer_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_Elonger:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("Elonger");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     /* Internal Category */
-  bufAppendC(' ');
+    bufAppendC(' ');
     bufAppendC('[');
     shInteger(_p_->u.elonger_.integer_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
   case is_Edouble:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("Edouble");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     /* Internal Category */
-  bufAppendC(' ');
+    bufAppendC(' ');
     bufAppendC('[');
     shDouble(_p_->u.edouble_.double_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
@@ -6015,17 +6007,17 @@ void shConstant_expression(Constant_expression _p_)
   switch(_p_->kind)
   {
   case is_Especial:
-  bufAppendC('(');
+    bufAppendC('(');
 
     bufAppendS("Especial");
 
-  bufAppendC(' ');
+    bufAppendC(' ');
 
     bufAppendC('[');
     shExp(_p_->u.especial_.exp_);
     bufAppendC(']');
 
-  bufAppendC(')');
+    bufAppendC(')');
 
     break;
 
@@ -6248,4 +6240,3 @@ void resizeBuffer(void)
 }
 char *buf_;
 int cur_, buf_size;
-

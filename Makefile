@@ -11,7 +11,9 @@ OBJS = Absyn.o Lexer.o Parser.o Printer.o TransformDoge.o
 
 .PHONY: clean distclean
 
-all: TestDoge
+all:	TestDoge
+
+re:	clean all
 
 clean:
 	rm -f *.o TestDoge Doge.aux Doge.log Doge.pdf Doge.dvi Doge.ps Doge

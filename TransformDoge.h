@@ -3,6 +3,12 @@
 
 #include "Absyn.h"
 
+#ifdef __GNUC__
+# define UNUSED __attribute__ ((unused))
+#else
+# define UNUSED
+#endif
+
 void visitExternal_declaration(External_declaration p);
 void visitExtends(Extends p);
 void visitJump_stm(Jump_stm p);

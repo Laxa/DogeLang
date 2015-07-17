@@ -1184,98 +1184,97 @@ void visitListExp(ListExp listexp)
   }
 }
 
-void visitUnsigned(Unsigned p)
+void visitUnsigned(Unsigned UNUSED p)
 {
   /* Code for Unsigned Goes Here */
 }
 
-void visitLong(Long p)
+void visitLong(Long UNUSED p)
 {
   /* Code for Long Goes Here */
 }
 
-void visitUnsignedLong(UnsignedLong p)
+void visitUnsignedLong(UnsignedLong UNUSED p)
 {
   /* Code for UnsignedLong Goes Here */
 }
 
-void visitHexadecimal(Hexadecimal p)
+void visitHexadecimal(Hexadecimal UNUSED p)
 {
   /* Code for Hexadecimal Goes Here */
 }
 
-void visitHexUnsigned(HexUnsigned p)
+void visitHexUnsigned(HexUnsigned UNUSED p)
 {
   /* Code for HexUnsigned Goes Here */
 }
 
-void visitHexLong(HexLong p)
+void visitHexLong(HexLong UNUSED p)
 {
   /* Code for HexLong Goes Here */
 }
 
-void visitHexUnsLong(HexUnsLong p)
+void visitHexUnsLong(HexUnsLong UNUSED p)
 {
   /* Code for HexUnsLong Goes Here */
 }
 
-void visitOctal(Octal p)
+void visitOctal(Octal UNUSED p)
 {
   /* Code for Octal Goes Here */
 }
 
-void visitOctalUnsigned(OctalUnsigned p)
+void visitOctalUnsigned(OctalUnsigned UNUSED p)
 {
   /* Code for OctalUnsigned Goes Here */
 }
 
-void visitOctalLong(OctalLong p)
+void visitOctalLong(OctalLong UNUSED p)
 {
   /* Code for OctalLong Goes Here */
 }
 
-void visitOctalUnsLong(OctalUnsLong p)
+void visitOctalUnsLong(OctalUnsLong UNUSED p)
 {
   /* Code for OctalUnsLong Goes Here */
 }
 
-void visitCDouble(CDouble p)
+void visitCDouble(CDouble UNUSED p)
 {
   /* Code for CDouble Goes Here */
 }
 
-void visitCFloat(CFloat p)
+void visitCFloat(CFloat UNUSED p)
 {
   /* Code for CFloat Goes Here */
 }
 
-void visitCLongDouble(CLongDouble p)
+void visitCLongDouble(CLongDouble UNUSED p)
 {
   /* Code for CLongDouble Goes Here */
 }
 
-void visitIdent(Ident i)
+void visitIdent(Ident UNUSED i)
 {
   /* Code for Ident Goes Here */
 }
 
-void visitInteger(Integer i)
+void visitInteger(Integer UNUSED i)
 {
   /* Code for Integer Goes Here */
 }
 
-void visitDouble(Double d)
+void visitDouble(Double UNUSED d)
 {
   /* Code for Double Goes Here */
 }
 
-void visitChar(Char c)
+void visitChar(Char UNUSED c)
 {
   /* Code for Char Goes Here */
 }
 
-void visitString(String s)
+void visitString(String UNUSED s)
 {
   /* Code for String Goes Here */
-
 }
