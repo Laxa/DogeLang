@@ -5,8 +5,9 @@
 /*                                                                          */
 /****************************************************************************/
 
-#include <stdio.h>
+#include <string.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 #include "Parser.h"
 #include "Printer.h"
@@ -16,8 +17,11 @@
 
 int main(int argc, char ** argv)
 {
-  FILE *input;
+  FILE  *input;
+  FILE  *output;
   Program parse_tree;
+  char  *str;
+  char  *fileName;
 
   if (argc > 1)
   {
@@ -39,8 +43,22 @@ int main(int argc, char ** argv)
     printf("Transforming to doge now...\n");
     visitProgram(parse_tree);
     printf("Done!\n");
-    printf("[Linearized Tree]\n");
-    printf("%s\n\n", printProgram(parse_tree));
+    str = printProgram(parse_tree);
+    if (input != stdin)
+    {
+      fileName = strdup(argv[1]);
+      fileName = realloc(fileName, strlen(fileName) + 3);
+      strcat(fileName, ".c");
+      output = fopen(fileName, "w");
+      fwrite(str, strlen(str), 1, output);
+      printf("Wrote program to %s\n", fileName);
+      free(fileName);
+    }
+    else
+    {
+      printf("[Linearized Tree]\n");
+      printf("%s\n\n", printProgram(parse_tree));
+    }
     return 0;
   }
   return 1;
