@@ -159,7 +159,7 @@ void ppExternal_declaration(External_declaration _p_, int _i_)
   {
   case is_Class:
     if (_i_ > 0) renderC(_L_PAREN);
-    renderS("struct");
+    renderS("struct", 1);
     strncpy(curClassName, _p_->u.class_.ident_, CLASSNAME_MAX_LENGTH);
     if (strlen(curNameSpace) > 0)
       snprintf(buf, 512, "%s_%s", curNameSpace, curClassName);
@@ -167,8 +167,9 @@ void ppExternal_declaration(External_declaration _p_, int _i_)
       snprintf(buf, 512, "%s", curClassName);
     renderS(buf, 1);
     renderC('{');
+    ppListExternal_declaration(_p_->u.class_.listexternal_declaration_, 0); // bufferise functions ?
     renderC('}');
-    ppListExternal_declaration(_p_->u.class_.listexternal_declaration_, 0);
+    memset(curClassName, 0, CLASSNAME_MAX_LENGTH);
 
     if (_i_ > 0) renderC(_R_PAREN);
     break;
@@ -177,6 +178,7 @@ void ppExternal_declaration(External_declaration _p_, int _i_)
     if (_i_ > 0) renderC(_L_PAREN);
     /* snprintf(buf, 512, "#include \"%s.h\"\n", _p_->u.namespace_.ident_); */
     strncpy(curNameSpace, _p_->u.namespace_.ident_, NAMESPACE_MAX_LENGTH);
+    /* memset(curNameSpace, 0, NAMESPACE_MAX_LENGTH); */ // for later when namespace fixed
     if (_i_ > 0) renderC(_R_PAREN);
     break;
 
