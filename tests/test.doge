@@ -1,0 +1,25 @@
+amaze stdlib;
+
+such int main() {
+
+  such int attribute1;
+
+  attribute1 iz 9;
+
+  wow 1;
+}
+
+  such int methode1(such int a , such int b)
+  {
+    this->attribute1 iz 2;
+    this->attribute2 iz 'a';
+    if (not a)
+    wow b;
+  }
+
+  such float attribute3;
+
+  such int methode2(such int a , such int b)
+  {
+    attribute3 iz 0.5;
+  }
