@@ -266,63 +266,63 @@ void ppType_specifier(Type_specifier _p_, int _i_)
   {
   case is_Tvoid:
     if (_i_ > 0) renderC(_L_PAREN);
-    renderS("such void");
+    renderS("void");
 
     if (_i_ > 0) renderC(_R_PAREN);
     break;
 
   case is_Tchar:
     if (_i_ > 0) renderC(_L_PAREN);
-    renderS("such char");
+    renderS("char");
 
     if (_i_ > 0) renderC(_R_PAREN);
     break;
 
   case is_Tshort:
     if (_i_ > 0) renderC(_L_PAREN);
-    renderS("such short");
+    renderS("short");
 
     if (_i_ > 0) renderC(_R_PAREN);
     break;
 
   case is_Tint:
     if (_i_ > 0) renderC(_L_PAREN);
-    renderS("such int");
+    renderS("int");
 
     if (_i_ > 0) renderC(_R_PAREN);
     break;
 
   case is_Tlong:
     if (_i_ > 0) renderC(_L_PAREN);
-    renderS("such long");
+    renderS("long");
 
     if (_i_ > 0) renderC(_R_PAREN);
     break;
 
   case is_Tfloat:
     if (_i_ > 0) renderC(_L_PAREN);
-    renderS("such float");
+    renderS("float");
 
     if (_i_ > 0) renderC(_R_PAREN);
     break;
 
   case is_Tdouble:
     if (_i_ > 0) renderC(_L_PAREN);
-    renderS("such double");
+    renderS("double");
 
     if (_i_ > 0) renderC(_R_PAREN);
     break;
 
   case is_Tsigned:
     if (_i_ > 0) renderC(_L_PAREN);
-    renderS("such signed");
+    renderS("signed");
 
     if (_i_ > 0) renderC(_R_PAREN);
     break;
 
   case is_Tunsigned:
     if (_i_ > 0) renderC(_L_PAREN);
-    renderS("such unsigned");
+    renderS("unsigned");
 
     if (_i_ > 0) renderC(_R_PAREN);
     break;
@@ -361,7 +361,7 @@ void ppStorage_class_specifier(Storage_class_specifier _p_, int _i_)
   {
   case is_MyType:
     if (_i_ > 0) renderC(_L_PAREN);
-    renderS("such typedef");
+    renderS("typedef");
 
     if (_i_ > 0) renderC(_R_PAREN);
     break;
@@ -407,7 +407,7 @@ void ppType_qualifier(Type_qualifier _p_, int _i_)
   {
   case is_Const:
     if (_i_ > 0) renderC(_L_PAREN);
-    renderS("such const");
+    renderS("const");
 
     if (_i_ > 0) renderC(_R_PAREN);
     break;
@@ -629,17 +629,17 @@ void ppExp(Exp _p_, int _i_)
     if (_i_ > 2) renderC(_L_PAREN);
     ppExp(_p_->u.initclass_.exp_, 15);
     ppAssignment_op(_p_->u.initclass_.assignment_op_, 0);
-    renderS("new");
+    renderS("malloc(sizeof(");
     ppIdent(_p_->u.initclass_.ident_, 0);
-
+    renderS("))");
     if (_i_ > 2) renderC(_R_PAREN);
     break;
 
   case is_DestroyClass:
     if (_i_ > 2) renderC(_L_PAREN);
-    renderS("stahp");
+    renderS("free(");
     ppIdent(_p_->u.destroyclass_.ident_, 0);
-
+    renderS(")");
     if (_i_ > 2) renderC(_R_PAREN);
     break;
 
@@ -983,7 +983,6 @@ void ppDeclaration_specifier(Declaration_specifier _p_, int _i_)
   {
   case is_DecClass:
     if (_i_ > 0) renderC(_L_PAREN);
-    renderS("such");
     ppIdent(_p_->u.decclass_.ident_1, 0);
     ppPointer(_p_->u.decclass_.pointer_, 0);
     ppIdent(_p_->u.decclass_.ident_2, 0);
@@ -993,7 +992,6 @@ void ppDeclaration_specifier(Declaration_specifier _p_, int _i_)
 
   case is_DecClassNoPoiter:
     if (_i_ > 0) renderC(_L_PAREN);
-    renderS("such");
     ppIdent(_p_->u.decclassnopoiter_.ident_1, 0);
     ppIdent(_p_->u.decclassnopoiter_.ident_2, 0);
 
