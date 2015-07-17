@@ -57,7 +57,7 @@ int main(int argc, char ** argv)
     else
     {
       printf("[Linearized Tree]\n");
-      printf("%s\n\n", printProgram(parse_tree));
+      printf("%s\n\n", str);
     }
     return 0;
   }

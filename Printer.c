@@ -8,11 +8,14 @@
 #include "TransformDoge.h"
 
 #define INDENT_WIDTH 2
+#define MANGLING_START "_ZN"
+#define NAMESPACE_MAX_LENGTH    128
 
 int _n_;
 char* buf_;
 int cur_;
 int buf_size;
+char curNameSpace[NAMESPACE_MAX_LENGTH];
 
 /* You may wish to change the renderC functions */
 void renderC(Char c)
@@ -143,7 +146,6 @@ char* showExp(Exp p)
 }
 void ppExternal_declaration(External_declaration _p_, int _i_)
 {
-  char buf[512];
   switch(_p_->kind)
   {
   case is_Class:
@@ -160,8 +162,8 @@ void ppExternal_declaration(External_declaration _p_, int _i_)
 
   case is_Namespace:
     if (_i_ > 0) renderC(_L_PAREN);
-    snprintf(buf, 512, "#include \"%s.h\"\n", _p_->u.namespace_.ident_);
-    renderS(buf);
+    /* snprintf(buf, 512, "#include \"%s.h\"\n", _p_->u.namespace_.ident_); */
+    strncpy(curNameSpace, _p_->u.namespace_.ident_, 128);
     if (_i_ > 0) renderC(_R_PAREN);
     break;
 
@@ -6243,5 +6245,6 @@ void resizeBuffer(void)
   }
   buf_ = temp;
 }
+
 char *buf_;
 int cur_, buf_size;
