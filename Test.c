@@ -12,11 +12,14 @@
 #include "Printer.h"
 #include "Absyn.h"
 
+#include "TransformDoge.h"
+
 int main(int argc, char ** argv)
 {
   FILE *input;
   Program parse_tree;
-  if (argc > 1) 
+
+  if (argc > 1)
   {
     input = fopen(argv[1], "r");
     if (!input)
@@ -33,6 +36,9 @@ int main(int argc, char ** argv)
     printf("\nParse Succesful!\n");
     printf("\n[Abstract Syntax]\n");
     printf("%s\n\n", showProgram(parse_tree));
+    printf("Transforming to doge now...\n");
+    visitProgram(parse_tree);
+    printf("Done!\n");
     printf("[Linearized Tree]\n");
     printf("%s\n\n", printProgram(parse_tree));
     return 0;
