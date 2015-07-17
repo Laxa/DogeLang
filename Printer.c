@@ -9,13 +9,15 @@
 
 #define INDENT_WIDTH 2
 #define MANGLING_START "_ZN"
-#define NAMESPACE_MAX_LENGTH    128
+#define NAMESPACE_MAX_LENGTH 128
+#define CLASSNAME_MAX_LENGTH 128
 
 int _n_;
 char* buf_;
 int cur_;
 int buf_size;
 char curNameSpace[NAMESPACE_MAX_LENGTH];
+char curClassName[CLASSNAME_MAX_LENGTH];
 
 /* You may wish to change the renderC functions */
 void renderC(Char c)
@@ -106,6 +108,8 @@ char* printProgram(Program p)
 {
   _n_ = 0;
   bufReset();
+  memset(curNameSpace, 0, NAMESPACE_MAX_LENGTH);
+  memset(curClassName, 0, CLASSNAME_MAX_LENGTH);
   ppProgram(p, 0);
   return buf_;
 }
@@ -146,16 +150,22 @@ char* showExp(Exp p)
 }
 void ppExternal_declaration(External_declaration _p_, int _i_)
 {
+  char buf[512];
+
   switch(_p_->kind)
   {
   case is_Class:
     if (_i_ > 0) renderC(_L_PAREN);
     renderS("struct");
-    ppIdent(_p_->u.class_.ident_, 0);
-    ppExtends(_p_->u.class_.extends_, 0);
+    strncpy(curClassName, _p_->u.class_.ident_, CLASSNAME_MAX_LENGTH);
+    if (strlen(curNameSpace) > 0)
+      snprintf(buf, 512, "%s_%s", curNameSpace, curClassName);
+    else
+      snprintf(buf, 512, "%s", curClassName);
+    renderS(buf);
     renderC('{');
-    ppListExternal_declaration(_p_->u.class_.listexternal_declaration_, 0);
     renderC('}');
+    ppListExternal_declaration(_p_->u.class_.listexternal_declaration_, 0);
 
     if (_i_ > 0) renderC(_R_PAREN);
     break;
@@ -163,7 +173,7 @@ void ppExternal_declaration(External_declaration _p_, int _i_)
   case is_Namespace:
     if (_i_ > 0) renderC(_L_PAREN);
     /* snprintf(buf, 512, "#include \"%s.h\"\n", _p_->u.namespace_.ident_); */
-    strncpy(curNameSpace, _p_->u.namespace_.ident_, 128);
+    strncpy(curNameSpace, _p_->u.namespace_.ident_, NAMESPACE_MAX_LENGTH);
     if (_i_ > 0) renderC(_R_PAREN);
     break;
 
@@ -174,7 +184,7 @@ void ppExternal_declaration(External_declaration _p_, int _i_)
     if (_i_ > 0) renderC(_R_PAREN);
     break;
 
-  case is_Global:
+  case is_Global: // attribut si dans namespace + class
     if (_i_ > 0) renderC(_L_PAREN);
     ppDec(_p_->u.global_.dec_, 0);
 
@@ -1057,7 +1067,7 @@ void ppListExternal_declaration(ListExternal_declaration listexternal_declaratio
     {
       ppExternal_declaration(listexternal_declaration->external_declaration_, i);
 
-      listexternal_declaration = 0;
+      listexternal_declaration = 0; // a la fin de la liste de declarations, on set a NULL
     }
     else
     {

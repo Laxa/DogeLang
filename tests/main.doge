@@ -1,4 +1,4 @@
-amaze stdlib;
+amaze test;
 
 such int main() {
 
