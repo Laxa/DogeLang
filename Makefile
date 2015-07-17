@@ -7,7 +7,7 @@ FLEX_OPTS = -PDoge
 BISON = bison
 BISON_OPTS = -t -pDoge
 
-OBJS = Absyn.o Lexer.o Parser.o Printer.o TransformDoge.o
+OBJS = Absyn.o Lexer.o Parser.o Printer.o CheckDoge.o ChainedList.o
 
 .PHONY: clean distclean
 
@@ -40,11 +40,14 @@ Lexer.o: Lexer.c Parser.h
 Parser.o: Parser.c Absyn.h
 	${CC} ${CCFLAGS} -c Parser.c
 
+ChainedList.o: ChainedList.c Absyn.h
+	${CC} ${CCFLAGS} -c ChainedList.c
+
 Printer.o: Printer.c Printer.h Absyn.h
 	${CC} ${CCFLAGS} -c Printer.c
 
-TransformDoge.o: TransformDoge.c TransformDoge.h Absyn.h
-	${CC} ${CCFLAGS} -c TransformDoge.c
+CheckDoge.o: CheckDoge.c CheckDoge.h Absyn.h
+	${CC} ${CCFLAGS} -c CheckDoge.c
 
 Test.o: Test.c Parser.h Printer.h Absyn.h
 	${CC} ${CCFLAGS} -c Test.c

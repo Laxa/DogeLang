@@ -43,7 +43,7 @@
 
 /* end standard C headers. */
 
-#include "TransformDoge.h"
+#include "CheckDoge.h"
 
 /* flex integer type definitions */
 

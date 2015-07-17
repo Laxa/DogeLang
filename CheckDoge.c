@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "TransformDoge.h"
+#include "CheckDoge.h"
 
 void visitExternal_declaration(External_declaration _p_)
 {

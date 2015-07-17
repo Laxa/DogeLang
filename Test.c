@@ -13,7 +13,7 @@
 #include "Printer.h"
 #include "Absyn.h"
 
-#include "TransformDoge.h"
+#include "CheckDoge.h"
 
 int main(int argc, char ** argv)
 {

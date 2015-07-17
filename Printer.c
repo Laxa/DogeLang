@@ -5,7 +5,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include "TransformDoge.h"
+#include "CheckDoge.h"
 
 #define INDENT_WIDTH 2
 #define MANGLING_START "_ZN"
@@ -167,7 +167,7 @@ void ppExternal_declaration(External_declaration _p_, int _i_)
       snprintf(buf, 512, "%s", curClassName);
     renderS(buf, 1);
     renderC('{');
-    ppListExternal_declaration(_p_->u.class_.listexternal_declaration_, 0); // bufferise functions ?
+    ppListExternal_declaration(_p_->u.class_.listexternal_declaration_, 0); // On doit tout bufferiser au cas ou on herite de notre classe quelque part
     renderC('}');
     memset(curClassName, 0, CLASSNAME_MAX_LENGTH);
 
@@ -182,7 +182,7 @@ void ppExternal_declaration(External_declaration _p_, int _i_)
     if (_i_ > 0) renderC(_R_PAREN);
     break;
 
-  case is_Afunc:
+  case is_Afunc: // methode de class
     if (_i_ > 0) renderC(_L_PAREN);
     ppFunction_def(_p_->u.afunc_.function_def_, 0);
 
@@ -651,14 +651,14 @@ void ppExp(Exp _p_, int _i_)
     if (_i_ > 2) renderC(_L_PAREN);
     ppExp(_p_->u.initclass_.exp_, 15);
     ppAssignment_op(_p_->u.initclass_.assignment_op_, 0);
-    snprintf(buf, 512, "malloc(sizeof(%s))", _p_->u.initclass_.ident_);
+    snprintf(buf, 512, "malloc(sizeof(%s))", _p_->u.initclass_.ident_); // we need a table with class/namespaces
     renderS(buf, 1);
     if (_i_ > 2) renderC(_R_PAREN);
     break;
 
   case is_DestroyClass:
     if (_i_ > 2) renderC(_L_PAREN);
-    snprintf(buf, 512, "free(%s)", _p_->u.destroyclass_.ident_);
+    snprintf(buf, 512, "free(%s)", _p_->u.destroyclass_.ident_); // same than above comment
     renderS(buf, 1);
     if (_i_ > 2) renderC(_R_PAREN);
     break;
