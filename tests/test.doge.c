@@ -7,13 +7,12 @@
 }
 int methode1 (int a, int b)
 {
-  char c = 'a';
+  this -> attribute1 = 2;
+  this -> attribute2 = 'a';
   if (!a)return b;
-  return 0;
 }
 float attribute3;
 int methode2 (int a, int b)
 {
   attribute3 = 0.5;
-  return attribute3;
 }

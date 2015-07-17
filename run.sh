@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [[ $# > 0 ]]
+if [[ $# = 0 ]]
 then
        make re && ./TestDoge tests/main.doge && cat tests/main.doge.c # && gcc tests/main.doge.c && tests/a.out
 else
