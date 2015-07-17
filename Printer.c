@@ -160,7 +160,7 @@ void ppExternal_declaration(External_declaration _p_, int _i_)
 
   case is_Namespace:
     if (_i_ > 0) renderC(_L_PAREN);
-    snprintf(buf, 512, "include \"%s.h\"\n", _p_->u.namespace_.ident_);
+    snprintf(buf, 512, "#include \"%s.h\"\n", _p_->u.namespace_.ident_);
     renderS(buf);
     if (_i_ > 0) renderC(_R_PAREN);
     break;
