@@ -1,5 +1,5 @@
 CC = gcc
-CCFLAGS = -g -W -Wall
+CCFLAGS = -g -W -Wall -Werror
 
 FLEX = flex
 FLEX_OPTS = -PDoge
