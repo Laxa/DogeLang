@@ -2,5 +2,5 @@
 *.bak
 .DS_Store
 TestDoge
-tests/main.doge.c
+tests/*.c
 obj/*
