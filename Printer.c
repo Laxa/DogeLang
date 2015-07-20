@@ -150,7 +150,7 @@ void ppExternal_declaration(External_declaration _p_, int _i_)
   {
   case is_Class:
     if (_i_ > 0) renderC(_L_PAREN);
-    renderS("doge", 1);
+    renderS("struct", 1);
     ppClassName(_p_->u.class_.classname_, 0);
     ppExtends(_p_->u.class_.extends_, 0);
     renderC('{');
@@ -1039,7 +1039,6 @@ void ppDeclaration_specifier(Declaration_specifier _p_, int _i_)
   {
   case is_DecClass:
     if (_i_ > 0) renderC(_L_PAREN);
-    renderS("such", 1); // TODO : check that
     ppClassName(_p_->u.decclass_.classname_, 0);
     ppPointer(_p_->u.decclass_.pointer_, 0);
     ppIdent(_p_->u.decclass_.ident_, 0);
@@ -1049,7 +1048,6 @@ void ppDeclaration_specifier(Declaration_specifier _p_, int _i_)
 
   case is_DecClassNoPoiter:
     if (_i_ > 0) renderC(_L_PAREN);
-    renderS("such", 1); // TODO : check that
     ppClassName(_p_->u.decclassnopoiter_.classname_, 0);
     ppIdent(_p_->u.decclassnopoiter_.ident_, 0);
 
