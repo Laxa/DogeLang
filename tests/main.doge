@@ -1,4 +1,4 @@
-amaze test
+amaze NameSpace
 {
   doge class1 very class2
   {
@@ -27,11 +27,11 @@ amaze test
 
 such int main()
 {
-  such class1 *test;
+  such NameSpace::class1 *test;
   such int attribute1;
 
   attribute1 iz 9;
-  test iz new class1;
+  test iz new Namespace::class1;
 
   stahp test;
 
