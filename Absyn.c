@@ -6,2704 +6,2731 @@
 
 
 /********************   Class    ********************/
-External_declaration make_Class(Ident p1, Extends p2, ListExternal_declaration p3)
+External_declaration make_Class(ClassName p1, Extends p2, ListExternal_declaration p3)
 {
-  External_declaration tmp = (External_declaration) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Class!\n");
-    exit(1);
-  }
-  tmp->kind = is_Class;
-  tmp->u.class_.ident_ = p1;
-  tmp->u.class_.extends_ = p2;
-  tmp->u.class_.listexternal_declaration_ = p3;
-  return tmp;
+    External_declaration tmp = (External_declaration) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Class!\n");
+        exit(1);
+    }
+    tmp->kind = is_Class;
+    tmp->u.class_.classname_ = p1;
+    tmp->u.class_.extends_ = p2;
+    tmp->u.class_.listexternal_declaration_ = p3;
+    return tmp;
 }
 /********************   Namespace    ********************/
-External_declaration make_Namespace(Ident p1)
+External_declaration make_Namespace(Ident p1, ListExternal_declaration p2)
 {
-  External_declaration tmp = (External_declaration) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Namespace!\n");
-    exit(1);
-  }
-  tmp->kind = is_Namespace;
-  tmp->u.namespace_.ident_ = p1;
-  return tmp;
+    External_declaration tmp = (External_declaration) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Namespace!\n");
+        exit(1);
+    }
+    tmp->kind = is_Namespace;
+    tmp->u.namespace_.ident_ = p1;
+    tmp->u.namespace_.listexternal_declaration_ = p2;
+    return tmp;
 }
 /********************   Afunc    ********************/
 External_declaration make_Afunc(Function_def p1)
 {
-  External_declaration tmp = (External_declaration) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Afunc!\n");
-    exit(1);
-  }
-  tmp->kind = is_Afunc;
-  tmp->u.afunc_.function_def_ = p1;
-  return tmp;
+    External_declaration tmp = (External_declaration) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Afunc!\n");
+        exit(1);
+    }
+    tmp->kind = is_Afunc;
+    tmp->u.afunc_.function_def_ = p1;
+    return tmp;
 }
 /********************   Global    ********************/
 External_declaration make_Global(Dec p1)
 {
-  External_declaration tmp = (External_declaration) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Global!\n");
-    exit(1);
-  }
-  tmp->kind = is_Global;
-  tmp->u.global_.dec_ = p1;
-  return tmp;
-}/********************   Inheritance    ********************/
-Extends make_Inheritance(Ident p1)
+    External_declaration tmp = (External_declaration) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Global!\n");
+        exit(1);
+    }
+    tmp->kind = is_Global;
+    tmp->u.global_.dec_ = p1;
+    return tmp;
+}/********************   ClassWithNamespace    ********************/
+ClassName make_ClassWithNamespace(Ident p1, Ident p2)
 {
-  Extends tmp = (Extends) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Inheritance!\n");
-    exit(1);
-  }
-  tmp->kind = is_Inheritance;
-  tmp->u.inheritance_.ident_ = p1;
-  return tmp;
+    ClassName tmp = (ClassName) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating ClassWithNamespace!\n");
+        exit(1);
+    }
+    tmp->kind = is_ClassWithNamespace;
+    tmp->u.classwithnamespace_.ident_1 = p1;
+    tmp->u.classwithnamespace_.ident_2 = p2;
+    return tmp;
+}
+/********************   ClassWithoutNamespace    ********************/
+ClassName make_ClassWithoutNamespace(Ident p1)
+{
+    ClassName tmp = (ClassName) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating ClassWithoutNamespace!\n");
+        exit(1);
+    }
+    tmp->kind = is_ClassWithoutNamespace;
+    tmp->u.classwithoutnamespace_.ident_ = p1;
+    return tmp;
+}/********************   Inheritance    ********************/
+Extends make_Inheritance(ClassName p1)
+{
+    Extends tmp = (Extends) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Inheritance!\n");
+        exit(1);
+    }
+    tmp->kind = is_Inheritance;
+    tmp->u.inheritance_.classname_ = p1;
+    return tmp;
 }
 /********************   NoInheritance    ********************/
 Extends make_NoInheritance()
 {
-  Extends tmp = (Extends) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating NoInheritance!\n");
-    exit(1);
-  }
-  tmp->kind = is_NoInheritance;
-  return tmp;
+    Extends tmp = (Extends) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating NoInheritance!\n");
+        exit(1);
+    }
+    tmp->kind = is_NoInheritance;
+    return tmp;
 }/********************   SjumpFour    ********************/
 Jump_stm make_SjumpFour()
 {
-  Jump_stm tmp = (Jump_stm) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating SjumpFour!\n");
-    exit(1);
-  }
-  tmp->kind = is_SjumpFour;
-  return tmp;
+    Jump_stm tmp = (Jump_stm) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating SjumpFour!\n");
+        exit(1);
+    }
+    tmp->kind = is_SjumpFour;
+    return tmp;
 }
 /********************   SjumpFive    ********************/
 Jump_stm make_SjumpFive(Exp p1)
 {
-  Jump_stm tmp = (Jump_stm) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating SjumpFive!\n");
-    exit(1);
-  }
-  tmp->kind = is_SjumpFive;
-  tmp->u.sjumpfive_.exp_ = p1;
-  return tmp;
+    Jump_stm tmp = (Jump_stm) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating SjumpFive!\n");
+        exit(1);
+    }
+    tmp->kind = is_SjumpFive;
+    tmp->u.sjumpfive_.exp_ = p1;
+    return tmp;
 }
 /********************   SjumpOne    ********************/
 Jump_stm make_SjumpOne(Ident p1)
 {
-  Jump_stm tmp = (Jump_stm) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating SjumpOne!\n");
-    exit(1);
-  }
-  tmp->kind = is_SjumpOne;
-  tmp->u.sjumpone_.ident_ = p1;
-  return tmp;
+    Jump_stm tmp = (Jump_stm) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating SjumpOne!\n");
+        exit(1);
+    }
+    tmp->kind = is_SjumpOne;
+    tmp->u.sjumpone_.ident_ = p1;
+    return tmp;
 }
 /********************   SjumpTwo    ********************/
 Jump_stm make_SjumpTwo()
 {
-  Jump_stm tmp = (Jump_stm) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating SjumpTwo!\n");
-    exit(1);
-  }
-  tmp->kind = is_SjumpTwo;
-  return tmp;
+    Jump_stm tmp = (Jump_stm) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating SjumpTwo!\n");
+        exit(1);
+    }
+    tmp->kind = is_SjumpTwo;
+    return tmp;
 }
 /********************   SjumpThree    ********************/
 Jump_stm make_SjumpThree()
 {
-  Jump_stm tmp = (Jump_stm) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating SjumpThree!\n");
-    exit(1);
-  }
-  tmp->kind = is_SjumpThree;
-  return tmp;
+    Jump_stm tmp = (Jump_stm) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating SjumpThree!\n");
+        exit(1);
+    }
+    tmp->kind = is_SjumpThree;
+    return tmp;
 }/********************   Tvoid    ********************/
 Type_specifier make_Tvoid()
 {
-  Type_specifier tmp = (Type_specifier) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Tvoid!\n");
-    exit(1);
-  }
-  tmp->kind = is_Tvoid;
-  return tmp;
+    Type_specifier tmp = (Type_specifier) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Tvoid!\n");
+        exit(1);
+    }
+    tmp->kind = is_Tvoid;
+    return tmp;
 }
 /********************   Tchar    ********************/
 Type_specifier make_Tchar()
 {
-  Type_specifier tmp = (Type_specifier) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Tchar!\n");
-    exit(1);
-  }
-  tmp->kind = is_Tchar;
-  return tmp;
+    Type_specifier tmp = (Type_specifier) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Tchar!\n");
+        exit(1);
+    }
+    tmp->kind = is_Tchar;
+    return tmp;
 }
 /********************   Tshort    ********************/
 Type_specifier make_Tshort()
 {
-  Type_specifier tmp = (Type_specifier) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Tshort!\n");
-    exit(1);
-  }
-  tmp->kind = is_Tshort;
-  return tmp;
+    Type_specifier tmp = (Type_specifier) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Tshort!\n");
+        exit(1);
+    }
+    tmp->kind = is_Tshort;
+    return tmp;
 }
 /********************   Tint    ********************/
 Type_specifier make_Tint()
 {
-  Type_specifier tmp = (Type_specifier) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Tint!\n");
-    exit(1);
-  }
-  tmp->kind = is_Tint;
-  return tmp;
+    Type_specifier tmp = (Type_specifier) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Tint!\n");
+        exit(1);
+    }
+    tmp->kind = is_Tint;
+    return tmp;
 }
 /********************   Tlong    ********************/
 Type_specifier make_Tlong()
 {
-  Type_specifier tmp = (Type_specifier) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Tlong!\n");
-    exit(1);
-  }
-  tmp->kind = is_Tlong;
-  return tmp;
+    Type_specifier tmp = (Type_specifier) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Tlong!\n");
+        exit(1);
+    }
+    tmp->kind = is_Tlong;
+    return tmp;
 }
 /********************   Tfloat    ********************/
 Type_specifier make_Tfloat()
 {
-  Type_specifier tmp = (Type_specifier) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Tfloat!\n");
-    exit(1);
-  }
-  tmp->kind = is_Tfloat;
-  return tmp;
+    Type_specifier tmp = (Type_specifier) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Tfloat!\n");
+        exit(1);
+    }
+    tmp->kind = is_Tfloat;
+    return tmp;
 }
 /********************   Tdouble    ********************/
 Type_specifier make_Tdouble()
 {
-  Type_specifier tmp = (Type_specifier) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Tdouble!\n");
-    exit(1);
-  }
-  tmp->kind = is_Tdouble;
-  return tmp;
+    Type_specifier tmp = (Type_specifier) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Tdouble!\n");
+        exit(1);
+    }
+    tmp->kind = is_Tdouble;
+    return tmp;
 }
 /********************   Tsigned    ********************/
 Type_specifier make_Tsigned()
 {
-  Type_specifier tmp = (Type_specifier) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Tsigned!\n");
-    exit(1);
-  }
-  tmp->kind = is_Tsigned;
-  return tmp;
+    Type_specifier tmp = (Type_specifier) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Tsigned!\n");
+        exit(1);
+    }
+    tmp->kind = is_Tsigned;
+    return tmp;
 }
 /********************   Tunsigned    ********************/
 Type_specifier make_Tunsigned()
 {
-  Type_specifier tmp = (Type_specifier) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Tunsigned!\n");
-    exit(1);
-  }
-  tmp->kind = is_Tunsigned;
-  return tmp;
+    Type_specifier tmp = (Type_specifier) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Tunsigned!\n");
+        exit(1);
+    }
+    tmp->kind = is_Tunsigned;
+    return tmp;
 }
 /********************   Tstruct    ********************/
 Type_specifier make_Tstruct(Struct_or_union_spec p1)
 {
-  Type_specifier tmp = (Type_specifier) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Tstruct!\n");
-    exit(1);
-  }
-  tmp->kind = is_Tstruct;
-  tmp->u.tstruct_.struct_or_union_spec_ = p1;
-  return tmp;
+    Type_specifier tmp = (Type_specifier) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Tstruct!\n");
+        exit(1);
+    }
+    tmp->kind = is_Tstruct;
+    tmp->u.tstruct_.struct_or_union_spec_ = p1;
+    return tmp;
 }
 /********************   Tenum    ********************/
 Type_specifier make_Tenum(Enum_specifier p1)
 {
-  Type_specifier tmp = (Type_specifier) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Tenum!\n");
-    exit(1);
-  }
-  tmp->kind = is_Tenum;
-  tmp->u.tenum_.enum_specifier_ = p1;
-  return tmp;
+    Type_specifier tmp = (Type_specifier) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Tenum!\n");
+        exit(1);
+    }
+    tmp->kind = is_Tenum;
+    tmp->u.tenum_.enum_specifier_ = p1;
+    return tmp;
 }
 /********************   Tname    ********************/
 Type_specifier make_Tname()
 {
-  Type_specifier tmp = (Type_specifier) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Tname!\n");
-    exit(1);
-  }
-  tmp->kind = is_Tname;
-  return tmp;
+    Type_specifier tmp = (Type_specifier) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Tname!\n");
+        exit(1);
+    }
+    tmp->kind = is_Tname;
+    return tmp;
 }/********************   MyType    ********************/
 Storage_class_specifier make_MyType()
 {
-  Storage_class_specifier tmp = (Storage_class_specifier) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating MyType!\n");
-    exit(1);
-  }
-  tmp->kind = is_MyType;
-  return tmp;
+    Storage_class_specifier tmp = (Storage_class_specifier) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating MyType!\n");
+        exit(1);
+    }
+    tmp->kind = is_MyType;
+    return tmp;
 }
 /********************   GlobalPrograms    ********************/
 Storage_class_specifier make_GlobalPrograms()
 {
-  Storage_class_specifier tmp = (Storage_class_specifier) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating GlobalPrograms!\n");
-    exit(1);
-  }
-  tmp->kind = is_GlobalPrograms;
-  return tmp;
+    Storage_class_specifier tmp = (Storage_class_specifier) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating GlobalPrograms!\n");
+        exit(1);
+    }
+    tmp->kind = is_GlobalPrograms;
+    return tmp;
 }
 /********************   LocalProgram    ********************/
 Storage_class_specifier make_LocalProgram()
 {
-  Storage_class_specifier tmp = (Storage_class_specifier) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating LocalProgram!\n");
-    exit(1);
-  }
-  tmp->kind = is_LocalProgram;
-  return tmp;
+    Storage_class_specifier tmp = (Storage_class_specifier) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating LocalProgram!\n");
+        exit(1);
+    }
+    tmp->kind = is_LocalProgram;
+    return tmp;
 }
 /********************   LocalBlock    ********************/
 Storage_class_specifier make_LocalBlock()
 {
-  Storage_class_specifier tmp = (Storage_class_specifier) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating LocalBlock!\n");
-    exit(1);
-  }
-  tmp->kind = is_LocalBlock;
-  return tmp;
+    Storage_class_specifier tmp = (Storage_class_specifier) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating LocalBlock!\n");
+        exit(1);
+    }
+    tmp->kind = is_LocalBlock;
+    return tmp;
 }
 /********************   LocalReg    ********************/
 Storage_class_specifier make_LocalReg()
 {
-  Storage_class_specifier tmp = (Storage_class_specifier) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating LocalReg!\n");
-    exit(1);
-  }
-  tmp->kind = is_LocalReg;
-  return tmp;
+    Storage_class_specifier tmp = (Storage_class_specifier) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating LocalReg!\n");
+        exit(1);
+    }
+    tmp->kind = is_LocalReg;
+    return tmp;
 }/********************   Const    ********************/
 Type_qualifier make_Const()
 {
-  Type_qualifier tmp = (Type_qualifier) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Const!\n");
-    exit(1);
-  }
-  tmp->kind = is_Const;
-  return tmp;
+    Type_qualifier tmp = (Type_qualifier) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Const!\n");
+        exit(1);
+    }
+    tmp->kind = is_Const;
+    return tmp;
 }
 /********************   NoOptim    ********************/
 Type_qualifier make_NoOptim()
 {
-  Type_qualifier tmp = (Type_qualifier) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating NoOptim!\n");
-    exit(1);
-  }
-  tmp->kind = is_NoOptim;
-  return tmp;
+    Type_qualifier tmp = (Type_qualifier) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating NoOptim!\n");
+        exit(1);
+    }
+    tmp->kind = is_NoOptim;
+    return tmp;
 }/********************   Logicalneg    ********************/
 Unary_operator make_Logicalneg()
 {
-  Unary_operator tmp = (Unary_operator) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Logicalneg!\n");
-    exit(1);
-  }
-  tmp->kind = is_Logicalneg;
-  return tmp;
+    Unary_operator tmp = (Unary_operator) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Logicalneg!\n");
+        exit(1);
+    }
+    tmp->kind = is_Logicalneg;
+    return tmp;
 }
 /********************   Address    ********************/
 Unary_operator make_Address()
 {
-  Unary_operator tmp = (Unary_operator) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Address!\n");
-    exit(1);
-  }
-  tmp->kind = is_Address;
-  return tmp;
+    Unary_operator tmp = (Unary_operator) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Address!\n");
+        exit(1);
+    }
+    tmp->kind = is_Address;
+    return tmp;
 }
 /********************   Indirection    ********************/
 Unary_operator make_Indirection()
 {
-  Unary_operator tmp = (Unary_operator) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Indirection!\n");
-    exit(1);
-  }
-  tmp->kind = is_Indirection;
-  return tmp;
+    Unary_operator tmp = (Unary_operator) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Indirection!\n");
+        exit(1);
+    }
+    tmp->kind = is_Indirection;
+    return tmp;
 }
 /********************   Plus    ********************/
 Unary_operator make_Plus()
 {
-  Unary_operator tmp = (Unary_operator) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Plus!\n");
-    exit(1);
-  }
-  tmp->kind = is_Plus;
-  return tmp;
+    Unary_operator tmp = (Unary_operator) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Plus!\n");
+        exit(1);
+    }
+    tmp->kind = is_Plus;
+    return tmp;
 }
 /********************   Negative    ********************/
 Unary_operator make_Negative()
 {
-  Unary_operator tmp = (Unary_operator) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Negative!\n");
-    exit(1);
-  }
-  tmp->kind = is_Negative;
-  return tmp;
+    Unary_operator tmp = (Unary_operator) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Negative!\n");
+        exit(1);
+    }
+    tmp->kind = is_Negative;
+    return tmp;
 }
 /********************   Complement    ********************/
 Unary_operator make_Complement()
 {
-  Unary_operator tmp = (Unary_operator) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Complement!\n");
-    exit(1);
-  }
-  tmp->kind = is_Complement;
-  return tmp;
+    Unary_operator tmp = (Unary_operator) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Complement!\n");
+        exit(1);
+    }
+    tmp->kind = is_Complement;
+    return tmp;
 }/********************   Assign    ********************/
 Assignment_op make_Assign()
 {
-  Assignment_op tmp = (Assignment_op) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Assign!\n");
-    exit(1);
-  }
-  tmp->kind = is_Assign;
-  return tmp;
+    Assignment_op tmp = (Assignment_op) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Assign!\n");
+        exit(1);
+    }
+    tmp->kind = is_Assign;
+    return tmp;
 }
 /********************   AssignMul    ********************/
 Assignment_op make_AssignMul()
 {
-  Assignment_op tmp = (Assignment_op) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating AssignMul!\n");
-    exit(1);
-  }
-  tmp->kind = is_AssignMul;
-  return tmp;
+    Assignment_op tmp = (Assignment_op) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating AssignMul!\n");
+        exit(1);
+    }
+    tmp->kind = is_AssignMul;
+    return tmp;
 }
 /********************   AssignDiv    ********************/
 Assignment_op make_AssignDiv()
 {
-  Assignment_op tmp = (Assignment_op) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating AssignDiv!\n");
-    exit(1);
-  }
-  tmp->kind = is_AssignDiv;
-  return tmp;
+    Assignment_op tmp = (Assignment_op) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating AssignDiv!\n");
+        exit(1);
+    }
+    tmp->kind = is_AssignDiv;
+    return tmp;
 }
 /********************   AssignMod    ********************/
 Assignment_op make_AssignMod()
 {
-  Assignment_op tmp = (Assignment_op) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating AssignMod!\n");
-    exit(1);
-  }
-  tmp->kind = is_AssignMod;
-  return tmp;
+    Assignment_op tmp = (Assignment_op) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating AssignMod!\n");
+        exit(1);
+    }
+    tmp->kind = is_AssignMod;
+    return tmp;
 }
 /********************   AssignAdd    ********************/
 Assignment_op make_AssignAdd()
 {
-  Assignment_op tmp = (Assignment_op) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating AssignAdd!\n");
-    exit(1);
-  }
-  tmp->kind = is_AssignAdd;
-  return tmp;
+    Assignment_op tmp = (Assignment_op) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating AssignAdd!\n");
+        exit(1);
+    }
+    tmp->kind = is_AssignAdd;
+    return tmp;
 }
 /********************   AssignSub    ********************/
 Assignment_op make_AssignSub()
 {
-  Assignment_op tmp = (Assignment_op) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating AssignSub!\n");
-    exit(1);
-  }
-  tmp->kind = is_AssignSub;
-  return tmp;
+    Assignment_op tmp = (Assignment_op) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating AssignSub!\n");
+        exit(1);
+    }
+    tmp->kind = is_AssignSub;
+    return tmp;
 }
 /********************   AssignLeft    ********************/
 Assignment_op make_AssignLeft()
 {
-  Assignment_op tmp = (Assignment_op) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating AssignLeft!\n");
-    exit(1);
-  }
-  tmp->kind = is_AssignLeft;
-  return tmp;
+    Assignment_op tmp = (Assignment_op) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating AssignLeft!\n");
+        exit(1);
+    }
+    tmp->kind = is_AssignLeft;
+    return tmp;
 }
 /********************   AssignRight    ********************/
 Assignment_op make_AssignRight()
 {
-  Assignment_op tmp = (Assignment_op) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating AssignRight!\n");
-    exit(1);
-  }
-  tmp->kind = is_AssignRight;
-  return tmp;
+    Assignment_op tmp = (Assignment_op) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating AssignRight!\n");
+        exit(1);
+    }
+    tmp->kind = is_AssignRight;
+    return tmp;
 }
 /********************   AssignAnd    ********************/
 Assignment_op make_AssignAnd()
 {
-  Assignment_op tmp = (Assignment_op) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating AssignAnd!\n");
-    exit(1);
-  }
-  tmp->kind = is_AssignAnd;
-  return tmp;
+    Assignment_op tmp = (Assignment_op) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating AssignAnd!\n");
+        exit(1);
+    }
+    tmp->kind = is_AssignAnd;
+    return tmp;
 }
 /********************   AssignXor    ********************/
 Assignment_op make_AssignXor()
 {
-  Assignment_op tmp = (Assignment_op) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating AssignXor!\n");
-    exit(1);
-  }
-  tmp->kind = is_AssignXor;
-  return tmp;
+    Assignment_op tmp = (Assignment_op) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating AssignXor!\n");
+        exit(1);
+    }
+    tmp->kind = is_AssignXor;
+    return tmp;
 }
 /********************   AssignOr    ********************/
 Assignment_op make_AssignOr()
 {
-  Assignment_op tmp = (Assignment_op) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating AssignOr!\n");
-    exit(1);
-  }
-  tmp->kind = is_AssignOr;
-  return tmp;
+    Assignment_op tmp = (Assignment_op) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating AssignOr!\n");
+        exit(1);
+    }
+    tmp->kind = is_AssignOr;
+    return tmp;
 }/********************   InitDecl    ********************/
 Init_declarator make_InitDecl(Declarator p1, Initializer p2)
 {
-  Init_declarator tmp = (Init_declarator) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating InitDecl!\n");
-    exit(1);
-  }
-  tmp->kind = is_InitDecl;
-  tmp->u.initdecl_.declarator_ = p1;
-  tmp->u.initdecl_.initializer_ = p2;
-  return tmp;
+    Init_declarator tmp = (Init_declarator) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating InitDecl!\n");
+        exit(1);
+    }
+    tmp->kind = is_InitDecl;
+    tmp->u.initdecl_.declarator_ = p1;
+    tmp->u.initdecl_.initializer_ = p2;
+    return tmp;
 }
 /********************   OnlyDecl    ********************/
 Init_declarator make_OnlyDecl(Declarator p1)
 {
-  Init_declarator tmp = (Init_declarator) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating OnlyDecl!\n");
-    exit(1);
-  }
-  tmp->kind = is_OnlyDecl;
-  tmp->u.onlydecl_.declarator_ = p1;
-  return tmp;
+    Init_declarator tmp = (Init_declarator) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating OnlyDecl!\n");
+        exit(1);
+    }
+    tmp->kind = is_OnlyDecl;
+    tmp->u.onlydecl_.declarator_ = p1;
+    return tmp;
 }/********************   EnumInit    ********************/
 Enumerator make_EnumInit(Ident p1, Constant_expression p2)
 {
-  Enumerator tmp = (Enumerator) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating EnumInit!\n");
-    exit(1);
-  }
-  tmp->kind = is_EnumInit;
-  tmp->u.enuminit_.ident_ = p1;
-  tmp->u.enuminit_.constant_expression_ = p2;
-  return tmp;
+    Enumerator tmp = (Enumerator) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating EnumInit!\n");
+        exit(1);
+    }
+    tmp->kind = is_EnumInit;
+    tmp->u.enuminit_.ident_ = p1;
+    tmp->u.enuminit_.constant_expression_ = p2;
+    return tmp;
 }
 /********************   Plain    ********************/
 Enumerator make_Plain(Ident p1)
 {
-  Enumerator tmp = (Enumerator) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Plain!\n");
-    exit(1);
-  }
-  tmp->kind = is_Plain;
-  tmp->u.plain_.ident_ = p1;
-  return tmp;
+    Enumerator tmp = (Enumerator) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Plain!\n");
+        exit(1);
+    }
+    tmp->kind = is_Plain;
+    tmp->u.plain_.ident_ = p1;
+    return tmp;
 }/********************   InitClass    ********************/
-Exp make_InitClass(Exp p1, Assignment_op p2, Ident p3)
+Exp make_InitClass(Exp p1, Assignment_op p2, ClassName p3)
 {
-  Exp tmp = (Exp) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating InitClass!\n");
-    exit(1);
-  }
-  tmp->kind = is_InitClass;
-  tmp->u.initclass_.exp_ = p1;
-  tmp->u.initclass_.assignment_op_ = p2;
-  tmp->u.initclass_.ident_ = p3;
-  return tmp;
+    Exp tmp = (Exp) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating InitClass!\n");
+        exit(1);
+    }
+    tmp->kind = is_InitClass;
+    tmp->u.initclass_.exp_ = p1;
+    tmp->u.initclass_.assignment_op_ = p2;
+    tmp->u.initclass_.classname_ = p3;
+    return tmp;
 }
 /********************   DestroyClass    ********************/
 Exp make_DestroyClass(Ident p1)
 {
-  Exp tmp = (Exp) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating DestroyClass!\n");
-    exit(1);
-  }
-  tmp->kind = is_DestroyClass;
-  tmp->u.destroyclass_.ident_ = p1;
-  return tmp;
+    Exp tmp = (Exp) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating DestroyClass!\n");
+        exit(1);
+    }
+    tmp->kind = is_DestroyClass;
+    tmp->u.destroyclass_.ident_ = p1;
+    return tmp;
 }
 /********************   Ecomma    ********************/
 Exp make_Ecomma(Exp p1, Exp p2)
 {
-  Exp tmp = (Exp) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Ecomma!\n");
-    exit(1);
-  }
-  tmp->kind = is_Ecomma;
-  tmp->u.ecomma_.exp_1 = p1;
-  tmp->u.ecomma_.exp_2 = p2;
-  return tmp;
+    Exp tmp = (Exp) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Ecomma!\n");
+        exit(1);
+    }
+    tmp->kind = is_Ecomma;
+    tmp->u.ecomma_.exp_1 = p1;
+    tmp->u.ecomma_.exp_2 = p2;
+    return tmp;
 }
 /********************   Eassign    ********************/
 Exp make_Eassign(Exp p1, Assignment_op p2, Exp p3)
 {
-  Exp tmp = (Exp) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Eassign!\n");
-    exit(1);
-  }
-  tmp->kind = is_Eassign;
-  tmp->u.eassign_.exp_1 = p1;
-  tmp->u.eassign_.assignment_op_ = p2;
-  tmp->u.eassign_.exp_2 = p3;
-  return tmp;
+    Exp tmp = (Exp) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Eassign!\n");
+        exit(1);
+    }
+    tmp->kind = is_Eassign;
+    tmp->u.eassign_.exp_1 = p1;
+    tmp->u.eassign_.assignment_op_ = p2;
+    tmp->u.eassign_.exp_2 = p3;
+    return tmp;
 }
 /********************   Econdition    ********************/
 Exp make_Econdition(Exp p1, Exp p2, Exp p3)
 {
-  Exp tmp = (Exp) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Econdition!\n");
-    exit(1);
-  }
-  tmp->kind = is_Econdition;
-  tmp->u.econdition_.exp_1 = p1;
-  tmp->u.econdition_.exp_2 = p2;
-  tmp->u.econdition_.exp_3 = p3;
-  return tmp;
+    Exp tmp = (Exp) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Econdition!\n");
+        exit(1);
+    }
+    tmp->kind = is_Econdition;
+    tmp->u.econdition_.exp_1 = p1;
+    tmp->u.econdition_.exp_2 = p2;
+    tmp->u.econdition_.exp_3 = p3;
+    return tmp;
 }
 /********************   Elor    ********************/
 Exp make_Elor(Exp p1, Exp p2)
 {
-  Exp tmp = (Exp) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Elor!\n");
-    exit(1);
-  }
-  tmp->kind = is_Elor;
-  tmp->u.elor_.exp_1 = p1;
-  tmp->u.elor_.exp_2 = p2;
-  return tmp;
+    Exp tmp = (Exp) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Elor!\n");
+        exit(1);
+    }
+    tmp->kind = is_Elor;
+    tmp->u.elor_.exp_1 = p1;
+    tmp->u.elor_.exp_2 = p2;
+    return tmp;
 }
 /********************   Eland    ********************/
 Exp make_Eland(Exp p1, Exp p2)
 {
-  Exp tmp = (Exp) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Eland!\n");
-    exit(1);
-  }
-  tmp->kind = is_Eland;
-  tmp->u.eland_.exp_1 = p1;
-  tmp->u.eland_.exp_2 = p2;
-  return tmp;
+    Exp tmp = (Exp) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Eland!\n");
+        exit(1);
+    }
+    tmp->kind = is_Eland;
+    tmp->u.eland_.exp_1 = p1;
+    tmp->u.eland_.exp_2 = p2;
+    return tmp;
 }
 /********************   Ebitor    ********************/
 Exp make_Ebitor(Exp p1, Exp p2)
 {
-  Exp tmp = (Exp) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Ebitor!\n");
-    exit(1);
-  }
-  tmp->kind = is_Ebitor;
-  tmp->u.ebitor_.exp_1 = p1;
-  tmp->u.ebitor_.exp_2 = p2;
-  return tmp;
+    Exp tmp = (Exp) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Ebitor!\n");
+        exit(1);
+    }
+    tmp->kind = is_Ebitor;
+    tmp->u.ebitor_.exp_1 = p1;
+    tmp->u.ebitor_.exp_2 = p2;
+    return tmp;
 }
 /********************   Ebitexor    ********************/
 Exp make_Ebitexor(Exp p1, Exp p2)
 {
-  Exp tmp = (Exp) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Ebitexor!\n");
-    exit(1);
-  }
-  tmp->kind = is_Ebitexor;
-  tmp->u.ebitexor_.exp_1 = p1;
-  tmp->u.ebitexor_.exp_2 = p2;
-  return tmp;
+    Exp tmp = (Exp) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Ebitexor!\n");
+        exit(1);
+    }
+    tmp->kind = is_Ebitexor;
+    tmp->u.ebitexor_.exp_1 = p1;
+    tmp->u.ebitexor_.exp_2 = p2;
+    return tmp;
 }
 /********************   Ebitand    ********************/
 Exp make_Ebitand(Exp p1, Exp p2)
 {
-  Exp tmp = (Exp) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Ebitand!\n");
-    exit(1);
-  }
-  tmp->kind = is_Ebitand;
-  tmp->u.ebitand_.exp_1 = p1;
-  tmp->u.ebitand_.exp_2 = p2;
-  return tmp;
+    Exp tmp = (Exp) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Ebitand!\n");
+        exit(1);
+    }
+    tmp->kind = is_Ebitand;
+    tmp->u.ebitand_.exp_1 = p1;
+    tmp->u.ebitand_.exp_2 = p2;
+    return tmp;
 }
 /********************   Eeq    ********************/
 Exp make_Eeq(Exp p1, Exp p2)
 {
-  Exp tmp = (Exp) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Eeq!\n");
-    exit(1);
-  }
-  tmp->kind = is_Eeq;
-  tmp->u.eeq_.exp_1 = p1;
-  tmp->u.eeq_.exp_2 = p2;
-  return tmp;
+    Exp tmp = (Exp) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Eeq!\n");
+        exit(1);
+    }
+    tmp->kind = is_Eeq;
+    tmp->u.eeq_.exp_1 = p1;
+    tmp->u.eeq_.exp_2 = p2;
+    return tmp;
 }
 /********************   Eneq    ********************/
 Exp make_Eneq(Exp p1, Exp p2)
 {
-  Exp tmp = (Exp) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Eneq!\n");
-    exit(1);
-  }
-  tmp->kind = is_Eneq;
-  tmp->u.eneq_.exp_1 = p1;
-  tmp->u.eneq_.exp_2 = p2;
-  return tmp;
+    Exp tmp = (Exp) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Eneq!\n");
+        exit(1);
+    }
+    tmp->kind = is_Eneq;
+    tmp->u.eneq_.exp_1 = p1;
+    tmp->u.eneq_.exp_2 = p2;
+    return tmp;
 }
 /********************   Elthen    ********************/
 Exp make_Elthen(Exp p1, Exp p2)
 {
-  Exp tmp = (Exp) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Elthen!\n");
-    exit(1);
-  }
-  tmp->kind = is_Elthen;
-  tmp->u.elthen_.exp_1 = p1;
-  tmp->u.elthen_.exp_2 = p2;
-  return tmp;
+    Exp tmp = (Exp) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Elthen!\n");
+        exit(1);
+    }
+    tmp->kind = is_Elthen;
+    tmp->u.elthen_.exp_1 = p1;
+    tmp->u.elthen_.exp_2 = p2;
+    return tmp;
 }
 /********************   Egrthen    ********************/
 Exp make_Egrthen(Exp p1, Exp p2)
 {
-  Exp tmp = (Exp) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Egrthen!\n");
-    exit(1);
-  }
-  tmp->kind = is_Egrthen;
-  tmp->u.egrthen_.exp_1 = p1;
-  tmp->u.egrthen_.exp_2 = p2;
-  return tmp;
+    Exp tmp = (Exp) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Egrthen!\n");
+        exit(1);
+    }
+    tmp->kind = is_Egrthen;
+    tmp->u.egrthen_.exp_1 = p1;
+    tmp->u.egrthen_.exp_2 = p2;
+    return tmp;
 }
 /********************   Ele    ********************/
 Exp make_Ele(Exp p1, Exp p2)
 {
-  Exp tmp = (Exp) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Ele!\n");
-    exit(1);
-  }
-  tmp->kind = is_Ele;
-  tmp->u.ele_.exp_1 = p1;
-  tmp->u.ele_.exp_2 = p2;
-  return tmp;
+    Exp tmp = (Exp) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Ele!\n");
+        exit(1);
+    }
+    tmp->kind = is_Ele;
+    tmp->u.ele_.exp_1 = p1;
+    tmp->u.ele_.exp_2 = p2;
+    return tmp;
 }
 /********************   Ege    ********************/
 Exp make_Ege(Exp p1, Exp p2)
 {
-  Exp tmp = (Exp) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Ege!\n");
-    exit(1);
-  }
-  tmp->kind = is_Ege;
-  tmp->u.ege_.exp_1 = p1;
-  tmp->u.ege_.exp_2 = p2;
-  return tmp;
+    Exp tmp = (Exp) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Ege!\n");
+        exit(1);
+    }
+    tmp->kind = is_Ege;
+    tmp->u.ege_.exp_1 = p1;
+    tmp->u.ege_.exp_2 = p2;
+    return tmp;
 }
 /********************   Eleft    ********************/
 Exp make_Eleft(Exp p1, Exp p2)
 {
-  Exp tmp = (Exp) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Eleft!\n");
-    exit(1);
-  }
-  tmp->kind = is_Eleft;
-  tmp->u.eleft_.exp_1 = p1;
-  tmp->u.eleft_.exp_2 = p2;
-  return tmp;
+    Exp tmp = (Exp) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Eleft!\n");
+        exit(1);
+    }
+    tmp->kind = is_Eleft;
+    tmp->u.eleft_.exp_1 = p1;
+    tmp->u.eleft_.exp_2 = p2;
+    return tmp;
 }
 /********************   Eright    ********************/
 Exp make_Eright(Exp p1, Exp p2)
 {
-  Exp tmp = (Exp) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Eright!\n");
-    exit(1);
-  }
-  tmp->kind = is_Eright;
-  tmp->u.eright_.exp_1 = p1;
-  tmp->u.eright_.exp_2 = p2;
-  return tmp;
+    Exp tmp = (Exp) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Eright!\n");
+        exit(1);
+    }
+    tmp->kind = is_Eright;
+    tmp->u.eright_.exp_1 = p1;
+    tmp->u.eright_.exp_2 = p2;
+    return tmp;
 }
 /********************   Eplus    ********************/
 Exp make_Eplus(Exp p1, Exp p2)
 {
-  Exp tmp = (Exp) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Eplus!\n");
-    exit(1);
-  }
-  tmp->kind = is_Eplus;
-  tmp->u.eplus_.exp_1 = p1;
-  tmp->u.eplus_.exp_2 = p2;
-  return tmp;
+    Exp tmp = (Exp) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Eplus!\n");
+        exit(1);
+    }
+    tmp->kind = is_Eplus;
+    tmp->u.eplus_.exp_1 = p1;
+    tmp->u.eplus_.exp_2 = p2;
+    return tmp;
 }
 /********************   Eminus    ********************/
 Exp make_Eminus(Exp p1, Exp p2)
 {
-  Exp tmp = (Exp) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Eminus!\n");
-    exit(1);
-  }
-  tmp->kind = is_Eminus;
-  tmp->u.eminus_.exp_1 = p1;
-  tmp->u.eminus_.exp_2 = p2;
-  return tmp;
+    Exp tmp = (Exp) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Eminus!\n");
+        exit(1);
+    }
+    tmp->kind = is_Eminus;
+    tmp->u.eminus_.exp_1 = p1;
+    tmp->u.eminus_.exp_2 = p2;
+    return tmp;
 }
 /********************   Etimes    ********************/
 Exp make_Etimes(Exp p1, Exp p2)
 {
-  Exp tmp = (Exp) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Etimes!\n");
-    exit(1);
-  }
-  tmp->kind = is_Etimes;
-  tmp->u.etimes_.exp_1 = p1;
-  tmp->u.etimes_.exp_2 = p2;
-  return tmp;
+    Exp tmp = (Exp) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Etimes!\n");
+        exit(1);
+    }
+    tmp->kind = is_Etimes;
+    tmp->u.etimes_.exp_1 = p1;
+    tmp->u.etimes_.exp_2 = p2;
+    return tmp;
 }
 /********************   Ediv    ********************/
 Exp make_Ediv(Exp p1, Exp p2)
 {
-  Exp tmp = (Exp) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Ediv!\n");
-    exit(1);
-  }
-  tmp->kind = is_Ediv;
-  tmp->u.ediv_.exp_1 = p1;
-  tmp->u.ediv_.exp_2 = p2;
-  return tmp;
+    Exp tmp = (Exp) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Ediv!\n");
+        exit(1);
+    }
+    tmp->kind = is_Ediv;
+    tmp->u.ediv_.exp_1 = p1;
+    tmp->u.ediv_.exp_2 = p2;
+    return tmp;
 }
 /********************   Emod    ********************/
 Exp make_Emod(Exp p1, Exp p2)
 {
-  Exp tmp = (Exp) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Emod!\n");
-    exit(1);
-  }
-  tmp->kind = is_Emod;
-  tmp->u.emod_.exp_1 = p1;
-  tmp->u.emod_.exp_2 = p2;
-  return tmp;
+    Exp tmp = (Exp) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Emod!\n");
+        exit(1);
+    }
+    tmp->kind = is_Emod;
+    tmp->u.emod_.exp_1 = p1;
+    tmp->u.emod_.exp_2 = p2;
+    return tmp;
 }
 /********************   Etypeconv    ********************/
 Exp make_Etypeconv(Type_name p1, Exp p2)
 {
-  Exp tmp = (Exp) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Etypeconv!\n");
-    exit(1);
-  }
-  tmp->kind = is_Etypeconv;
-  tmp->u.etypeconv_.type_name_ = p1;
-  tmp->u.etypeconv_.exp_ = p2;
-  return tmp;
+    Exp tmp = (Exp) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Etypeconv!\n");
+        exit(1);
+    }
+    tmp->kind = is_Etypeconv;
+    tmp->u.etypeconv_.type_name_ = p1;
+    tmp->u.etypeconv_.exp_ = p2;
+    return tmp;
 }
 /********************   Epreinc    ********************/
 Exp make_Epreinc(Exp p1)
 {
-  Exp tmp = (Exp) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Epreinc!\n");
-    exit(1);
-  }
-  tmp->kind = is_Epreinc;
-  tmp->u.epreinc_.exp_ = p1;
-  return tmp;
+    Exp tmp = (Exp) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Epreinc!\n");
+        exit(1);
+    }
+    tmp->kind = is_Epreinc;
+    tmp->u.epreinc_.exp_ = p1;
+    return tmp;
 }
 /********************   Epredec    ********************/
 Exp make_Epredec(Exp p1)
 {
-  Exp tmp = (Exp) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Epredec!\n");
-    exit(1);
-  }
-  tmp->kind = is_Epredec;
-  tmp->u.epredec_.exp_ = p1;
-  return tmp;
+    Exp tmp = (Exp) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Epredec!\n");
+        exit(1);
+    }
+    tmp->kind = is_Epredec;
+    tmp->u.epredec_.exp_ = p1;
+    return tmp;
 }
 /********************   Epreop    ********************/
 Exp make_Epreop(Unary_operator p1, Exp p2)
 {
-  Exp tmp = (Exp) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Epreop!\n");
-    exit(1);
-  }
-  tmp->kind = is_Epreop;
-  tmp->u.epreop_.unary_operator_ = p1;
-  tmp->u.epreop_.exp_ = p2;
-  return tmp;
+    Exp tmp = (Exp) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Epreop!\n");
+        exit(1);
+    }
+    tmp->kind = is_Epreop;
+    tmp->u.epreop_.unary_operator_ = p1;
+    tmp->u.epreop_.exp_ = p2;
+    return tmp;
 }
 /********************   Ebytesexpr    ********************/
 Exp make_Ebytesexpr(Exp p1)
 {
-  Exp tmp = (Exp) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Ebytesexpr!\n");
-    exit(1);
-  }
-  tmp->kind = is_Ebytesexpr;
-  tmp->u.ebytesexpr_.exp_ = p1;
-  return tmp;
+    Exp tmp = (Exp) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Ebytesexpr!\n");
+        exit(1);
+    }
+    tmp->kind = is_Ebytesexpr;
+    tmp->u.ebytesexpr_.exp_ = p1;
+    return tmp;
 }
 /********************   Ebytestype    ********************/
 Exp make_Ebytestype(Type_name p1)
 {
-  Exp tmp = (Exp) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Ebytestype!\n");
-    exit(1);
-  }
-  tmp->kind = is_Ebytestype;
-  tmp->u.ebytestype_.type_name_ = p1;
-  return tmp;
+    Exp tmp = (Exp) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Ebytestype!\n");
+        exit(1);
+    }
+    tmp->kind = is_Ebytestype;
+    tmp->u.ebytestype_.type_name_ = p1;
+    return tmp;
 }
 /********************   Earray    ********************/
 Exp make_Earray(Exp p1, Exp p2)
 {
-  Exp tmp = (Exp) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Earray!\n");
-    exit(1);
-  }
-  tmp->kind = is_Earray;
-  tmp->u.earray_.exp_1 = p1;
-  tmp->u.earray_.exp_2 = p2;
-  return tmp;
+    Exp tmp = (Exp) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Earray!\n");
+        exit(1);
+    }
+    tmp->kind = is_Earray;
+    tmp->u.earray_.exp_1 = p1;
+    tmp->u.earray_.exp_2 = p2;
+    return tmp;
 }
 /********************   Efunk    ********************/
 Exp make_Efunk(Exp p1)
 {
-  Exp tmp = (Exp) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Efunk!\n");
-    exit(1);
-  }
-  tmp->kind = is_Efunk;
-  tmp->u.efunk_.exp_ = p1;
-  return tmp;
+    Exp tmp = (Exp) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Efunk!\n");
+        exit(1);
+    }
+    tmp->kind = is_Efunk;
+    tmp->u.efunk_.exp_ = p1;
+    return tmp;
 }
 /********************   Efunkpar    ********************/
 Exp make_Efunkpar(Exp p1, ListExp p2)
 {
-  Exp tmp = (Exp) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Efunkpar!\n");
-    exit(1);
-  }
-  tmp->kind = is_Efunkpar;
-  tmp->u.efunkpar_.exp_ = p1;
-  tmp->u.efunkpar_.listexp_ = p2;
-  return tmp;
+    Exp tmp = (Exp) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Efunkpar!\n");
+        exit(1);
+    }
+    tmp->kind = is_Efunkpar;
+    tmp->u.efunkpar_.exp_ = p1;
+    tmp->u.efunkpar_.listexp_ = p2;
+    return tmp;
 }
 /********************   Eselect    ********************/
 Exp make_Eselect(Exp p1, Ident p2)
 {
-  Exp tmp = (Exp) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Eselect!\n");
-    exit(1);
-  }
-  tmp->kind = is_Eselect;
-  tmp->u.eselect_.exp_ = p1;
-  tmp->u.eselect_.ident_ = p2;
-  return tmp;
+    Exp tmp = (Exp) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Eselect!\n");
+        exit(1);
+    }
+    tmp->kind = is_Eselect;
+    tmp->u.eselect_.exp_ = p1;
+    tmp->u.eselect_.ident_ = p2;
+    return tmp;
 }
 /********************   Epoint    ********************/
 Exp make_Epoint(Exp p1, Ident p2)
 {
-  Exp tmp = (Exp) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Epoint!\n");
-    exit(1);
-  }
-  tmp->kind = is_Epoint;
-  tmp->u.epoint_.exp_ = p1;
-  tmp->u.epoint_.ident_ = p2;
-  return tmp;
+    Exp tmp = (Exp) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Epoint!\n");
+        exit(1);
+    }
+    tmp->kind = is_Epoint;
+    tmp->u.epoint_.exp_ = p1;
+    tmp->u.epoint_.ident_ = p2;
+    return tmp;
 }
 /********************   Epostinc    ********************/
 Exp make_Epostinc(Exp p1)
 {
-  Exp tmp = (Exp) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Epostinc!\n");
-    exit(1);
-  }
-  tmp->kind = is_Epostinc;
-  tmp->u.epostinc_.exp_ = p1;
-  return tmp;
+    Exp tmp = (Exp) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Epostinc!\n");
+        exit(1);
+    }
+    tmp->kind = is_Epostinc;
+    tmp->u.epostinc_.exp_ = p1;
+    return tmp;
 }
 /********************   Epostdec    ********************/
 Exp make_Epostdec(Exp p1)
 {
-  Exp tmp = (Exp) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Epostdec!\n");
-    exit(1);
-  }
-  tmp->kind = is_Epostdec;
-  tmp->u.epostdec_.exp_ = p1;
-  return tmp;
+    Exp tmp = (Exp) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Epostdec!\n");
+        exit(1);
+    }
+    tmp->kind = is_Epostdec;
+    tmp->u.epostdec_.exp_ = p1;
+    return tmp;
 }
 /********************   Evar    ********************/
 Exp make_Evar(Ident p1)
 {
-  Exp tmp = (Exp) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Evar!\n");
-    exit(1);
-  }
-  tmp->kind = is_Evar;
-  tmp->u.evar_.ident_ = p1;
-  return tmp;
+    Exp tmp = (Exp) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Evar!\n");
+        exit(1);
+    }
+    tmp->kind = is_Evar;
+    tmp->u.evar_.ident_ = p1;
+    return tmp;
 }
 /********************   Econst    ********************/
 Exp make_Econst(Constant p1)
 {
-  Exp tmp = (Exp) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Econst!\n");
-    exit(1);
-  }
-  tmp->kind = is_Econst;
-  tmp->u.econst_.constant_ = p1;
-  return tmp;
+    Exp tmp = (Exp) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Econst!\n");
+        exit(1);
+    }
+    tmp->kind = is_Econst;
+    tmp->u.econst_.constant_ = p1;
+    return tmp;
 }
 /********************   Estring    ********************/
 Exp make_Estring(String p1)
 {
-  Exp tmp = (Exp) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Estring!\n");
-    exit(1);
-  }
-  tmp->kind = is_Estring;
-  tmp->u.estring_.string_ = p1;
-  return tmp;
+    Exp tmp = (Exp) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Estring!\n");
+        exit(1);
+    }
+    tmp->kind = is_Estring;
+    tmp->u.estring_.string_ = p1;
+    return tmp;
 }/********************   DecClass    ********************/
-Declaration_specifier make_DecClass(Ident p1, Pointer p2, Ident p3)
+Declaration_specifier make_DecClass(ClassName p1, Pointer p2, Ident p3)
 {
-  Declaration_specifier tmp = (Declaration_specifier) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating DecClass!\n");
-    exit(1);
-  }
-  tmp->kind = is_DecClass;
-  tmp->u.decclass_.ident_1 = p1;
-  tmp->u.decclass_.pointer_ = p2;
-  tmp->u.decclass_.ident_2 = p3;
-  return tmp;
+    Declaration_specifier tmp = (Declaration_specifier) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating DecClass!\n");
+        exit(1);
+    }
+    tmp->kind = is_DecClass;
+    tmp->u.decclass_.classname_ = p1;
+    tmp->u.decclass_.pointer_ = p2;
+    tmp->u.decclass_.ident_ = p3;
+    return tmp;
 }
 /********************   DecClassNoPoiter    ********************/
-Declaration_specifier make_DecClassNoPoiter(Ident p1, Ident p2)
+Declaration_specifier make_DecClassNoPoiter(ClassName p1, Ident p2)
 {
-  Declaration_specifier tmp = (Declaration_specifier) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating DecClassNoPoiter!\n");
-    exit(1);
-  }
-  tmp->kind = is_DecClassNoPoiter;
-  tmp->u.decclassnopoiter_.ident_1 = p1;
-  tmp->u.decclassnopoiter_.ident_2 = p2;
-  return tmp;
+    Declaration_specifier tmp = (Declaration_specifier) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating DecClassNoPoiter!\n");
+        exit(1);
+    }
+    tmp->kind = is_DecClassNoPoiter;
+    tmp->u.decclassnopoiter_.classname_ = p1;
+    tmp->u.decclassnopoiter_.ident_ = p2;
+    return tmp;
 }
 /********************   Type    ********************/
 Declaration_specifier make_Type(Type_specifier p1)
 {
-  Declaration_specifier tmp = (Declaration_specifier) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Type!\n");
-    exit(1);
-  }
-  tmp->kind = is_Type;
-  tmp->u.type_.type_specifier_ = p1;
-  return tmp;
+    Declaration_specifier tmp = (Declaration_specifier) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Type!\n");
+        exit(1);
+    }
+    tmp->kind = is_Type;
+    tmp->u.type_.type_specifier_ = p1;
+    return tmp;
 }
 /********************   Storage    ********************/
 Declaration_specifier make_Storage(Storage_class_specifier p1)
 {
-  Declaration_specifier tmp = (Declaration_specifier) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Storage!\n");
-    exit(1);
-  }
-  tmp->kind = is_Storage;
-  tmp->u.storage_.storage_class_specifier_ = p1;
-  return tmp;
+    Declaration_specifier tmp = (Declaration_specifier) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Storage!\n");
+        exit(1);
+    }
+    tmp->kind = is_Storage;
+    tmp->u.storage_.storage_class_specifier_ = p1;
+    return tmp;
 }
 /********************   SpecProp    ********************/
 Declaration_specifier make_SpecProp(Type_qualifier p1)
 {
-  Declaration_specifier tmp = (Declaration_specifier) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating SpecProp!\n");
-    exit(1);
-  }
-  tmp->kind = is_SpecProp;
-  tmp->u.specprop_.type_qualifier_ = p1;
-  return tmp;
+    Declaration_specifier tmp = (Declaration_specifier) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating SpecProp!\n");
+        exit(1);
+    }
+    tmp->kind = is_SpecProp;
+    tmp->u.specprop_.type_qualifier_ = p1;
+    return tmp;
 }/********************   Progr    ********************/
 Program make_Progr(ListExternal_declaration p1)
 {
-  Program tmp = (Program) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Progr!\n");
-    exit(1);
-  }
-  tmp->kind = is_Progr;
-  tmp->u.progr_.listexternal_declaration_ = p1;
-  return tmp;
+    Program tmp = (Program) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Progr!\n");
+        exit(1);
+    }
+    tmp->kind = is_Progr;
+    tmp->u.progr_.listexternal_declaration_ = p1;
+    return tmp;
 }/********************   ListExternal_declaration    ********************/
 ListExternal_declaration make_ListExternal_declaration(External_declaration p1, ListExternal_declaration p2)
 {
-  ListExternal_declaration tmp = (ListExternal_declaration) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating ListExternal_declaration!\n");
-    exit(1);
-  }
-  tmp->external_declaration_ = p1;
-  tmp->listexternal_declaration_ = p2;
-  return tmp;
+    ListExternal_declaration tmp = (ListExternal_declaration) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating ListExternal_declaration!\n");
+        exit(1);
+    }
+    tmp->external_declaration_ = p1;
+    tmp->listexternal_declaration_ = p2;
+    return tmp;
 }/********************   OldFunc    ********************/
 Function_def make_OldFunc(ListDeclaration_specifier p1, Declarator p2, ListDec p3, Compound_stm p4)
 {
-  Function_def tmp = (Function_def) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating OldFunc!\n");
-    exit(1);
-  }
-  tmp->kind = is_OldFunc;
-  tmp->u.oldfunc_.listdeclaration_specifier_ = p1;
-  tmp->u.oldfunc_.declarator_ = p2;
-  tmp->u.oldfunc_.listdec_ = p3;
-  tmp->u.oldfunc_.compound_stm_ = p4;
-  return tmp;
+    Function_def tmp = (Function_def) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating OldFunc!\n");
+        exit(1);
+    }
+    tmp->kind = is_OldFunc;
+    tmp->u.oldfunc_.listdeclaration_specifier_ = p1;
+    tmp->u.oldfunc_.declarator_ = p2;
+    tmp->u.oldfunc_.listdec_ = p3;
+    tmp->u.oldfunc_.compound_stm_ = p4;
+    return tmp;
 }
 /********************   NewFunc    ********************/
 Function_def make_NewFunc(ListDeclaration_specifier p1, Declarator p2, Compound_stm p3)
 {
-  Function_def tmp = (Function_def) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating NewFunc!\n");
-    exit(1);
-  }
-  tmp->kind = is_NewFunc;
-  tmp->u.newfunc_.listdeclaration_specifier_ = p1;
-  tmp->u.newfunc_.declarator_ = p2;
-  tmp->u.newfunc_.compound_stm_ = p3;
-  return tmp;
+    Function_def tmp = (Function_def) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating NewFunc!\n");
+        exit(1);
+    }
+    tmp->kind = is_NewFunc;
+    tmp->u.newfunc_.listdeclaration_specifier_ = p1;
+    tmp->u.newfunc_.declarator_ = p2;
+    tmp->u.newfunc_.compound_stm_ = p3;
+    return tmp;
 }
 /********************   OldFuncInt    ********************/
 Function_def make_OldFuncInt(Declarator p1, ListDec p2, Compound_stm p3)
 {
-  Function_def tmp = (Function_def) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating OldFuncInt!\n");
-    exit(1);
-  }
-  tmp->kind = is_OldFuncInt;
-  tmp->u.oldfuncint_.declarator_ = p1;
-  tmp->u.oldfuncint_.listdec_ = p2;
-  tmp->u.oldfuncint_.compound_stm_ = p3;
-  return tmp;
+    Function_def tmp = (Function_def) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating OldFuncInt!\n");
+        exit(1);
+    }
+    tmp->kind = is_OldFuncInt;
+    tmp->u.oldfuncint_.declarator_ = p1;
+    tmp->u.oldfuncint_.listdec_ = p2;
+    tmp->u.oldfuncint_.compound_stm_ = p3;
+    return tmp;
 }
 /********************   NewFuncInt    ********************/
 Function_def make_NewFuncInt(Declarator p1, Compound_stm p2)
 {
-  Function_def tmp = (Function_def) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating NewFuncInt!\n");
-    exit(1);
-  }
-  tmp->kind = is_NewFuncInt;
-  tmp->u.newfuncint_.declarator_ = p1;
-  tmp->u.newfuncint_.compound_stm_ = p2;
-  return tmp;
+    Function_def tmp = (Function_def) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating NewFuncInt!\n");
+        exit(1);
+    }
+    tmp->kind = is_NewFuncInt;
+    tmp->u.newfuncint_.declarator_ = p1;
+    tmp->u.newfuncint_.compound_stm_ = p2;
+    return tmp;
 }/********************   NoDeclarator    ********************/
 Dec make_NoDeclarator(ListDeclaration_specifier p1)
 {
-  Dec tmp = (Dec) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating NoDeclarator!\n");
-    exit(1);
-  }
-  tmp->kind = is_NoDeclarator;
-  tmp->u.nodeclarator_.listdeclaration_specifier_ = p1;
-  return tmp;
+    Dec tmp = (Dec) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating NoDeclarator!\n");
+        exit(1);
+    }
+    tmp->kind = is_NoDeclarator;
+    tmp->u.nodeclarator_.listdeclaration_specifier_ = p1;
+    return tmp;
 }
 /********************   Declarators    ********************/
 Dec make_Declarators(ListDeclaration_specifier p1, ListInit_declarator p2)
 {
-  Dec tmp = (Dec) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Declarators!\n");
-    exit(1);
-  }
-  tmp->kind = is_Declarators;
-  tmp->u.declarators_.listdeclaration_specifier_ = p1;
-  tmp->u.declarators_.listinit_declarator_ = p2;
-  return tmp;
+    Dec tmp = (Dec) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Declarators!\n");
+        exit(1);
+    }
+    tmp->kind = is_Declarators;
+    tmp->u.declarators_.listdeclaration_specifier_ = p1;
+    tmp->u.declarators_.listinit_declarator_ = p2;
+    return tmp;
 }/********************   ListDec    ********************/
 ListDec make_ListDec(Dec p1, ListDec p2)
 {
-  ListDec tmp = (ListDec) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating ListDec!\n");
-    exit(1);
-  }
-  tmp->dec_ = p1;
-  tmp->listdec_ = p2;
-  return tmp;
+    ListDec tmp = (ListDec) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating ListDec!\n");
+        exit(1);
+    }
+    tmp->dec_ = p1;
+    tmp->listdec_ = p2;
+    return tmp;
 }/********************   ListDeclaration_specifier    ********************/
 ListDeclaration_specifier make_ListDeclaration_specifier(Declaration_specifier p1, ListDeclaration_specifier p2)
 {
-  ListDeclaration_specifier tmp = (ListDeclaration_specifier) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating ListDeclaration_specifier!\n");
-    exit(1);
-  }
-  tmp->declaration_specifier_ = p1;
-  tmp->listdeclaration_specifier_ = p2;
-  return tmp;
+    ListDeclaration_specifier tmp = (ListDeclaration_specifier) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating ListDeclaration_specifier!\n");
+        exit(1);
+    }
+    tmp->declaration_specifier_ = p1;
+    tmp->listdeclaration_specifier_ = p2;
+    return tmp;
 }/********************   ListInit_declarator    ********************/
 ListInit_declarator make_ListInit_declarator(Init_declarator p1, ListInit_declarator p2)
 {
-  ListInit_declarator tmp = (ListInit_declarator) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating ListInit_declarator!\n");
-    exit(1);
-  }
-  tmp->init_declarator_ = p1;
-  tmp->listinit_declarator_ = p2;
-  return tmp;
+    ListInit_declarator tmp = (ListInit_declarator) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating ListInit_declarator!\n");
+        exit(1);
+    }
+    tmp->init_declarator_ = p1;
+    tmp->listinit_declarator_ = p2;
+    return tmp;
 }/********************   Tag    ********************/
 Struct_or_union_spec make_Tag(Struct_or_union p1, Ident p2, ListStruct_dec p3)
 {
-  Struct_or_union_spec tmp = (Struct_or_union_spec) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Tag!\n");
-    exit(1);
-  }
-  tmp->kind = is_Tag;
-  tmp->u.tag_.struct_or_union_ = p1;
-  tmp->u.tag_.ident_ = p2;
-  tmp->u.tag_.liststruct_dec_ = p3;
-  return tmp;
+    Struct_or_union_spec tmp = (Struct_or_union_spec) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Tag!\n");
+        exit(1);
+    }
+    tmp->kind = is_Tag;
+    tmp->u.tag_.struct_or_union_ = p1;
+    tmp->u.tag_.ident_ = p2;
+    tmp->u.tag_.liststruct_dec_ = p3;
+    return tmp;
 }
 /********************   Unique    ********************/
 Struct_or_union_spec make_Unique(Struct_or_union p1, ListStruct_dec p2)
 {
-  Struct_or_union_spec tmp = (Struct_or_union_spec) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Unique!\n");
-    exit(1);
-  }
-  tmp->kind = is_Unique;
-  tmp->u.unique_.struct_or_union_ = p1;
-  tmp->u.unique_.liststruct_dec_ = p2;
-  return tmp;
+    Struct_or_union_spec tmp = (Struct_or_union_spec) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Unique!\n");
+        exit(1);
+    }
+    tmp->kind = is_Unique;
+    tmp->u.unique_.struct_or_union_ = p1;
+    tmp->u.unique_.liststruct_dec_ = p2;
+    return tmp;
 }
 /********************   TagType    ********************/
 Struct_or_union_spec make_TagType(Struct_or_union p1, Ident p2)
 {
-  Struct_or_union_spec tmp = (Struct_or_union_spec) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating TagType!\n");
-    exit(1);
-  }
-  tmp->kind = is_TagType;
-  tmp->u.tagtype_.struct_or_union_ = p1;
-  tmp->u.tagtype_.ident_ = p2;
-  return tmp;
+    Struct_or_union_spec tmp = (Struct_or_union_spec) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating TagType!\n");
+        exit(1);
+    }
+    tmp->kind = is_TagType;
+    tmp->u.tagtype_.struct_or_union_ = p1;
+    tmp->u.tagtype_.ident_ = p2;
+    return tmp;
 }/********************   Struct    ********************/
 Struct_or_union make_Struct()
 {
-  Struct_or_union tmp = (Struct_or_union) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Struct!\n");
-    exit(1);
-  }
-  tmp->kind = is_Struct;
-  return tmp;
+    Struct_or_union tmp = (Struct_or_union) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Struct!\n");
+        exit(1);
+    }
+    tmp->kind = is_Struct;
+    return tmp;
 }
 /********************   Union    ********************/
 Struct_or_union make_Union()
 {
-  Struct_or_union tmp = (Struct_or_union) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Union!\n");
-    exit(1);
-  }
-  tmp->kind = is_Union;
-  return tmp;
+    Struct_or_union tmp = (Struct_or_union) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Union!\n");
+        exit(1);
+    }
+    tmp->kind = is_Union;
+    return tmp;
 }/********************   ListStruct_dec    ********************/
 ListStruct_dec make_ListStruct_dec(Struct_dec p1, ListStruct_dec p2)
 {
-  ListStruct_dec tmp = (ListStruct_dec) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating ListStruct_dec!\n");
-    exit(1);
-  }
-  tmp->struct_dec_ = p1;
-  tmp->liststruct_dec_ = p2;
-  return tmp;
+    ListStruct_dec tmp = (ListStruct_dec) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating ListStruct_dec!\n");
+        exit(1);
+    }
+    tmp->struct_dec_ = p1;
+    tmp->liststruct_dec_ = p2;
+    return tmp;
 }/********************   Structen    ********************/
 Struct_dec make_Structen(ListSpec_qual p1, ListStruct_declarator p2)
 {
-  Struct_dec tmp = (Struct_dec) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Structen!\n");
-    exit(1);
-  }
-  tmp->kind = is_Structen;
-  tmp->u.structen_.listspec_qual_ = p1;
-  tmp->u.structen_.liststruct_declarator_ = p2;
-  return tmp;
+    Struct_dec tmp = (Struct_dec) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Structen!\n");
+        exit(1);
+    }
+    tmp->kind = is_Structen;
+    tmp->u.structen_.listspec_qual_ = p1;
+    tmp->u.structen_.liststruct_declarator_ = p2;
+    return tmp;
 }/********************   ListSpec_qual    ********************/
 ListSpec_qual make_ListSpec_qual(Spec_qual p1, ListSpec_qual p2)
 {
-  ListSpec_qual tmp = (ListSpec_qual) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating ListSpec_qual!\n");
-    exit(1);
-  }
-  tmp->spec_qual_ = p1;
-  tmp->listspec_qual_ = p2;
-  return tmp;
+    ListSpec_qual tmp = (ListSpec_qual) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating ListSpec_qual!\n");
+        exit(1);
+    }
+    tmp->spec_qual_ = p1;
+    tmp->listspec_qual_ = p2;
+    return tmp;
 }/********************   TypeSpec    ********************/
 Spec_qual make_TypeSpec(Type_specifier p1)
 {
-  Spec_qual tmp = (Spec_qual) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating TypeSpec!\n");
-    exit(1);
-  }
-  tmp->kind = is_TypeSpec;
-  tmp->u.typespec_.type_specifier_ = p1;
-  return tmp;
+    Spec_qual tmp = (Spec_qual) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating TypeSpec!\n");
+        exit(1);
+    }
+    tmp->kind = is_TypeSpec;
+    tmp->u.typespec_.type_specifier_ = p1;
+    return tmp;
 }
 /********************   QualSpec    ********************/
 Spec_qual make_QualSpec(Type_qualifier p1)
 {
-  Spec_qual tmp = (Spec_qual) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating QualSpec!\n");
-    exit(1);
-  }
-  tmp->kind = is_QualSpec;
-  tmp->u.qualspec_.type_qualifier_ = p1;
-  return tmp;
+    Spec_qual tmp = (Spec_qual) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating QualSpec!\n");
+        exit(1);
+    }
+    tmp->kind = is_QualSpec;
+    tmp->u.qualspec_.type_qualifier_ = p1;
+    return tmp;
 }/********************   ListStruct_declarator    ********************/
 ListStruct_declarator make_ListStruct_declarator(Struct_declarator p1, ListStruct_declarator p2)
 {
-  ListStruct_declarator tmp = (ListStruct_declarator) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating ListStruct_declarator!\n");
-    exit(1);
-  }
-  tmp->struct_declarator_ = p1;
-  tmp->liststruct_declarator_ = p2;
-  return tmp;
+    ListStruct_declarator tmp = (ListStruct_declarator) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating ListStruct_declarator!\n");
+        exit(1);
+    }
+    tmp->struct_declarator_ = p1;
+    tmp->liststruct_declarator_ = p2;
+    return tmp;
 }/********************   Decl    ********************/
 Struct_declarator make_Decl(Declarator p1)
 {
-  Struct_declarator tmp = (Struct_declarator) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Decl!\n");
-    exit(1);
-  }
-  tmp->kind = is_Decl;
-  tmp->u.decl_.declarator_ = p1;
-  return tmp;
+    Struct_declarator tmp = (Struct_declarator) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Decl!\n");
+        exit(1);
+    }
+    tmp->kind = is_Decl;
+    tmp->u.decl_.declarator_ = p1;
+    return tmp;
 }
 /********************   Field    ********************/
 Struct_declarator make_Field(Constant_expression p1)
 {
-  Struct_declarator tmp = (Struct_declarator) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Field!\n");
-    exit(1);
-  }
-  tmp->kind = is_Field;
-  tmp->u.field_.constant_expression_ = p1;
-  return tmp;
+    Struct_declarator tmp = (Struct_declarator) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Field!\n");
+        exit(1);
+    }
+    tmp->kind = is_Field;
+    tmp->u.field_.constant_expression_ = p1;
+    return tmp;
 }
 /********************   DecField    ********************/
 Struct_declarator make_DecField(Declarator p1, Constant_expression p2)
 {
-  Struct_declarator tmp = (Struct_declarator) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating DecField!\n");
-    exit(1);
-  }
-  tmp->kind = is_DecField;
-  tmp->u.decfield_.declarator_ = p1;
-  tmp->u.decfield_.constant_expression_ = p2;
-  return tmp;
+    Struct_declarator tmp = (Struct_declarator) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating DecField!\n");
+        exit(1);
+    }
+    tmp->kind = is_DecField;
+    tmp->u.decfield_.declarator_ = p1;
+    tmp->u.decfield_.constant_expression_ = p2;
+    return tmp;
 }/********************   EnumDec    ********************/
 Enum_specifier make_EnumDec(ListEnumerator p1)
 {
-  Enum_specifier tmp = (Enum_specifier) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating EnumDec!\n");
-    exit(1);
-  }
-  tmp->kind = is_EnumDec;
-  tmp->u.enumdec_.listenumerator_ = p1;
-  return tmp;
+    Enum_specifier tmp = (Enum_specifier) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating EnumDec!\n");
+        exit(1);
+    }
+    tmp->kind = is_EnumDec;
+    tmp->u.enumdec_.listenumerator_ = p1;
+    return tmp;
 }
 /********************   EnumName    ********************/
 Enum_specifier make_EnumName(Ident p1, ListEnumerator p2)
 {
-  Enum_specifier tmp = (Enum_specifier) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating EnumName!\n");
-    exit(1);
-  }
-  tmp->kind = is_EnumName;
-  tmp->u.enumname_.ident_ = p1;
-  tmp->u.enumname_.listenumerator_ = p2;
-  return tmp;
+    Enum_specifier tmp = (Enum_specifier) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating EnumName!\n");
+        exit(1);
+    }
+    tmp->kind = is_EnumName;
+    tmp->u.enumname_.ident_ = p1;
+    tmp->u.enumname_.listenumerator_ = p2;
+    return tmp;
 }
 /********************   EnumVar    ********************/
 Enum_specifier make_EnumVar(Ident p1)
 {
-  Enum_specifier tmp = (Enum_specifier) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating EnumVar!\n");
-    exit(1);
-  }
-  tmp->kind = is_EnumVar;
-  tmp->u.enumvar_.ident_ = p1;
-  return tmp;
+    Enum_specifier tmp = (Enum_specifier) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating EnumVar!\n");
+        exit(1);
+    }
+    tmp->kind = is_EnumVar;
+    tmp->u.enumvar_.ident_ = p1;
+    return tmp;
 }/********************   ListEnumerator    ********************/
 ListEnumerator make_ListEnumerator(Enumerator p1, ListEnumerator p2)
 {
-  ListEnumerator tmp = (ListEnumerator) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating ListEnumerator!\n");
-    exit(1);
-  }
-  tmp->enumerator_ = p1;
-  tmp->listenumerator_ = p2;
-  return tmp;
+    ListEnumerator tmp = (ListEnumerator) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating ListEnumerator!\n");
+        exit(1);
+    }
+    tmp->enumerator_ = p1;
+    tmp->listenumerator_ = p2;
+    return tmp;
 }/********************   BeginPointer    ********************/
 Declarator make_BeginPointer(Pointer p1, Direct_declarator p2)
 {
-  Declarator tmp = (Declarator) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating BeginPointer!\n");
-    exit(1);
-  }
-  tmp->kind = is_BeginPointer;
-  tmp->u.beginpointer_.pointer_ = p1;
-  tmp->u.beginpointer_.direct_declarator_ = p2;
-  return tmp;
+    Declarator tmp = (Declarator) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating BeginPointer!\n");
+        exit(1);
+    }
+    tmp->kind = is_BeginPointer;
+    tmp->u.beginpointer_.pointer_ = p1;
+    tmp->u.beginpointer_.direct_declarator_ = p2;
+    return tmp;
 }
 /********************   NoPointer    ********************/
 Declarator make_NoPointer(Direct_declarator p1)
 {
-  Declarator tmp = (Declarator) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating NoPointer!\n");
-    exit(1);
-  }
-  tmp->kind = is_NoPointer;
-  tmp->u.nopointer_.direct_declarator_ = p1;
-  return tmp;
+    Declarator tmp = (Declarator) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating NoPointer!\n");
+        exit(1);
+    }
+    tmp->kind = is_NoPointer;
+    tmp->u.nopointer_.direct_declarator_ = p1;
+    return tmp;
 }/********************   Name    ********************/
 Direct_declarator make_Name(Ident p1)
 {
-  Direct_declarator tmp = (Direct_declarator) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Name!\n");
-    exit(1);
-  }
-  tmp->kind = is_Name;
-  tmp->u.name_.ident_ = p1;
-  return tmp;
+    Direct_declarator tmp = (Direct_declarator) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Name!\n");
+        exit(1);
+    }
+    tmp->kind = is_Name;
+    tmp->u.name_.ident_ = p1;
+    return tmp;
 }
 /********************   ParenDecl    ********************/
 Direct_declarator make_ParenDecl(Declarator p1)
 {
-  Direct_declarator tmp = (Direct_declarator) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating ParenDecl!\n");
-    exit(1);
-  }
-  tmp->kind = is_ParenDecl;
-  tmp->u.parendecl_.declarator_ = p1;
-  return tmp;
+    Direct_declarator tmp = (Direct_declarator) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating ParenDecl!\n");
+        exit(1);
+    }
+    tmp->kind = is_ParenDecl;
+    tmp->u.parendecl_.declarator_ = p1;
+    return tmp;
 }
 /********************   InnitArray    ********************/
 Direct_declarator make_InnitArray(Direct_declarator p1, Constant_expression p2)
 {
-  Direct_declarator tmp = (Direct_declarator) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating InnitArray!\n");
-    exit(1);
-  }
-  tmp->kind = is_InnitArray;
-  tmp->u.innitarray_.direct_declarator_ = p1;
-  tmp->u.innitarray_.constant_expression_ = p2;
-  return tmp;
+    Direct_declarator tmp = (Direct_declarator) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating InnitArray!\n");
+        exit(1);
+    }
+    tmp->kind = is_InnitArray;
+    tmp->u.innitarray_.direct_declarator_ = p1;
+    tmp->u.innitarray_.constant_expression_ = p2;
+    return tmp;
 }
 /********************   Incomplete    ********************/
 Direct_declarator make_Incomplete(Direct_declarator p1)
 {
-  Direct_declarator tmp = (Direct_declarator) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Incomplete!\n");
-    exit(1);
-  }
-  tmp->kind = is_Incomplete;
-  tmp->u.incomplete_.direct_declarator_ = p1;
-  return tmp;
+    Direct_declarator tmp = (Direct_declarator) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Incomplete!\n");
+        exit(1);
+    }
+    tmp->kind = is_Incomplete;
+    tmp->u.incomplete_.direct_declarator_ = p1;
+    return tmp;
 }
 /********************   NewFuncDec    ********************/
 Direct_declarator make_NewFuncDec(Direct_declarator p1, Parameter_type p2)
 {
-  Direct_declarator tmp = (Direct_declarator) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating NewFuncDec!\n");
-    exit(1);
-  }
-  tmp->kind = is_NewFuncDec;
-  tmp->u.newfuncdec_.direct_declarator_ = p1;
-  tmp->u.newfuncdec_.parameter_type_ = p2;
-  return tmp;
+    Direct_declarator tmp = (Direct_declarator) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating NewFuncDec!\n");
+        exit(1);
+    }
+    tmp->kind = is_NewFuncDec;
+    tmp->u.newfuncdec_.direct_declarator_ = p1;
+    tmp->u.newfuncdec_.parameter_type_ = p2;
+    return tmp;
 }
 /********************   OldFuncDef    ********************/
 Direct_declarator make_OldFuncDef(Direct_declarator p1, ListIdent p2)
 {
-  Direct_declarator tmp = (Direct_declarator) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating OldFuncDef!\n");
-    exit(1);
-  }
-  tmp->kind = is_OldFuncDef;
-  tmp->u.oldfuncdef_.direct_declarator_ = p1;
-  tmp->u.oldfuncdef_.listident_ = p2;
-  return tmp;
+    Direct_declarator tmp = (Direct_declarator) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating OldFuncDef!\n");
+        exit(1);
+    }
+    tmp->kind = is_OldFuncDef;
+    tmp->u.oldfuncdef_.direct_declarator_ = p1;
+    tmp->u.oldfuncdef_.listident_ = p2;
+    return tmp;
 }
 /********************   OldFuncDec    ********************/
 Direct_declarator make_OldFuncDec(Direct_declarator p1)
 {
-  Direct_declarator tmp = (Direct_declarator) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating OldFuncDec!\n");
-    exit(1);
-  }
-  tmp->kind = is_OldFuncDec;
-  tmp->u.oldfuncdec_.direct_declarator_ = p1;
-  return tmp;
+    Direct_declarator tmp = (Direct_declarator) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating OldFuncDec!\n");
+        exit(1);
+    }
+    tmp->kind = is_OldFuncDec;
+    tmp->u.oldfuncdec_.direct_declarator_ = p1;
+    return tmp;
 }/********************   Point    ********************/
 Pointer make_Point()
 {
-  Pointer tmp = (Pointer) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Point!\n");
-    exit(1);
-  }
-  tmp->kind = is_Point;
-  return tmp;
+    Pointer tmp = (Pointer) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Point!\n");
+        exit(1);
+    }
+    tmp->kind = is_Point;
+    return tmp;
 }
 /********************   PointQual    ********************/
 Pointer make_PointQual(ListType_qualifier p1)
 {
-  Pointer tmp = (Pointer) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating PointQual!\n");
-    exit(1);
-  }
-  tmp->kind = is_PointQual;
-  tmp->u.pointqual_.listtype_qualifier_ = p1;
-  return tmp;
+    Pointer tmp = (Pointer) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating PointQual!\n");
+        exit(1);
+    }
+    tmp->kind = is_PointQual;
+    tmp->u.pointqual_.listtype_qualifier_ = p1;
+    return tmp;
 }
 /********************   PointPoint    ********************/
 Pointer make_PointPoint(Pointer p1)
 {
-  Pointer tmp = (Pointer) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating PointPoint!\n");
-    exit(1);
-  }
-  tmp->kind = is_PointPoint;
-  tmp->u.pointpoint_.pointer_ = p1;
-  return tmp;
+    Pointer tmp = (Pointer) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating PointPoint!\n");
+        exit(1);
+    }
+    tmp->kind = is_PointPoint;
+    tmp->u.pointpoint_.pointer_ = p1;
+    return tmp;
 }
 /********************   PointQualPoint    ********************/
 Pointer make_PointQualPoint(ListType_qualifier p1, Pointer p2)
 {
-  Pointer tmp = (Pointer) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating PointQualPoint!\n");
-    exit(1);
-  }
-  tmp->kind = is_PointQualPoint;
-  tmp->u.pointqualpoint_.listtype_qualifier_ = p1;
-  tmp->u.pointqualpoint_.pointer_ = p2;
-  return tmp;
+    Pointer tmp = (Pointer) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating PointQualPoint!\n");
+        exit(1);
+    }
+    tmp->kind = is_PointQualPoint;
+    tmp->u.pointqualpoint_.listtype_qualifier_ = p1;
+    tmp->u.pointqualpoint_.pointer_ = p2;
+    return tmp;
 }/********************   ListType_qualifier    ********************/
 ListType_qualifier make_ListType_qualifier(Type_qualifier p1, ListType_qualifier p2)
 {
-  ListType_qualifier tmp = (ListType_qualifier) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating ListType_qualifier!\n");
-    exit(1);
-  }
-  tmp->type_qualifier_ = p1;
-  tmp->listtype_qualifier_ = p2;
-  return tmp;
+    ListType_qualifier tmp = (ListType_qualifier) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating ListType_qualifier!\n");
+        exit(1);
+    }
+    tmp->type_qualifier_ = p1;
+    tmp->listtype_qualifier_ = p2;
+    return tmp;
 }/********************   AllSpec    ********************/
 Parameter_type make_AllSpec(Parameter_declarations p1)
 {
-  Parameter_type tmp = (Parameter_type) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating AllSpec!\n");
-    exit(1);
-  }
-  tmp->kind = is_AllSpec;
-  tmp->u.allspec_.parameter_declarations_ = p1;
-  return tmp;
+    Parameter_type tmp = (Parameter_type) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating AllSpec!\n");
+        exit(1);
+    }
+    tmp->kind = is_AllSpec;
+    tmp->u.allspec_.parameter_declarations_ = p1;
+    return tmp;
 }
 /********************   More    ********************/
 Parameter_type make_More(Parameter_declarations p1)
 {
-  Parameter_type tmp = (Parameter_type) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating More!\n");
-    exit(1);
-  }
-  tmp->kind = is_More;
-  tmp->u.more_.parameter_declarations_ = p1;
-  return tmp;
+    Parameter_type tmp = (Parameter_type) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating More!\n");
+        exit(1);
+    }
+    tmp->kind = is_More;
+    tmp->u.more_.parameter_declarations_ = p1;
+    return tmp;
 }/********************   ParamDec    ********************/
 Parameter_declarations make_ParamDec(Parameter_declaration p1)
 {
-  Parameter_declarations tmp = (Parameter_declarations) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating ParamDec!\n");
-    exit(1);
-  }
-  tmp->kind = is_ParamDec;
-  tmp->u.paramdec_.parameter_declaration_ = p1;
-  return tmp;
+    Parameter_declarations tmp = (Parameter_declarations) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating ParamDec!\n");
+        exit(1);
+    }
+    tmp->kind = is_ParamDec;
+    tmp->u.paramdec_.parameter_declaration_ = p1;
+    return tmp;
 }
 /********************   MoreParamDec    ********************/
 Parameter_declarations make_MoreParamDec(Parameter_declarations p1, Parameter_declaration p2)
 {
-  Parameter_declarations tmp = (Parameter_declarations) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating MoreParamDec!\n");
-    exit(1);
-  }
-  tmp->kind = is_MoreParamDec;
-  tmp->u.moreparamdec_.parameter_declarations_ = p1;
-  tmp->u.moreparamdec_.parameter_declaration_ = p2;
-  return tmp;
+    Parameter_declarations tmp = (Parameter_declarations) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating MoreParamDec!\n");
+        exit(1);
+    }
+    tmp->kind = is_MoreParamDec;
+    tmp->u.moreparamdec_.parameter_declarations_ = p1;
+    tmp->u.moreparamdec_.parameter_declaration_ = p2;
+    return tmp;
 }/********************   OnlyType    ********************/
 Parameter_declaration make_OnlyType(ListDeclaration_specifier p1)
 {
-  Parameter_declaration tmp = (Parameter_declaration) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating OnlyType!\n");
-    exit(1);
-  }
-  tmp->kind = is_OnlyType;
-  tmp->u.onlytype_.listdeclaration_specifier_ = p1;
-  return tmp;
+    Parameter_declaration tmp = (Parameter_declaration) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating OnlyType!\n");
+        exit(1);
+    }
+    tmp->kind = is_OnlyType;
+    tmp->u.onlytype_.listdeclaration_specifier_ = p1;
+    return tmp;
 }
 /********************   TypeAndParam    ********************/
 Parameter_declaration make_TypeAndParam(ListDeclaration_specifier p1, Declarator p2)
 {
-  Parameter_declaration tmp = (Parameter_declaration) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating TypeAndParam!\n");
-    exit(1);
-  }
-  tmp->kind = is_TypeAndParam;
-  tmp->u.typeandparam_.listdeclaration_specifier_ = p1;
-  tmp->u.typeandparam_.declarator_ = p2;
-  return tmp;
+    Parameter_declaration tmp = (Parameter_declaration) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating TypeAndParam!\n");
+        exit(1);
+    }
+    tmp->kind = is_TypeAndParam;
+    tmp->u.typeandparam_.listdeclaration_specifier_ = p1;
+    tmp->u.typeandparam_.declarator_ = p2;
+    return tmp;
 }
 /********************   Abstract    ********************/
 Parameter_declaration make_Abstract(ListDeclaration_specifier p1, Abstract_declarator p2)
 {
-  Parameter_declaration tmp = (Parameter_declaration) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Abstract!\n");
-    exit(1);
-  }
-  tmp->kind = is_Abstract;
-  tmp->u.abstract_.listdeclaration_specifier_ = p1;
-  tmp->u.abstract_.abstract_declarator_ = p2;
-  return tmp;
+    Parameter_declaration tmp = (Parameter_declaration) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Abstract!\n");
+        exit(1);
+    }
+    tmp->kind = is_Abstract;
+    tmp->u.abstract_.listdeclaration_specifier_ = p1;
+    tmp->u.abstract_.abstract_declarator_ = p2;
+    return tmp;
 }/********************   ListIdent    ********************/
 ListIdent make_ListIdent(Ident p1, ListIdent p2)
 {
-  ListIdent tmp = (ListIdent) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating ListIdent!\n");
-    exit(1);
-  }
-  tmp->ident_ = p1;
-  tmp->listident_ = p2;
-  return tmp;
+    ListIdent tmp = (ListIdent) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating ListIdent!\n");
+        exit(1);
+    }
+    tmp->ident_ = p1;
+    tmp->listident_ = p2;
+    return tmp;
 }/********************   InitExpr    ********************/
 Initializer make_InitExpr(Exp p1)
 {
-  Initializer tmp = (Initializer) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating InitExpr!\n");
-    exit(1);
-  }
-  tmp->kind = is_InitExpr;
-  tmp->u.initexpr_.exp_ = p1;
-  return tmp;
+    Initializer tmp = (Initializer) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating InitExpr!\n");
+        exit(1);
+    }
+    tmp->kind = is_InitExpr;
+    tmp->u.initexpr_.exp_ = p1;
+    return tmp;
 }
 /********************   InitListOne    ********************/
 Initializer make_InitListOne(Initializers p1)
 {
-  Initializer tmp = (Initializer) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating InitListOne!\n");
-    exit(1);
-  }
-  tmp->kind = is_InitListOne;
-  tmp->u.initlistone_.initializers_ = p1;
-  return tmp;
+    Initializer tmp = (Initializer) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating InitListOne!\n");
+        exit(1);
+    }
+    tmp->kind = is_InitListOne;
+    tmp->u.initlistone_.initializers_ = p1;
+    return tmp;
 }
 /********************   InitListTwo    ********************/
 Initializer make_InitListTwo(Initializers p1)
 {
-  Initializer tmp = (Initializer) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating InitListTwo!\n");
-    exit(1);
-  }
-  tmp->kind = is_InitListTwo;
-  tmp->u.initlisttwo_.initializers_ = p1;
-  return tmp;
+    Initializer tmp = (Initializer) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating InitListTwo!\n");
+        exit(1);
+    }
+    tmp->kind = is_InitListTwo;
+    tmp->u.initlisttwo_.initializers_ = p1;
+    return tmp;
 }/********************   AnInit    ********************/
 Initializers make_AnInit(Initializer p1)
 {
-  Initializers tmp = (Initializers) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating AnInit!\n");
-    exit(1);
-  }
-  tmp->kind = is_AnInit;
-  tmp->u.aninit_.initializer_ = p1;
-  return tmp;
+    Initializers tmp = (Initializers) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating AnInit!\n");
+        exit(1);
+    }
+    tmp->kind = is_AnInit;
+    tmp->u.aninit_.initializer_ = p1;
+    return tmp;
 }
 /********************   MoreInit    ********************/
 Initializers make_MoreInit(Initializers p1, Initializer p2)
 {
-  Initializers tmp = (Initializers) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating MoreInit!\n");
-    exit(1);
-  }
-  tmp->kind = is_MoreInit;
-  tmp->u.moreinit_.initializers_ = p1;
-  tmp->u.moreinit_.initializer_ = p2;
-  return tmp;
+    Initializers tmp = (Initializers) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating MoreInit!\n");
+        exit(1);
+    }
+    tmp->kind = is_MoreInit;
+    tmp->u.moreinit_.initializers_ = p1;
+    tmp->u.moreinit_.initializer_ = p2;
+    return tmp;
 }/********************   PlainType    ********************/
 Type_name make_PlainType(ListSpec_qual p1)
 {
-  Type_name tmp = (Type_name) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating PlainType!\n");
-    exit(1);
-  }
-  tmp->kind = is_PlainType;
-  tmp->u.plaintype_.listspec_qual_ = p1;
-  return tmp;
+    Type_name tmp = (Type_name) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating PlainType!\n");
+        exit(1);
+    }
+    tmp->kind = is_PlainType;
+    tmp->u.plaintype_.listspec_qual_ = p1;
+    return tmp;
 }
 /********************   ExtendedType    ********************/
 Type_name make_ExtendedType(ListSpec_qual p1, Abstract_declarator p2)
 {
-  Type_name tmp = (Type_name) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating ExtendedType!\n");
-    exit(1);
-  }
-  tmp->kind = is_ExtendedType;
-  tmp->u.extendedtype_.listspec_qual_ = p1;
-  tmp->u.extendedtype_.abstract_declarator_ = p2;
-  return tmp;
+    Type_name tmp = (Type_name) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating ExtendedType!\n");
+        exit(1);
+    }
+    tmp->kind = is_ExtendedType;
+    tmp->u.extendedtype_.listspec_qual_ = p1;
+    tmp->u.extendedtype_.abstract_declarator_ = p2;
+    return tmp;
 }/********************   PointerStart    ********************/
 Abstract_declarator make_PointerStart(Pointer p1)
 {
-  Abstract_declarator tmp = (Abstract_declarator) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating PointerStart!\n");
-    exit(1);
-  }
-  tmp->kind = is_PointerStart;
-  tmp->u.pointerstart_.pointer_ = p1;
-  return tmp;
+    Abstract_declarator tmp = (Abstract_declarator) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating PointerStart!\n");
+        exit(1);
+    }
+    tmp->kind = is_PointerStart;
+    tmp->u.pointerstart_.pointer_ = p1;
+    return tmp;
 }
 /********************   Advanced    ********************/
 Abstract_declarator make_Advanced(Dir_abs_dec p1)
 {
-  Abstract_declarator tmp = (Abstract_declarator) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Advanced!\n");
-    exit(1);
-  }
-  tmp->kind = is_Advanced;
-  tmp->u.advanced_.dir_abs_dec_ = p1;
-  return tmp;
+    Abstract_declarator tmp = (Abstract_declarator) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Advanced!\n");
+        exit(1);
+    }
+    tmp->kind = is_Advanced;
+    tmp->u.advanced_.dir_abs_dec_ = p1;
+    return tmp;
 }
 /********************   PointAdvanced    ********************/
 Abstract_declarator make_PointAdvanced(Pointer p1, Dir_abs_dec p2)
 {
-  Abstract_declarator tmp = (Abstract_declarator) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating PointAdvanced!\n");
-    exit(1);
-  }
-  tmp->kind = is_PointAdvanced;
-  tmp->u.pointadvanced_.pointer_ = p1;
-  tmp->u.pointadvanced_.dir_abs_dec_ = p2;
-  return tmp;
+    Abstract_declarator tmp = (Abstract_declarator) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating PointAdvanced!\n");
+        exit(1);
+    }
+    tmp->kind = is_PointAdvanced;
+    tmp->u.pointadvanced_.pointer_ = p1;
+    tmp->u.pointadvanced_.dir_abs_dec_ = p2;
+    return tmp;
 }/********************   WithinParentes    ********************/
 Dir_abs_dec make_WithinParentes(Abstract_declarator p1)
 {
-  Dir_abs_dec tmp = (Dir_abs_dec) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating WithinParentes!\n");
-    exit(1);
-  }
-  tmp->kind = is_WithinParentes;
-  tmp->u.withinparentes_.abstract_declarator_ = p1;
-  return tmp;
+    Dir_abs_dec tmp = (Dir_abs_dec) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating WithinParentes!\n");
+        exit(1);
+    }
+    tmp->kind = is_WithinParentes;
+    tmp->u.withinparentes_.abstract_declarator_ = p1;
+    return tmp;
 }
 /********************   Array    ********************/
 Dir_abs_dec make_Array()
 {
-  Dir_abs_dec tmp = (Dir_abs_dec) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Array!\n");
-    exit(1);
-  }
-  tmp->kind = is_Array;
-  return tmp;
+    Dir_abs_dec tmp = (Dir_abs_dec) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Array!\n");
+        exit(1);
+    }
+    tmp->kind = is_Array;
+    return tmp;
 }
 /********************   InitiatedArray    ********************/
 Dir_abs_dec make_InitiatedArray(Constant_expression p1)
 {
-  Dir_abs_dec tmp = (Dir_abs_dec) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating InitiatedArray!\n");
-    exit(1);
-  }
-  tmp->kind = is_InitiatedArray;
-  tmp->u.initiatedarray_.constant_expression_ = p1;
-  return tmp;
+    Dir_abs_dec tmp = (Dir_abs_dec) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating InitiatedArray!\n");
+        exit(1);
+    }
+    tmp->kind = is_InitiatedArray;
+    tmp->u.initiatedarray_.constant_expression_ = p1;
+    return tmp;
 }
 /********************   UnInitiated    ********************/
 Dir_abs_dec make_UnInitiated(Dir_abs_dec p1)
 {
-  Dir_abs_dec tmp = (Dir_abs_dec) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating UnInitiated!\n");
-    exit(1);
-  }
-  tmp->kind = is_UnInitiated;
-  tmp->u.uninitiated_.dir_abs_dec_ = p1;
-  return tmp;
+    Dir_abs_dec tmp = (Dir_abs_dec) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating UnInitiated!\n");
+        exit(1);
+    }
+    tmp->kind = is_UnInitiated;
+    tmp->u.uninitiated_.dir_abs_dec_ = p1;
+    return tmp;
 }
 /********************   Initiated    ********************/
 Dir_abs_dec make_Initiated(Dir_abs_dec p1, Constant_expression p2)
 {
-  Dir_abs_dec tmp = (Dir_abs_dec) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Initiated!\n");
-    exit(1);
-  }
-  tmp->kind = is_Initiated;
-  tmp->u.initiated_.dir_abs_dec_ = p1;
-  tmp->u.initiated_.constant_expression_ = p2;
-  return tmp;
+    Dir_abs_dec tmp = (Dir_abs_dec) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Initiated!\n");
+        exit(1);
+    }
+    tmp->kind = is_Initiated;
+    tmp->u.initiated_.dir_abs_dec_ = p1;
+    tmp->u.initiated_.constant_expression_ = p2;
+    return tmp;
 }
 /********************   OldFunction    ********************/
 Dir_abs_dec make_OldFunction()
 {
-  Dir_abs_dec tmp = (Dir_abs_dec) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating OldFunction!\n");
-    exit(1);
-  }
-  tmp->kind = is_OldFunction;
-  return tmp;
+    Dir_abs_dec tmp = (Dir_abs_dec) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating OldFunction!\n");
+        exit(1);
+    }
+    tmp->kind = is_OldFunction;
+    return tmp;
 }
 /********************   NewFunction    ********************/
 Dir_abs_dec make_NewFunction(Parameter_type p1)
 {
-  Dir_abs_dec tmp = (Dir_abs_dec) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating NewFunction!\n");
-    exit(1);
-  }
-  tmp->kind = is_NewFunction;
-  tmp->u.newfunction_.parameter_type_ = p1;
-  return tmp;
+    Dir_abs_dec tmp = (Dir_abs_dec) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating NewFunction!\n");
+        exit(1);
+    }
+    tmp->kind = is_NewFunction;
+    tmp->u.newfunction_.parameter_type_ = p1;
+    return tmp;
 }
 /********************   OldFuncExpr    ********************/
 Dir_abs_dec make_OldFuncExpr(Dir_abs_dec p1)
 {
-  Dir_abs_dec tmp = (Dir_abs_dec) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating OldFuncExpr!\n");
-    exit(1);
-  }
-  tmp->kind = is_OldFuncExpr;
-  tmp->u.oldfuncexpr_.dir_abs_dec_ = p1;
-  return tmp;
+    Dir_abs_dec tmp = (Dir_abs_dec) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating OldFuncExpr!\n");
+        exit(1);
+    }
+    tmp->kind = is_OldFuncExpr;
+    tmp->u.oldfuncexpr_.dir_abs_dec_ = p1;
+    return tmp;
 }
 /********************   NewFuncExpr    ********************/
 Dir_abs_dec make_NewFuncExpr(Dir_abs_dec p1, Parameter_type p2)
 {
-  Dir_abs_dec tmp = (Dir_abs_dec) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating NewFuncExpr!\n");
-    exit(1);
-  }
-  tmp->kind = is_NewFuncExpr;
-  tmp->u.newfuncexpr_.dir_abs_dec_ = p1;
-  tmp->u.newfuncexpr_.parameter_type_ = p2;
-  return tmp;
+    Dir_abs_dec tmp = (Dir_abs_dec) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating NewFuncExpr!\n");
+        exit(1);
+    }
+    tmp->kind = is_NewFuncExpr;
+    tmp->u.newfuncexpr_.dir_abs_dec_ = p1;
+    tmp->u.newfuncexpr_.parameter_type_ = p2;
+    return tmp;
 }/********************   LabelS    ********************/
 Stm make_LabelS(Labeled_stm p1)
 {
-  Stm tmp = (Stm) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating LabelS!\n");
-    exit(1);
-  }
-  tmp->kind = is_LabelS;
-  tmp->u.labels_.labeled_stm_ = p1;
-  return tmp;
+    Stm tmp = (Stm) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating LabelS!\n");
+        exit(1);
+    }
+    tmp->kind = is_LabelS;
+    tmp->u.labels_.labeled_stm_ = p1;
+    return tmp;
 }
 /********************   CompS    ********************/
 Stm make_CompS(Compound_stm p1)
 {
-  Stm tmp = (Stm) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating CompS!\n");
-    exit(1);
-  }
-  tmp->kind = is_CompS;
-  tmp->u.comps_.compound_stm_ = p1;
-  return tmp;
+    Stm tmp = (Stm) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating CompS!\n");
+        exit(1);
+    }
+    tmp->kind = is_CompS;
+    tmp->u.comps_.compound_stm_ = p1;
+    return tmp;
 }
 /********************   ExprS    ********************/
 Stm make_ExprS(Expression_stm p1)
 {
-  Stm tmp = (Stm) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating ExprS!\n");
-    exit(1);
-  }
-  tmp->kind = is_ExprS;
-  tmp->u.exprs_.expression_stm_ = p1;
-  return tmp;
+    Stm tmp = (Stm) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating ExprS!\n");
+        exit(1);
+    }
+    tmp->kind = is_ExprS;
+    tmp->u.exprs_.expression_stm_ = p1;
+    return tmp;
 }
 /********************   SelS    ********************/
 Stm make_SelS(Selection_stm p1)
 {
-  Stm tmp = (Stm) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating SelS!\n");
-    exit(1);
-  }
-  tmp->kind = is_SelS;
-  tmp->u.sels_.selection_stm_ = p1;
-  return tmp;
+    Stm tmp = (Stm) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating SelS!\n");
+        exit(1);
+    }
+    tmp->kind = is_SelS;
+    tmp->u.sels_.selection_stm_ = p1;
+    return tmp;
 }
 /********************   IterS    ********************/
 Stm make_IterS(Iter_stm p1)
 {
-  Stm tmp = (Stm) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating IterS!\n");
-    exit(1);
-  }
-  tmp->kind = is_IterS;
-  tmp->u.iters_.iter_stm_ = p1;
-  return tmp;
+    Stm tmp = (Stm) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating IterS!\n");
+        exit(1);
+    }
+    tmp->kind = is_IterS;
+    tmp->u.iters_.iter_stm_ = p1;
+    return tmp;
 }
 /********************   JumpS    ********************/
 Stm make_JumpS(Jump_stm p1)
 {
-  Stm tmp = (Stm) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating JumpS!\n");
-    exit(1);
-  }
-  tmp->kind = is_JumpS;
-  tmp->u.jumps_.jump_stm_ = p1;
-  return tmp;
+    Stm tmp = (Stm) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating JumpS!\n");
+        exit(1);
+    }
+    tmp->kind = is_JumpS;
+    tmp->u.jumps_.jump_stm_ = p1;
+    return tmp;
 }/********************   SlabelOne    ********************/
 Labeled_stm make_SlabelOne(Ident p1, Stm p2)
 {
-  Labeled_stm tmp = (Labeled_stm) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating SlabelOne!\n");
-    exit(1);
-  }
-  tmp->kind = is_SlabelOne;
-  tmp->u.slabelone_.ident_ = p1;
-  tmp->u.slabelone_.stm_ = p2;
-  return tmp;
+    Labeled_stm tmp = (Labeled_stm) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating SlabelOne!\n");
+        exit(1);
+    }
+    tmp->kind = is_SlabelOne;
+    tmp->u.slabelone_.ident_ = p1;
+    tmp->u.slabelone_.stm_ = p2;
+    return tmp;
 }
 /********************   SlabelTwo    ********************/
 Labeled_stm make_SlabelTwo(Constant_expression p1, Stm p2)
 {
-  Labeled_stm tmp = (Labeled_stm) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating SlabelTwo!\n");
-    exit(1);
-  }
-  tmp->kind = is_SlabelTwo;
-  tmp->u.slabeltwo_.constant_expression_ = p1;
-  tmp->u.slabeltwo_.stm_ = p2;
-  return tmp;
+    Labeled_stm tmp = (Labeled_stm) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating SlabelTwo!\n");
+        exit(1);
+    }
+    tmp->kind = is_SlabelTwo;
+    tmp->u.slabeltwo_.constant_expression_ = p1;
+    tmp->u.slabeltwo_.stm_ = p2;
+    return tmp;
 }
 /********************   SlabelThree    ********************/
 Labeled_stm make_SlabelThree(Stm p1)
 {
-  Labeled_stm tmp = (Labeled_stm) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating SlabelThree!\n");
-    exit(1);
-  }
-  tmp->kind = is_SlabelThree;
-  tmp->u.slabelthree_.stm_ = p1;
-  return tmp;
+    Labeled_stm tmp = (Labeled_stm) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating SlabelThree!\n");
+        exit(1);
+    }
+    tmp->kind = is_SlabelThree;
+    tmp->u.slabelthree_.stm_ = p1;
+    return tmp;
 }/********************   ScompOne    ********************/
 Compound_stm make_ScompOne()
 {
-  Compound_stm tmp = (Compound_stm) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating ScompOne!\n");
-    exit(1);
-  }
-  tmp->kind = is_ScompOne;
-  return tmp;
+    Compound_stm tmp = (Compound_stm) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating ScompOne!\n");
+        exit(1);
+    }
+    tmp->kind = is_ScompOne;
+    return tmp;
 }
 /********************   ScompTwo    ********************/
 Compound_stm make_ScompTwo(ListStm p1)
 {
-  Compound_stm tmp = (Compound_stm) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating ScompTwo!\n");
-    exit(1);
-  }
-  tmp->kind = is_ScompTwo;
-  tmp->u.scomptwo_.liststm_ = p1;
-  return tmp;
+    Compound_stm tmp = (Compound_stm) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating ScompTwo!\n");
+        exit(1);
+    }
+    tmp->kind = is_ScompTwo;
+    tmp->u.scomptwo_.liststm_ = p1;
+    return tmp;
 }
 /********************   ScompThree    ********************/
 Compound_stm make_ScompThree(ListDec p1)
 {
-  Compound_stm tmp = (Compound_stm) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating ScompThree!\n");
-    exit(1);
-  }
-  tmp->kind = is_ScompThree;
-  tmp->u.scompthree_.listdec_ = p1;
-  return tmp;
+    Compound_stm tmp = (Compound_stm) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating ScompThree!\n");
+        exit(1);
+    }
+    tmp->kind = is_ScompThree;
+    tmp->u.scompthree_.listdec_ = p1;
+    return tmp;
 }
 /********************   ScompFour    ********************/
 Compound_stm make_ScompFour(ListDec p1, ListStm p2)
 {
-  Compound_stm tmp = (Compound_stm) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating ScompFour!\n");
-    exit(1);
-  }
-  tmp->kind = is_ScompFour;
-  tmp->u.scompfour_.listdec_ = p1;
-  tmp->u.scompfour_.liststm_ = p2;
-  return tmp;
+    Compound_stm tmp = (Compound_stm) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating ScompFour!\n");
+        exit(1);
+    }
+    tmp->kind = is_ScompFour;
+    tmp->u.scompfour_.listdec_ = p1;
+    tmp->u.scompfour_.liststm_ = p2;
+    return tmp;
 }/********************   SexprOne    ********************/
 Expression_stm make_SexprOne()
 {
-  Expression_stm tmp = (Expression_stm) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating SexprOne!\n");
-    exit(1);
-  }
-  tmp->kind = is_SexprOne;
-  return tmp;
+    Expression_stm tmp = (Expression_stm) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating SexprOne!\n");
+        exit(1);
+    }
+    tmp->kind = is_SexprOne;
+    return tmp;
 }
 /********************   SexprTwo    ********************/
 Expression_stm make_SexprTwo(Exp p1)
 {
-  Expression_stm tmp = (Expression_stm) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating SexprTwo!\n");
-    exit(1);
-  }
-  tmp->kind = is_SexprTwo;
-  tmp->u.sexprtwo_.exp_ = p1;
-  return tmp;
+    Expression_stm tmp = (Expression_stm) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating SexprTwo!\n");
+        exit(1);
+    }
+    tmp->kind = is_SexprTwo;
+    tmp->u.sexprtwo_.exp_ = p1;
+    return tmp;
 }/********************   SselOne    ********************/
 Selection_stm make_SselOne(Exp p1, Stm p2)
 {
-  Selection_stm tmp = (Selection_stm) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating SselOne!\n");
-    exit(1);
-  }
-  tmp->kind = is_SselOne;
-  tmp->u.sselone_.exp_ = p1;
-  tmp->u.sselone_.stm_ = p2;
-  return tmp;
+    Selection_stm tmp = (Selection_stm) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating SselOne!\n");
+        exit(1);
+    }
+    tmp->kind = is_SselOne;
+    tmp->u.sselone_.exp_ = p1;
+    tmp->u.sselone_.stm_ = p2;
+    return tmp;
 }
 /********************   SselTwo    ********************/
 Selection_stm make_SselTwo(Exp p1, Stm p2, Stm p3)
 {
-  Selection_stm tmp = (Selection_stm) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating SselTwo!\n");
-    exit(1);
-  }
-  tmp->kind = is_SselTwo;
-  tmp->u.sseltwo_.exp_ = p1;
-  tmp->u.sseltwo_.stm_1 = p2;
-  tmp->u.sseltwo_.stm_2 = p3;
-  return tmp;
+    Selection_stm tmp = (Selection_stm) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating SselTwo!\n");
+        exit(1);
+    }
+    tmp->kind = is_SselTwo;
+    tmp->u.sseltwo_.exp_ = p1;
+    tmp->u.sseltwo_.stm_1 = p2;
+    tmp->u.sseltwo_.stm_2 = p3;
+    return tmp;
 }
 /********************   SselThree    ********************/
 Selection_stm make_SselThree(Exp p1, Stm p2)
 {
-  Selection_stm tmp = (Selection_stm) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating SselThree!\n");
-    exit(1);
-  }
-  tmp->kind = is_SselThree;
-  tmp->u.sselthree_.exp_ = p1;
-  tmp->u.sselthree_.stm_ = p2;
-  return tmp;
+    Selection_stm tmp = (Selection_stm) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating SselThree!\n");
+        exit(1);
+    }
+    tmp->kind = is_SselThree;
+    tmp->u.sselthree_.exp_ = p1;
+    tmp->u.sselthree_.stm_ = p2;
+    return tmp;
 }/********************   SiterOne    ********************/
 Iter_stm make_SiterOne(Exp p1, Stm p2)
 {
-  Iter_stm tmp = (Iter_stm) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating SiterOne!\n");
-    exit(1);
-  }
-  tmp->kind = is_SiterOne;
-  tmp->u.siterone_.exp_ = p1;
-  tmp->u.siterone_.stm_ = p2;
-  return tmp;
+    Iter_stm tmp = (Iter_stm) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating SiterOne!\n");
+        exit(1);
+    }
+    tmp->kind = is_SiterOne;
+    tmp->u.siterone_.exp_ = p1;
+    tmp->u.siterone_.stm_ = p2;
+    return tmp;
 }
 /********************   SiterTwo    ********************/
 Iter_stm make_SiterTwo(Stm p1, Exp p2)
 {
-  Iter_stm tmp = (Iter_stm) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating SiterTwo!\n");
-    exit(1);
-  }
-  tmp->kind = is_SiterTwo;
-  tmp->u.sitertwo_.stm_ = p1;
-  tmp->u.sitertwo_.exp_ = p2;
-  return tmp;
+    Iter_stm tmp = (Iter_stm) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating SiterTwo!\n");
+        exit(1);
+    }
+    tmp->kind = is_SiterTwo;
+    tmp->u.sitertwo_.stm_ = p1;
+    tmp->u.sitertwo_.exp_ = p2;
+    return tmp;
 }
 /********************   SiterThree    ********************/
 Iter_stm make_SiterThree(Expression_stm p1, Expression_stm p2, Stm p3)
 {
-  Iter_stm tmp = (Iter_stm) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating SiterThree!\n");
-    exit(1);
-  }
-  tmp->kind = is_SiterThree;
-  tmp->u.siterthree_.expression_stm_1 = p1;
-  tmp->u.siterthree_.expression_stm_2 = p2;
-  tmp->u.siterthree_.stm_ = p3;
-  return tmp;
+    Iter_stm tmp = (Iter_stm) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating SiterThree!\n");
+        exit(1);
+    }
+    tmp->kind = is_SiterThree;
+    tmp->u.siterthree_.expression_stm_1 = p1;
+    tmp->u.siterthree_.expression_stm_2 = p2;
+    tmp->u.siterthree_.stm_ = p3;
+    return tmp;
 }
 /********************   SiterFour    ********************/
 Iter_stm make_SiterFour(Expression_stm p1, Expression_stm p2, Exp p3, Stm p4)
 {
-  Iter_stm tmp = (Iter_stm) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating SiterFour!\n");
-    exit(1);
-  }
-  tmp->kind = is_SiterFour;
-  tmp->u.siterfour_.expression_stm_1 = p1;
-  tmp->u.siterfour_.expression_stm_2 = p2;
-  tmp->u.siterfour_.exp_ = p3;
-  tmp->u.siterfour_.stm_ = p4;
-  return tmp;
+    Iter_stm tmp = (Iter_stm) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating SiterFour!\n");
+        exit(1);
+    }
+    tmp->kind = is_SiterFour;
+    tmp->u.siterfour_.expression_stm_1 = p1;
+    tmp->u.siterfour_.expression_stm_2 = p2;
+    tmp->u.siterfour_.exp_ = p3;
+    tmp->u.siterfour_.stm_ = p4;
+    return tmp;
 }/********************   ListStm    ********************/
 ListStm make_ListStm(Stm p1, ListStm p2)
 {
-  ListStm tmp = (ListStm) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating ListStm!\n");
-    exit(1);
-  }
-  tmp->stm_ = p1;
-  tmp->liststm_ = p2;
-  return tmp;
+    ListStm tmp = (ListStm) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating ListStm!\n");
+        exit(1);
+    }
+    tmp->stm_ = p1;
+    tmp->liststm_ = p2;
+    return tmp;
 }/********************   Efloat    ********************/
 Constant make_Efloat(Double p1)
 {
-  Constant tmp = (Constant) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Efloat!\n");
-    exit(1);
-  }
-  tmp->kind = is_Efloat;
-  tmp->u.efloat_.double_ = p1;
-  return tmp;
+    Constant tmp = (Constant) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Efloat!\n");
+        exit(1);
+    }
+    tmp->kind = is_Efloat;
+    tmp->u.efloat_.double_ = p1;
+    return tmp;
 }
 /********************   Echar    ********************/
 Constant make_Echar(Char p1)
 {
-  Constant tmp = (Constant) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Echar!\n");
-    exit(1);
-  }
-  tmp->kind = is_Echar;
-  tmp->u.echar_.char_ = p1;
-  return tmp;
+    Constant tmp = (Constant) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Echar!\n");
+        exit(1);
+    }
+    tmp->kind = is_Echar;
+    tmp->u.echar_.char_ = p1;
+    return tmp;
 }
 /********************   Eunsigned    ********************/
 Constant make_Eunsigned(Unsigned p1)
 {
-  Constant tmp = (Constant) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Eunsigned!\n");
-    exit(1);
-  }
-  tmp->kind = is_Eunsigned;
-  tmp->u.eunsigned_.unsigned_ = p1;
-  return tmp;
+    Constant tmp = (Constant) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Eunsigned!\n");
+        exit(1);
+    }
+    tmp->kind = is_Eunsigned;
+    tmp->u.eunsigned_.unsigned_ = p1;
+    return tmp;
 }
 /********************   Elong    ********************/
 Constant make_Elong(Long p1)
 {
-  Constant tmp = (Constant) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Elong!\n");
-    exit(1);
-  }
-  tmp->kind = is_Elong;
-  tmp->u.elong_.long_ = p1;
-  return tmp;
+    Constant tmp = (Constant) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Elong!\n");
+        exit(1);
+    }
+    tmp->kind = is_Elong;
+    tmp->u.elong_.long_ = p1;
+    return tmp;
 }
 /********************   Eunsignlong    ********************/
 Constant make_Eunsignlong(UnsignedLong p1)
 {
-  Constant tmp = (Constant) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Eunsignlong!\n");
-    exit(1);
-  }
-  tmp->kind = is_Eunsignlong;
-  tmp->u.eunsignlong_.unsignedlong_ = p1;
-  return tmp;
+    Constant tmp = (Constant) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Eunsignlong!\n");
+        exit(1);
+    }
+    tmp->kind = is_Eunsignlong;
+    tmp->u.eunsignlong_.unsignedlong_ = p1;
+    return tmp;
 }
 /********************   Ehexadec    ********************/
 Constant make_Ehexadec(Hexadecimal p1)
 {
-  Constant tmp = (Constant) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Ehexadec!\n");
-    exit(1);
-  }
-  tmp->kind = is_Ehexadec;
-  tmp->u.ehexadec_.hexadecimal_ = p1;
-  return tmp;
+    Constant tmp = (Constant) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Ehexadec!\n");
+        exit(1);
+    }
+    tmp->kind = is_Ehexadec;
+    tmp->u.ehexadec_.hexadecimal_ = p1;
+    return tmp;
 }
 /********************   Ehexaunsign    ********************/
 Constant make_Ehexaunsign(HexUnsigned p1)
 {
-  Constant tmp = (Constant) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Ehexaunsign!\n");
-    exit(1);
-  }
-  tmp->kind = is_Ehexaunsign;
-  tmp->u.ehexaunsign_.hexunsigned_ = p1;
-  return tmp;
+    Constant tmp = (Constant) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Ehexaunsign!\n");
+        exit(1);
+    }
+    tmp->kind = is_Ehexaunsign;
+    tmp->u.ehexaunsign_.hexunsigned_ = p1;
+    return tmp;
 }
 /********************   Ehexalong    ********************/
 Constant make_Ehexalong(HexLong p1)
 {
-  Constant tmp = (Constant) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Ehexalong!\n");
-    exit(1);
-  }
-  tmp->kind = is_Ehexalong;
-  tmp->u.ehexalong_.hexlong_ = p1;
-  return tmp;
+    Constant tmp = (Constant) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Ehexalong!\n");
+        exit(1);
+    }
+    tmp->kind = is_Ehexalong;
+    tmp->u.ehexalong_.hexlong_ = p1;
+    return tmp;
 }
 /********************   Ehexaunslong    ********************/
 Constant make_Ehexaunslong(HexUnsLong p1)
 {
-  Constant tmp = (Constant) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Ehexaunslong!\n");
-    exit(1);
-  }
-  tmp->kind = is_Ehexaunslong;
-  tmp->u.ehexaunslong_.hexunslong_ = p1;
-  return tmp;
+    Constant tmp = (Constant) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Ehexaunslong!\n");
+        exit(1);
+    }
+    tmp->kind = is_Ehexaunslong;
+    tmp->u.ehexaunslong_.hexunslong_ = p1;
+    return tmp;
 }
 /********************   Eoctal    ********************/
 Constant make_Eoctal(Octal p1)
 {
-  Constant tmp = (Constant) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Eoctal!\n");
-    exit(1);
-  }
-  tmp->kind = is_Eoctal;
-  tmp->u.eoctal_.octal_ = p1;
-  return tmp;
+    Constant tmp = (Constant) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Eoctal!\n");
+        exit(1);
+    }
+    tmp->kind = is_Eoctal;
+    tmp->u.eoctal_.octal_ = p1;
+    return tmp;
 }
 /********************   Eoctalunsign    ********************/
 Constant make_Eoctalunsign(OctalUnsigned p1)
 {
-  Constant tmp = (Constant) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Eoctalunsign!\n");
-    exit(1);
-  }
-  tmp->kind = is_Eoctalunsign;
-  tmp->u.eoctalunsign_.octalunsigned_ = p1;
-  return tmp;
+    Constant tmp = (Constant) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Eoctalunsign!\n");
+        exit(1);
+    }
+    tmp->kind = is_Eoctalunsign;
+    tmp->u.eoctalunsign_.octalunsigned_ = p1;
+    return tmp;
 }
 /********************   Eoctallong    ********************/
 Constant make_Eoctallong(OctalLong p1)
 {
-  Constant tmp = (Constant) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Eoctallong!\n");
-    exit(1);
-  }
-  tmp->kind = is_Eoctallong;
-  tmp->u.eoctallong_.octallong_ = p1;
-  return tmp;
+    Constant tmp = (Constant) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Eoctallong!\n");
+        exit(1);
+    }
+    tmp->kind = is_Eoctallong;
+    tmp->u.eoctallong_.octallong_ = p1;
+    return tmp;
 }
 /********************   Eoctalunslong    ********************/
 Constant make_Eoctalunslong(OctalUnsLong p1)
 {
-  Constant tmp = (Constant) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Eoctalunslong!\n");
-    exit(1);
-  }
-  tmp->kind = is_Eoctalunslong;
-  tmp->u.eoctalunslong_.octalunslong_ = p1;
-  return tmp;
+    Constant tmp = (Constant) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Eoctalunslong!\n");
+        exit(1);
+    }
+    tmp->kind = is_Eoctalunslong;
+    tmp->u.eoctalunslong_.octalunslong_ = p1;
+    return tmp;
 }
 /********************   Ecdouble    ********************/
 Constant make_Ecdouble(CDouble p1)
 {
-  Constant tmp = (Constant) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Ecdouble!\n");
-    exit(1);
-  }
-  tmp->kind = is_Ecdouble;
-  tmp->u.ecdouble_.cdouble_ = p1;
-  return tmp;
+    Constant tmp = (Constant) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Ecdouble!\n");
+        exit(1);
+    }
+    tmp->kind = is_Ecdouble;
+    tmp->u.ecdouble_.cdouble_ = p1;
+    return tmp;
 }
 /********************   Ecfloat    ********************/
 Constant make_Ecfloat(CFloat p1)
 {
-  Constant tmp = (Constant) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Ecfloat!\n");
-    exit(1);
-  }
-  tmp->kind = is_Ecfloat;
-  tmp->u.ecfloat_.cfloat_ = p1;
-  return tmp;
+    Constant tmp = (Constant) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Ecfloat!\n");
+        exit(1);
+    }
+    tmp->kind = is_Ecfloat;
+    tmp->u.ecfloat_.cfloat_ = p1;
+    return tmp;
 }
 /********************   Eclongdouble    ********************/
 Constant make_Eclongdouble(CLongDouble p1)
 {
-  Constant tmp = (Constant) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Eclongdouble!\n");
-    exit(1);
-  }
-  tmp->kind = is_Eclongdouble;
-  tmp->u.eclongdouble_.clongdouble_ = p1;
-  return tmp;
+    Constant tmp = (Constant) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Eclongdouble!\n");
+        exit(1);
+    }
+    tmp->kind = is_Eclongdouble;
+    tmp->u.eclongdouble_.clongdouble_ = p1;
+    return tmp;
 }
 /********************   Eint    ********************/
 Constant make_Eint(Integer p1)
 {
-  Constant tmp = (Constant) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Eint!\n");
-    exit(1);
-  }
-  tmp->kind = is_Eint;
-  tmp->u.eint_.integer_ = p1;
-  return tmp;
+    Constant tmp = (Constant) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Eint!\n");
+        exit(1);
+    }
+    tmp->kind = is_Eint;
+    tmp->u.eint_.integer_ = p1;
+    return tmp;
 }
 /********************   Elonger    ********************/
 Constant make_Elonger(Integer p1)
 {
-  Constant tmp = (Constant) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Elonger!\n");
-    exit(1);
-  }
-  tmp->kind = is_Elonger;
-  tmp->u.elonger_.integer_ = p1;
-  return tmp;
+    Constant tmp = (Constant) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Elonger!\n");
+        exit(1);
+    }
+    tmp->kind = is_Elonger;
+    tmp->u.elonger_.integer_ = p1;
+    return tmp;
 }
 /********************   Edouble    ********************/
 Constant make_Edouble(Double p1)
 {
-  Constant tmp = (Constant) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Edouble!\n");
-    exit(1);
-  }
-  tmp->kind = is_Edouble;
-  tmp->u.edouble_.double_ = p1;
-  return tmp;
+    Constant tmp = (Constant) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Edouble!\n");
+        exit(1);
+    }
+    tmp->kind = is_Edouble;
+    tmp->u.edouble_.double_ = p1;
+    return tmp;
 }/********************   Especial    ********************/
 Constant_expression make_Especial(Exp p1)
 {
-  Constant_expression tmp = (Constant_expression) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating Especial!\n");
-    exit(1);
-  }
-  tmp->kind = is_Especial;
-  tmp->u.especial_.exp_ = p1;
-  return tmp;
+    Constant_expression tmp = (Constant_expression) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating Especial!\n");
+        exit(1);
+    }
+    tmp->kind = is_Especial;
+    tmp->u.especial_.exp_ = p1;
+    return tmp;
 }/********************   ListExp    ********************/
 ListExp make_ListExp(Exp p1, ListExp p2)
 {
-  ListExp tmp = (ListExp) malloc(sizeof(*tmp));
-  if (!tmp)
-  {
-    fprintf(stderr, "Error: out of memory when allocating ListExp!\n");
-    exit(1);
-  }
-  tmp->exp_ = p1;
-  tmp->listexp_ = p2;
-  return tmp;
+    ListExp tmp = (ListExp) malloc(sizeof(*tmp));
+    if (!tmp)
+    {
+        fprintf(stderr, "Error: out of memory when allocating ListExp!\n");
+        exit(1);
+    }
+    tmp->exp_ = p1;
+    tmp->listexp_ = p2;
+    return tmp;
 }

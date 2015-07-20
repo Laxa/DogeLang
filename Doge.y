@@ -30,6 +30,20 @@ External_declaration pExternal_declaration(FILE *inp)
   }
 }
 
+ClassName YY_RESULT_ClassName_ = 0;
+ClassName pClassName(FILE *inp)
+{
+  initialize_lexer(inp);
+  if (yyparse())
+  { /* Failure */
+    return 0;
+  }
+  else
+  { /* Success */
+    return YY_RESULT_ClassName_;
+  }
+}
+
 Extends YY_RESULT_Extends_ = 0;
 Extends pExtends(FILE *inp)
 {
@@ -911,6 +925,7 @@ ListExp reverseListExp(ListExp l)
   double double_;
   char* string_;
   External_declaration external_declaration_;
+  ClassName classname_;
   Extends extends_;
   Jump_stm jump_stm_;
   Type_specifier type_specifier_;
@@ -968,105 +983,107 @@ ListExp reverseListExp(ListExp l)
 %token _ERROR_
 %token _SYMB_0    /*   {   */
 %token _SYMB_1    /*   }   */
-%token _SYMB_2    /*   ;   */
-%token _SYMB_3    /*   such void   */
-%token _SYMB_4    /*   such char   */
-%token _SYMB_5    /*   such short   */
-%token _SYMB_6    /*   such int   */
-%token _SYMB_7    /*   such long   */
-%token _SYMB_8    /*   such float   */
-%token _SYMB_9    /*   such double   */
-%token _SYMB_10    /*   such signed   */
-%token _SYMB_11    /*   such unsigned   */
-%token _SYMB_12    /*   such typedef   */
-%token _SYMB_13    /*   such const   */
-%token _SYMB_14    /*   ,   */
-%token _SYMB_15    /*   :   */
-%token _SYMB_16    /*   (   */
-%token _SYMB_17    /*   )   */
-%token _SYMB_18    /*   [   */
-%token _SYMB_19    /*   ]   */
-%token _SYMB_20    /*   *   */
-%token _SYMB_21    /*   ...   */
-%token _SYMB_22    /*   ?   */
-%token _SYMB_23    /*   ||   */
-%token _SYMB_24    /*   &&   */
-%token _SYMB_25    /*   |   */
-%token _SYMB_26    /*   ^   */
-%token _SYMB_27    /*   &   */
-%token _SYMB_28    /*   ==   */
-%token _SYMB_29    /*   !=   */
-%token _SYMB_30    /*   <   */
-%token _SYMB_31    /*   >   */
-%token _SYMB_32    /*   <=   */
-%token _SYMB_33    /*   >=   */
-%token _SYMB_34    /*   <<   */
-%token _SYMB_35    /*   >>   */
-%token _SYMB_36    /*   +   */
-%token _SYMB_37    /*   -   */
-%token _SYMB_38    /*   /   */
-%token _SYMB_39    /*   %   */
-%token _SYMB_40    /*   ++   */
-%token _SYMB_41    /*   --   */
-%token _SYMB_42    /*   .   */
-%token _SYMB_43    /*   ->   */
-%token _SYMB_44    /*   ~   */
-%token _SYMB_45    /*   *=   */
-%token _SYMB_46    /*   /=   */
-%token _SYMB_47    /*   %=   */
-%token _SYMB_48    /*   +=   */
-%token _SYMB_49    /*   -=   */
-%token _SYMB_50    /*   <<=   */
-%token _SYMB_51    /*   >>=   */
-%token _SYMB_52    /*   &=   */
-%token _SYMB_53    /*   ^=   */
-%token _SYMB_54    /*   |=   */
-%token _SYMB_55    /*   Typedef_name   */
-%token _SYMB_56    /*   amaze   */
-%token _SYMB_57    /*   auto   */
-%token _SYMB_58    /*   break   */
-%token _SYMB_59    /*   case   */
-%token _SYMB_60    /*   continue   */
-%token _SYMB_61    /*   default   */
-%token _SYMB_62    /*   do   */
-%token _SYMB_63    /*   doge   */
-%token _SYMB_64    /*   else   */
-%token _SYMB_65    /*   enum   */
-%token _SYMB_66    /*   extern   */
-%token _SYMB_67    /*   for   */
-%token _SYMB_68    /*   goto   */
-%token _SYMB_69    /*   if   */
-%token _SYMB_70    /*   iz   */
-%token _SYMB_71    /*   new   */
-%token _SYMB_72    /*   not   */
-%token _SYMB_73    /*   register   */
-%token _SYMB_74    /*   sizeof   */
-%token _SYMB_75    /*   stahp   */
-%token _SYMB_76    /*   static   */
-%token _SYMB_77    /*   struct   */
-%token _SYMB_78    /*   such   */
-%token _SYMB_79    /*   switch   */
-%token _SYMB_80    /*   union   */
-%token _SYMB_81    /*   very   */
-%token _SYMB_82    /*   volatile   */
-%token _SYMB_83    /*   while   */
-%token _SYMB_84    /*   wow   */
-%token<string_> _SYMB_85    /*   Unsigned   */
-%token<string_> _SYMB_86    /*   Long   */
-%token<string_> _SYMB_87    /*   UnsignedLong   */
-%token<string_> _SYMB_88    /*   Hexadecimal   */
-%token<string_> _SYMB_89    /*   HexUnsigned   */
-%token<string_> _SYMB_90    /*   HexLong   */
-%token<string_> _SYMB_91    /*   HexUnsLong   */
-%token<string_> _SYMB_92    /*   Octal   */
-%token<string_> _SYMB_93    /*   OctalUnsigned   */
-%token<string_> _SYMB_94    /*   OctalLong   */
-%token<string_> _SYMB_95    /*   OctalUnsLong   */
-%token<string_> _SYMB_96    /*   CDouble   */
-%token<string_> _SYMB_97    /*   CFloat   */
-%token<string_> _SYMB_98    /*   CLongDouble   */
+%token _SYMB_2    /*   ::   */
+%token _SYMB_3    /*   ;   */
+%token _SYMB_4    /*   such void   */
+%token _SYMB_5    /*   such char   */
+%token _SYMB_6    /*   such short   */
+%token _SYMB_7    /*   such int   */
+%token _SYMB_8    /*   such long   */
+%token _SYMB_9    /*   such float   */
+%token _SYMB_10    /*   such double   */
+%token _SYMB_11    /*   such signed   */
+%token _SYMB_12    /*   such unsigned   */
+%token _SYMB_13    /*   such typedef   */
+%token _SYMB_14    /*   such const   */
+%token _SYMB_15    /*   ,   */
+%token _SYMB_16    /*   :   */
+%token _SYMB_17    /*   (   */
+%token _SYMB_18    /*   )   */
+%token _SYMB_19    /*   [   */
+%token _SYMB_20    /*   ]   */
+%token _SYMB_21    /*   *   */
+%token _SYMB_22    /*   ...   */
+%token _SYMB_23    /*   ?   */
+%token _SYMB_24    /*   ||   */
+%token _SYMB_25    /*   &&   */
+%token _SYMB_26    /*   |   */
+%token _SYMB_27    /*   ^   */
+%token _SYMB_28    /*   &   */
+%token _SYMB_29    /*   ==   */
+%token _SYMB_30    /*   !=   */
+%token _SYMB_31    /*   <   */
+%token _SYMB_32    /*   >   */
+%token _SYMB_33    /*   <=   */
+%token _SYMB_34    /*   >=   */
+%token _SYMB_35    /*   <<   */
+%token _SYMB_36    /*   >>   */
+%token _SYMB_37    /*   +   */
+%token _SYMB_38    /*   -   */
+%token _SYMB_39    /*   /   */
+%token _SYMB_40    /*   %   */
+%token _SYMB_41    /*   ++   */
+%token _SYMB_42    /*   --   */
+%token _SYMB_43    /*   .   */
+%token _SYMB_44    /*   ->   */
+%token _SYMB_45    /*   ~   */
+%token _SYMB_46    /*   *=   */
+%token _SYMB_47    /*   /=   */
+%token _SYMB_48    /*   %=   */
+%token _SYMB_49    /*   +=   */
+%token _SYMB_50    /*   -=   */
+%token _SYMB_51    /*   <<=   */
+%token _SYMB_52    /*   >>=   */
+%token _SYMB_53    /*   &=   */
+%token _SYMB_54    /*   ^=   */
+%token _SYMB_55    /*   |=   */
+%token _SYMB_56    /*   Typedef_name   */
+%token _SYMB_57    /*   amaze   */
+%token _SYMB_58    /*   auto   */
+%token _SYMB_59    /*   break   */
+%token _SYMB_60    /*   case   */
+%token _SYMB_61    /*   continue   */
+%token _SYMB_62    /*   default   */
+%token _SYMB_63    /*   do   */
+%token _SYMB_64    /*   doge   */
+%token _SYMB_65    /*   else   */
+%token _SYMB_66    /*   enum   */
+%token _SYMB_67    /*   extern   */
+%token _SYMB_68    /*   for   */
+%token _SYMB_69    /*   goto   */
+%token _SYMB_70    /*   if   */
+%token _SYMB_71    /*   iz   */
+%token _SYMB_72    /*   new   */
+%token _SYMB_73    /*   not   */
+%token _SYMB_74    /*   register   */
+%token _SYMB_75    /*   sizeof   */
+%token _SYMB_76    /*   stahp   */
+%token _SYMB_77    /*   static   */
+%token _SYMB_78    /*   struct   */
+%token _SYMB_79    /*   such   */
+%token _SYMB_80    /*   switch   */
+%token _SYMB_81    /*   union   */
+%token _SYMB_82    /*   very   */
+%token _SYMB_83    /*   volatile   */
+%token _SYMB_84    /*   while   */
+%token _SYMB_85    /*   wow   */
+%token<string_> _SYMB_86    /*   Unsigned   */
+%token<string_> _SYMB_87    /*   Long   */
+%token<string_> _SYMB_88    /*   UnsignedLong   */
+%token<string_> _SYMB_89    /*   Hexadecimal   */
+%token<string_> _SYMB_90    /*   HexUnsigned   */
+%token<string_> _SYMB_91    /*   HexLong   */
+%token<string_> _SYMB_92    /*   HexUnsLong   */
+%token<string_> _SYMB_93    /*   Octal   */
+%token<string_> _SYMB_94    /*   OctalUnsigned   */
+%token<string_> _SYMB_95    /*   OctalLong   */
+%token<string_> _SYMB_96    /*   OctalUnsLong   */
+%token<string_> _SYMB_97    /*   CDouble   */
+%token<string_> _SYMB_98    /*   CFloat   */
+%token<string_> _SYMB_99    /*   CLongDouble   */
 
 %type <external_declaration_> External_declaration
+%type <classname_> ClassName
 %type <extends_> Extends
 %type <jump_stm_> Jump_stm
 %type <type_specifier_> Type_specifier
@@ -1143,74 +1160,77 @@ ListExp reverseListExp(ListExp l)
 
 %start Program
 %%
-External_declaration : _SYMB_63 _IDENT_ Extends _SYMB_0 ListExternal_declaration _SYMB_1 { $$ = make_Class($2, $3, $5);  } 
-  | _SYMB_56 _IDENT_ _SYMB_2 { $$ = make_Namespace($2);  }
+External_declaration : _SYMB_64 ClassName Extends _SYMB_0 ListExternal_declaration _SYMB_1 { $$ = make_Class($2, $3, $5);  } 
+  | _SYMB_57 _IDENT_ _SYMB_0 ListExternal_declaration _SYMB_1 { $$ = make_Namespace($2, $4);  }
   | Function_def { $$ = make_Afunc($1);  }
   | Dec { $$ = make_Global($1);  }
 ;
-Extends : _SYMB_81 _IDENT_ { $$ = make_Inheritance($2);  } 
+ClassName : _IDENT_ _SYMB_2 _IDENT_ { $$ = make_ClassWithNamespace($1, $3);  } 
+  | _IDENT_ { $$ = make_ClassWithoutNamespace($1);  }
+;
+Extends : _SYMB_82 ClassName { $$ = make_Inheritance($2);  } 
   | /* empty */ { $$ = make_NoInheritance();  }
 ;
-Jump_stm : _SYMB_84 _SYMB_2 { $$ = make_SjumpFour();  } 
-  | _SYMB_84 Exp _SYMB_2 { $$ = make_SjumpFive($2);  }
-  | _SYMB_68 _IDENT_ _SYMB_2 { $$ = make_SjumpOne($2);  }
-  | _SYMB_60 _SYMB_2 { $$ = make_SjumpTwo();  }
-  | _SYMB_58 _SYMB_2 { $$ = make_SjumpThree();  }
+Jump_stm : _SYMB_85 _SYMB_3 { $$ = make_SjumpFour();  } 
+  | _SYMB_85 Exp _SYMB_3 { $$ = make_SjumpFive($2);  }
+  | _SYMB_69 _IDENT_ _SYMB_3 { $$ = make_SjumpOne($2);  }
+  | _SYMB_61 _SYMB_3 { $$ = make_SjumpTwo();  }
+  | _SYMB_59 _SYMB_3 { $$ = make_SjumpThree();  }
 ;
-Type_specifier : _SYMB_3 { $$ = make_Tvoid();  } 
-  | _SYMB_4 { $$ = make_Tchar();  }
-  | _SYMB_5 { $$ = make_Tshort();  }
-  | _SYMB_6 { $$ = make_Tint();  }
-  | _SYMB_7 { $$ = make_Tlong();  }
-  | _SYMB_8 { $$ = make_Tfloat();  }
-  | _SYMB_9 { $$ = make_Tdouble();  }
-  | _SYMB_10 { $$ = make_Tsigned();  }
-  | _SYMB_11 { $$ = make_Tunsigned();  }
+Type_specifier : _SYMB_4 { $$ = make_Tvoid();  } 
+  | _SYMB_5 { $$ = make_Tchar();  }
+  | _SYMB_6 { $$ = make_Tshort();  }
+  | _SYMB_7 { $$ = make_Tint();  }
+  | _SYMB_8 { $$ = make_Tlong();  }
+  | _SYMB_9 { $$ = make_Tfloat();  }
+  | _SYMB_10 { $$ = make_Tdouble();  }
+  | _SYMB_11 { $$ = make_Tsigned();  }
+  | _SYMB_12 { $$ = make_Tunsigned();  }
   | Struct_or_union_spec { $$ = make_Tstruct($1);  }
   | Enum_specifier { $$ = make_Tenum($1);  }
-  | _SYMB_55 { $$ = make_Tname();  }
+  | _SYMB_56 { $$ = make_Tname();  }
 ;
-Storage_class_specifier : _SYMB_12 { $$ = make_MyType();  } 
-  | _SYMB_66 { $$ = make_GlobalPrograms();  }
-  | _SYMB_76 { $$ = make_LocalProgram();  }
-  | _SYMB_57 { $$ = make_LocalBlock();  }
-  | _SYMB_73 { $$ = make_LocalReg();  }
+Storage_class_specifier : _SYMB_13 { $$ = make_MyType();  } 
+  | _SYMB_67 { $$ = make_GlobalPrograms();  }
+  | _SYMB_77 { $$ = make_LocalProgram();  }
+  | _SYMB_58 { $$ = make_LocalBlock();  }
+  | _SYMB_74 { $$ = make_LocalReg();  }
 ;
-Type_qualifier : _SYMB_13 { $$ = make_Const();  } 
-  | _SYMB_82 { $$ = make_NoOptim();  }
+Type_qualifier : _SYMB_14 { $$ = make_Const();  } 
+  | _SYMB_83 { $$ = make_NoOptim();  }
 ;
-Unary_operator : _SYMB_72 { $$ = make_Logicalneg();  } 
-  | _SYMB_27 { $$ = make_Address();  }
-  | _SYMB_20 { $$ = make_Indirection();  }
-  | _SYMB_36 { $$ = make_Plus();  }
-  | _SYMB_37 { $$ = make_Negative();  }
-  | _SYMB_44 { $$ = make_Complement();  }
+Unary_operator : _SYMB_73 { $$ = make_Logicalneg();  } 
+  | _SYMB_28 { $$ = make_Address();  }
+  | _SYMB_21 { $$ = make_Indirection();  }
+  | _SYMB_37 { $$ = make_Plus();  }
+  | _SYMB_38 { $$ = make_Negative();  }
+  | _SYMB_45 { $$ = make_Complement();  }
 ;
-Assignment_op : _SYMB_70 { $$ = make_Assign();  } 
-  | _SYMB_45 { $$ = make_AssignMul();  }
-  | _SYMB_46 { $$ = make_AssignDiv();  }
-  | _SYMB_47 { $$ = make_AssignMod();  }
-  | _SYMB_48 { $$ = make_AssignAdd();  }
-  | _SYMB_49 { $$ = make_AssignSub();  }
-  | _SYMB_50 { $$ = make_AssignLeft();  }
-  | _SYMB_51 { $$ = make_AssignRight();  }
-  | _SYMB_52 { $$ = make_AssignAnd();  }
-  | _SYMB_53 { $$ = make_AssignXor();  }
-  | _SYMB_54 { $$ = make_AssignOr();  }
+Assignment_op : _SYMB_71 { $$ = make_Assign();  } 
+  | _SYMB_46 { $$ = make_AssignMul();  }
+  | _SYMB_47 { $$ = make_AssignDiv();  }
+  | _SYMB_48 { $$ = make_AssignMod();  }
+  | _SYMB_49 { $$ = make_AssignAdd();  }
+  | _SYMB_50 { $$ = make_AssignSub();  }
+  | _SYMB_51 { $$ = make_AssignLeft();  }
+  | _SYMB_52 { $$ = make_AssignRight();  }
+  | _SYMB_53 { $$ = make_AssignAnd();  }
+  | _SYMB_54 { $$ = make_AssignXor();  }
+  | _SYMB_55 { $$ = make_AssignOr();  }
 ;
-Init_declarator : Declarator _SYMB_70 Initializer { $$ = make_InitDecl($1, $3);  } 
+Init_declarator : Declarator _SYMB_71 Initializer { $$ = make_InitDecl($1, $3);  } 
   | Declarator { $$ = make_OnlyDecl($1);  }
 ;
-Enumerator : _IDENT_ _SYMB_70 Constant_expression { $$ = make_EnumInit($1, $3);  } 
+Enumerator : _IDENT_ _SYMB_71 Constant_expression { $$ = make_EnumInit($1, $3);  } 
   | _IDENT_ { $$ = make_Plain($1);  }
 ;
-Exp2 : Exp15 Assignment_op _SYMB_71 _IDENT_ { $$ = make_InitClass($1, $2, $4);  } 
-  | _SYMB_75 _IDENT_ { $$ = make_DestroyClass($2);  }
+Exp2 : Exp15 Assignment_op _SYMB_72 ClassName { $$ = make_InitClass($1, $2, $4);  } 
+  | _SYMB_76 _IDENT_ { $$ = make_DestroyClass($2);  }
   | Exp15 Assignment_op Exp2 { $$ = make_Eassign($1, $2, $3);  }
   | Exp3 { $$ = $1;  }
 ;
-Declaration_specifier : _SYMB_78 _IDENT_ Pointer _IDENT_ { $$ = make_DecClass($2, $3, $4);  } 
-  | _SYMB_78 _IDENT_ _IDENT_ { $$ = make_DecClassNoPoiter($2, $3);  }
+Declaration_specifier : _SYMB_79 ClassName Pointer _IDENT_ { $$ = make_DecClass($2, $3, $4);  } 
+  | _SYMB_79 ClassName _IDENT_ { $$ = make_DecClassNoPoiter($2, $3);  }
   | Type_specifier { $$ = make_Type($1);  }
   | Storage_class_specifier { $$ = make_Storage($1);  }
   | Type_qualifier { $$ = make_SpecProp($1);  }
@@ -1225,8 +1245,8 @@ Function_def : ListDeclaration_specifier Declarator ListDec Compound_stm { $$ = 
   | Declarator ListDec Compound_stm { $$ = make_OldFuncInt($1, $2, $3);  }
   | Declarator Compound_stm { $$ = make_NewFuncInt($1, $2);  }
 ;
-Dec : ListDeclaration_specifier _SYMB_2 { $$ = make_NoDeclarator($1);  } 
-  | ListDeclaration_specifier ListInit_declarator _SYMB_2 { $$ = make_Declarators($1, $2);  }
+Dec : ListDeclaration_specifier _SYMB_3 { $$ = make_NoDeclarator($1);  } 
+  | ListDeclaration_specifier ListInit_declarator _SYMB_3 { $$ = make_Declarators($1, $2);  }
 ;
 ListDec : Dec { $$ = make_ListDec($1, 0);  } 
   | Dec ListDec { $$ = make_ListDec($1, $2);  }
@@ -1235,19 +1255,19 @@ ListDeclaration_specifier : Declaration_specifier { $$ = make_ListDeclaration_sp
   | Declaration_specifier ListDeclaration_specifier { $$ = make_ListDeclaration_specifier($1, $2);  }
 ;
 ListInit_declarator : Init_declarator { $$ = make_ListInit_declarator($1, 0);  } 
-  | Init_declarator _SYMB_14 ListInit_declarator { $$ = make_ListInit_declarator($1, $3);  }
+  | Init_declarator _SYMB_15 ListInit_declarator { $$ = make_ListInit_declarator($1, $3);  }
 ;
 Struct_or_union_spec : Struct_or_union _IDENT_ _SYMB_0 ListStruct_dec _SYMB_1 { $$ = make_Tag($1, $2, $4);  } 
   | Struct_or_union _SYMB_0 ListStruct_dec _SYMB_1 { $$ = make_Unique($1, $3);  }
   | Struct_or_union _IDENT_ { $$ = make_TagType($1, $2);  }
 ;
-Struct_or_union : _SYMB_77 { $$ = make_Struct();  } 
-  | _SYMB_80 { $$ = make_Union();  }
+Struct_or_union : _SYMB_78 { $$ = make_Struct();  } 
+  | _SYMB_81 { $$ = make_Union();  }
 ;
 ListStruct_dec : Struct_dec { $$ = make_ListStruct_dec($1, 0);  } 
   | Struct_dec ListStruct_dec { $$ = make_ListStruct_dec($1, $2);  }
 ;
-Struct_dec : ListSpec_qual ListStruct_declarator _SYMB_2 { $$ = make_Structen($1, $2);  } 
+Struct_dec : ListSpec_qual ListStruct_declarator _SYMB_3 { $$ = make_Structen($1, $2);  } 
 ;
 ListSpec_qual : Spec_qual { $$ = make_ListSpec_qual($1, 0);  } 
   | Spec_qual ListSpec_qual { $$ = make_ListSpec_qual($1, $2);  }
@@ -1256,57 +1276,57 @@ Spec_qual : Type_specifier { $$ = make_TypeSpec($1);  }
   | Type_qualifier { $$ = make_QualSpec($1);  }
 ;
 ListStruct_declarator : Struct_declarator { $$ = make_ListStruct_declarator($1, 0);  } 
-  | Struct_declarator _SYMB_14 ListStruct_declarator { $$ = make_ListStruct_declarator($1, $3);  }
+  | Struct_declarator _SYMB_15 ListStruct_declarator { $$ = make_ListStruct_declarator($1, $3);  }
 ;
 Struct_declarator : Declarator { $$ = make_Decl($1);  } 
-  | _SYMB_15 Constant_expression { $$ = make_Field($2);  }
-  | Declarator _SYMB_15 Constant_expression { $$ = make_DecField($1, $3);  }
+  | _SYMB_16 Constant_expression { $$ = make_Field($2);  }
+  | Declarator _SYMB_16 Constant_expression { $$ = make_DecField($1, $3);  }
 ;
-Enum_specifier : _SYMB_65 _SYMB_0 ListEnumerator _SYMB_1 { $$ = make_EnumDec($3);  } 
-  | _SYMB_65 _IDENT_ _SYMB_0 ListEnumerator _SYMB_1 { $$ = make_EnumName($2, $4);  }
-  | _SYMB_65 _IDENT_ { $$ = make_EnumVar($2);  }
+Enum_specifier : _SYMB_66 _SYMB_0 ListEnumerator _SYMB_1 { $$ = make_EnumDec($3);  } 
+  | _SYMB_66 _IDENT_ _SYMB_0 ListEnumerator _SYMB_1 { $$ = make_EnumName($2, $4);  }
+  | _SYMB_66 _IDENT_ { $$ = make_EnumVar($2);  }
 ;
 ListEnumerator : Enumerator { $$ = make_ListEnumerator($1, 0);  } 
-  | Enumerator _SYMB_14 ListEnumerator { $$ = make_ListEnumerator($1, $3);  }
+  | Enumerator _SYMB_15 ListEnumerator { $$ = make_ListEnumerator($1, $3);  }
 ;
 Declarator : Pointer Direct_declarator { $$ = make_BeginPointer($1, $2);  } 
   | Direct_declarator { $$ = make_NoPointer($1);  }
 ;
 Direct_declarator : _IDENT_ { $$ = make_Name($1);  } 
-  | _SYMB_16 Declarator _SYMB_17 { $$ = make_ParenDecl($2);  }
-  | Direct_declarator _SYMB_18 Constant_expression _SYMB_19 { $$ = make_InnitArray($1, $3);  }
-  | Direct_declarator _SYMB_18 _SYMB_19 { $$ = make_Incomplete($1);  }
-  | Direct_declarator _SYMB_16 Parameter_type _SYMB_17 { $$ = make_NewFuncDec($1, $3);  }
-  | Direct_declarator _SYMB_16 ListIdent _SYMB_17 { $$ = make_OldFuncDef($1, $3);  }
-  | Direct_declarator _SYMB_16 _SYMB_17 { $$ = make_OldFuncDec($1);  }
+  | _SYMB_17 Declarator _SYMB_18 { $$ = make_ParenDecl($2);  }
+  | Direct_declarator _SYMB_19 Constant_expression _SYMB_20 { $$ = make_InnitArray($1, $3);  }
+  | Direct_declarator _SYMB_19 _SYMB_20 { $$ = make_Incomplete($1);  }
+  | Direct_declarator _SYMB_17 Parameter_type _SYMB_18 { $$ = make_NewFuncDec($1, $3);  }
+  | Direct_declarator _SYMB_17 ListIdent _SYMB_18 { $$ = make_OldFuncDef($1, $3);  }
+  | Direct_declarator _SYMB_17 _SYMB_18 { $$ = make_OldFuncDec($1);  }
 ;
-Pointer : _SYMB_20 { $$ = make_Point();  } 
-  | _SYMB_20 ListType_qualifier { $$ = make_PointQual($2);  }
-  | _SYMB_20 Pointer { $$ = make_PointPoint($2);  }
-  | _SYMB_20 ListType_qualifier Pointer { $$ = make_PointQualPoint($2, $3);  }
+Pointer : _SYMB_21 { $$ = make_Point();  } 
+  | _SYMB_21 ListType_qualifier { $$ = make_PointQual($2);  }
+  | _SYMB_21 Pointer { $$ = make_PointPoint($2);  }
+  | _SYMB_21 ListType_qualifier Pointer { $$ = make_PointQualPoint($2, $3);  }
 ;
 ListType_qualifier : Type_qualifier { $$ = make_ListType_qualifier($1, 0);  } 
   | Type_qualifier ListType_qualifier { $$ = make_ListType_qualifier($1, $2);  }
 ;
 Parameter_type : Parameter_declarations { $$ = make_AllSpec($1);  } 
-  | Parameter_declarations _SYMB_14 _SYMB_21 { $$ = make_More($1);  }
+  | Parameter_declarations _SYMB_15 _SYMB_22 { $$ = make_More($1);  }
 ;
 Parameter_declarations : Parameter_declaration { $$ = make_ParamDec($1);  } 
-  | Parameter_declarations _SYMB_14 Parameter_declaration { $$ = make_MoreParamDec($1, $3);  }
+  | Parameter_declarations _SYMB_15 Parameter_declaration { $$ = make_MoreParamDec($1, $3);  }
 ;
 Parameter_declaration : ListDeclaration_specifier { $$ = make_OnlyType($1);  } 
   | ListDeclaration_specifier Declarator { $$ = make_TypeAndParam($1, $2);  }
   | ListDeclaration_specifier Abstract_declarator { $$ = make_Abstract($1, $2);  }
 ;
 ListIdent : _IDENT_ { $$ = make_ListIdent($1, 0);  } 
-  | _IDENT_ _SYMB_14 ListIdent { $$ = make_ListIdent($1, $3);  }
+  | _IDENT_ _SYMB_15 ListIdent { $$ = make_ListIdent($1, $3);  }
 ;
 Initializer : Exp2 { $$ = make_InitExpr($1);  } 
   | _SYMB_0 Initializers _SYMB_1 { $$ = make_InitListOne($2);  }
-  | _SYMB_0 Initializers _SYMB_14 _SYMB_1 { $$ = make_InitListTwo($2);  }
+  | _SYMB_0 Initializers _SYMB_15 _SYMB_1 { $$ = make_InitListTwo($2);  }
 ;
 Initializers : Initializer { $$ = make_AnInit($1);  } 
-  | Initializers _SYMB_14 Initializer { $$ = make_MoreInit($1, $3);  }
+  | Initializers _SYMB_15 Initializer { $$ = make_MoreInit($1, $3);  }
 ;
 Type_name : ListSpec_qual { $$ = make_PlainType($1);  } 
   | ListSpec_qual Abstract_declarator { $$ = make_ExtendedType($1, $2);  }
@@ -1315,15 +1335,15 @@ Abstract_declarator : Pointer { $$ = make_PointerStart($1);  }
   | Dir_abs_dec { $$ = make_Advanced($1);  }
   | Pointer Dir_abs_dec { $$ = make_PointAdvanced($1, $2);  }
 ;
-Dir_abs_dec : _SYMB_16 Abstract_declarator _SYMB_17 { $$ = make_WithinParentes($2);  } 
-  | _SYMB_18 _SYMB_19 { $$ = make_Array();  }
-  | _SYMB_18 Constant_expression _SYMB_19 { $$ = make_InitiatedArray($2);  }
-  | Dir_abs_dec _SYMB_18 _SYMB_19 { $$ = make_UnInitiated($1);  }
-  | Dir_abs_dec _SYMB_18 Constant_expression _SYMB_19 { $$ = make_Initiated($1, $3);  }
-  | _SYMB_16 _SYMB_17 { $$ = make_OldFunction();  }
-  | _SYMB_16 Parameter_type _SYMB_17 { $$ = make_NewFunction($2);  }
-  | Dir_abs_dec _SYMB_16 _SYMB_17 { $$ = make_OldFuncExpr($1);  }
-  | Dir_abs_dec _SYMB_16 Parameter_type _SYMB_17 { $$ = make_NewFuncExpr($1, $3);  }
+Dir_abs_dec : _SYMB_17 Abstract_declarator _SYMB_18 { $$ = make_WithinParentes($2);  } 
+  | _SYMB_19 _SYMB_20 { $$ = make_Array();  }
+  | _SYMB_19 Constant_expression _SYMB_20 { $$ = make_InitiatedArray($2);  }
+  | Dir_abs_dec _SYMB_19 _SYMB_20 { $$ = make_UnInitiated($1);  }
+  | Dir_abs_dec _SYMB_19 Constant_expression _SYMB_20 { $$ = make_Initiated($1, $3);  }
+  | _SYMB_17 _SYMB_18 { $$ = make_OldFunction();  }
+  | _SYMB_17 Parameter_type _SYMB_18 { $$ = make_NewFunction($2);  }
+  | Dir_abs_dec _SYMB_17 _SYMB_18 { $$ = make_OldFuncExpr($1);  }
+  | Dir_abs_dec _SYMB_17 Parameter_type _SYMB_18 { $$ = make_NewFuncExpr($1, $3);  }
 ;
 Stm : Labeled_stm { $$ = make_LabelS($1); YY_RESULT_Stm_= $$; } 
   | Compound_stm { $$ = make_CompS($1); YY_RESULT_Stm_= $$; }
@@ -1332,119 +1352,119 @@ Stm : Labeled_stm { $$ = make_LabelS($1); YY_RESULT_Stm_= $$; }
   | Iter_stm { $$ = make_IterS($1); YY_RESULT_Stm_= $$; }
   | Jump_stm { $$ = make_JumpS($1); YY_RESULT_Stm_= $$; }
 ;
-Labeled_stm : _IDENT_ _SYMB_15 Stm { $$ = make_SlabelOne($1, $3);  } 
-  | _SYMB_59 Constant_expression _SYMB_15 Stm { $$ = make_SlabelTwo($2, $4);  }
-  | _SYMB_61 _SYMB_15 Stm { $$ = make_SlabelThree($3);  }
+Labeled_stm : _IDENT_ _SYMB_16 Stm { $$ = make_SlabelOne($1, $3);  } 
+  | _SYMB_60 Constant_expression _SYMB_16 Stm { $$ = make_SlabelTwo($2, $4);  }
+  | _SYMB_62 _SYMB_16 Stm { $$ = make_SlabelThree($3);  }
 ;
 Compound_stm : _SYMB_0 _SYMB_1 { $$ = make_ScompOne();  } 
   | _SYMB_0 ListStm _SYMB_1 { $$ = make_ScompTwo($2);  }
   | _SYMB_0 ListDec _SYMB_1 { $$ = make_ScompThree($2);  }
   | _SYMB_0 ListDec ListStm _SYMB_1 { $$ = make_ScompFour($2, $3);  }
 ;
-Expression_stm : _SYMB_2 { $$ = make_SexprOne();  } 
-  | Exp _SYMB_2 { $$ = make_SexprTwo($1);  }
+Expression_stm : _SYMB_3 { $$ = make_SexprOne();  } 
+  | Exp _SYMB_3 { $$ = make_SexprTwo($1);  }
 ;
-Selection_stm : _SYMB_69 _SYMB_16 Exp _SYMB_17 Stm { $$ = make_SselOne($3, $5);  } 
-  | _SYMB_69 _SYMB_16 Exp _SYMB_17 Stm _SYMB_64 Stm { $$ = make_SselTwo($3, $5, $7);  }
-  | _SYMB_79 _SYMB_16 Exp _SYMB_17 Stm { $$ = make_SselThree($3, $5);  }
+Selection_stm : _SYMB_70 _SYMB_17 Exp _SYMB_18 Stm { $$ = make_SselOne($3, $5);  } 
+  | _SYMB_70 _SYMB_17 Exp _SYMB_18 Stm _SYMB_65 Stm { $$ = make_SselTwo($3, $5, $7);  }
+  | _SYMB_80 _SYMB_17 Exp _SYMB_18 Stm { $$ = make_SselThree($3, $5);  }
 ;
-Iter_stm : _SYMB_83 _SYMB_16 Exp _SYMB_17 Stm { $$ = make_SiterOne($3, $5);  } 
-  | _SYMB_62 Stm _SYMB_83 _SYMB_16 Exp _SYMB_17 _SYMB_2 { $$ = make_SiterTwo($2, $5);  }
-  | _SYMB_67 _SYMB_16 Expression_stm Expression_stm _SYMB_17 Stm { $$ = make_SiterThree($3, $4, $6);  }
-  | _SYMB_67 _SYMB_16 Expression_stm Expression_stm Exp _SYMB_17 Stm { $$ = make_SiterFour($3, $4, $5, $7);  }
+Iter_stm : _SYMB_84 _SYMB_17 Exp _SYMB_18 Stm { $$ = make_SiterOne($3, $5);  } 
+  | _SYMB_63 Stm _SYMB_84 _SYMB_17 Exp _SYMB_18 _SYMB_3 { $$ = make_SiterTwo($2, $5);  }
+  | _SYMB_68 _SYMB_17 Expression_stm Expression_stm _SYMB_18 Stm { $$ = make_SiterThree($3, $4, $6);  }
+  | _SYMB_68 _SYMB_17 Expression_stm Expression_stm Exp _SYMB_18 Stm { $$ = make_SiterFour($3, $4, $5, $7);  }
 ;
 ListStm : Stm { $$ = make_ListStm($1, 0);  } 
   | Stm ListStm { $$ = make_ListStm($1, $2);  }
 ;
-Exp : Exp _SYMB_14 Exp2 { $$ = make_Ecomma($1, $3); YY_RESULT_Exp_= $$; } 
+Exp : Exp _SYMB_15 Exp2 { $$ = make_Ecomma($1, $3); YY_RESULT_Exp_= $$; } 
   | Exp2 { $$ = $1; YY_RESULT_Exp_= $$; }
 ;
-Exp3 : Exp4 _SYMB_22 Exp _SYMB_15 Exp3 { $$ = make_Econdition($1, $3, $5);  } 
+Exp3 : Exp4 _SYMB_23 Exp _SYMB_16 Exp3 { $$ = make_Econdition($1, $3, $5);  } 
   | Exp4 { $$ = $1;  }
 ;
-Exp4 : Exp4 _SYMB_23 Exp5 { $$ = make_Elor($1, $3);  } 
+Exp4 : Exp4 _SYMB_24 Exp5 { $$ = make_Elor($1, $3);  } 
   | Exp5 { $$ = $1;  }
 ;
-Exp5 : Exp5 _SYMB_24 Exp6 { $$ = make_Eland($1, $3);  } 
+Exp5 : Exp5 _SYMB_25 Exp6 { $$ = make_Eland($1, $3);  } 
   | Exp6 { $$ = $1;  }
 ;
-Exp6 : Exp6 _SYMB_25 Exp7 { $$ = make_Ebitor($1, $3);  } 
+Exp6 : Exp6 _SYMB_26 Exp7 { $$ = make_Ebitor($1, $3);  } 
   | Exp7 { $$ = $1;  }
 ;
-Exp7 : Exp7 _SYMB_26 Exp8 { $$ = make_Ebitexor($1, $3);  } 
+Exp7 : Exp7 _SYMB_27 Exp8 { $$ = make_Ebitexor($1, $3);  } 
   | Exp8 { $$ = $1;  }
 ;
-Exp8 : Exp8 _SYMB_27 Exp9 { $$ = make_Ebitand($1, $3);  } 
+Exp8 : Exp8 _SYMB_28 Exp9 { $$ = make_Ebitand($1, $3);  } 
   | Exp9 { $$ = $1;  }
 ;
-Exp9 : Exp9 _SYMB_28 Exp10 { $$ = make_Eeq($1, $3);  } 
-  | Exp9 _SYMB_29 Exp10 { $$ = make_Eneq($1, $3);  }
+Exp9 : Exp9 _SYMB_29 Exp10 { $$ = make_Eeq($1, $3);  } 
+  | Exp9 _SYMB_30 Exp10 { $$ = make_Eneq($1, $3);  }
   | Exp10 { $$ = $1;  }
 ;
-Exp10 : Exp10 _SYMB_30 Exp11 { $$ = make_Elthen($1, $3);  } 
-  | Exp10 _SYMB_31 Exp11 { $$ = make_Egrthen($1, $3);  }
-  | Exp10 _SYMB_32 Exp11 { $$ = make_Ele($1, $3);  }
-  | Exp10 _SYMB_33 Exp11 { $$ = make_Ege($1, $3);  }
+Exp10 : Exp10 _SYMB_31 Exp11 { $$ = make_Elthen($1, $3);  } 
+  | Exp10 _SYMB_32 Exp11 { $$ = make_Egrthen($1, $3);  }
+  | Exp10 _SYMB_33 Exp11 { $$ = make_Ele($1, $3);  }
+  | Exp10 _SYMB_34 Exp11 { $$ = make_Ege($1, $3);  }
   | Exp11 { $$ = $1;  }
 ;
-Exp11 : Exp11 _SYMB_34 Exp12 { $$ = make_Eleft($1, $3);  } 
-  | Exp11 _SYMB_35 Exp12 { $$ = make_Eright($1, $3);  }
+Exp11 : Exp11 _SYMB_35 Exp12 { $$ = make_Eleft($1, $3);  } 
+  | Exp11 _SYMB_36 Exp12 { $$ = make_Eright($1, $3);  }
   | Exp12 { $$ = $1;  }
 ;
-Exp12 : Exp12 _SYMB_36 Exp13 { $$ = make_Eplus($1, $3);  } 
-  | Exp12 _SYMB_37 Exp13 { $$ = make_Eminus($1, $3);  }
+Exp12 : Exp12 _SYMB_37 Exp13 { $$ = make_Eplus($1, $3);  } 
+  | Exp12 _SYMB_38 Exp13 { $$ = make_Eminus($1, $3);  }
   | Exp13 { $$ = $1;  }
 ;
-Exp13 : Exp13 _SYMB_20 Exp14 { $$ = make_Etimes($1, $3);  } 
-  | Exp13 _SYMB_38 Exp14 { $$ = make_Ediv($1, $3);  }
-  | Exp13 _SYMB_39 Exp14 { $$ = make_Emod($1, $3);  }
+Exp13 : Exp13 _SYMB_21 Exp14 { $$ = make_Etimes($1, $3);  } 
+  | Exp13 _SYMB_39 Exp14 { $$ = make_Ediv($1, $3);  }
+  | Exp13 _SYMB_40 Exp14 { $$ = make_Emod($1, $3);  }
   | Exp14 { $$ = $1;  }
 ;
-Exp14 : _SYMB_16 Type_name _SYMB_17 Exp14 { $$ = make_Etypeconv($2, $4);  } 
+Exp14 : _SYMB_17 Type_name _SYMB_18 Exp14 { $$ = make_Etypeconv($2, $4);  } 
   | Exp15 { $$ = $1;  }
 ;
-Exp15 : _SYMB_40 Exp15 { $$ = make_Epreinc($2);  } 
-  | _SYMB_41 Exp15 { $$ = make_Epredec($2);  }
+Exp15 : _SYMB_41 Exp15 { $$ = make_Epreinc($2);  } 
+  | _SYMB_42 Exp15 { $$ = make_Epredec($2);  }
   | Unary_operator Exp14 { $$ = make_Epreop($1, $2);  }
-  | _SYMB_74 Exp15 { $$ = make_Ebytesexpr($2);  }
-  | _SYMB_74 _SYMB_16 Type_name _SYMB_17 { $$ = make_Ebytestype($3);  }
+  | _SYMB_75 Exp15 { $$ = make_Ebytesexpr($2);  }
+  | _SYMB_75 _SYMB_17 Type_name _SYMB_18 { $$ = make_Ebytestype($3);  }
   | Exp16 { $$ = $1;  }
 ;
-Exp16 : Exp16 _SYMB_18 Exp _SYMB_19 { $$ = make_Earray($1, $3);  } 
-  | Exp16 _SYMB_16 _SYMB_17 { $$ = make_Efunk($1);  }
-  | Exp16 _SYMB_16 ListExp2 _SYMB_17 { $$ = make_Efunkpar($1, $3);  }
-  | Exp16 _SYMB_42 _IDENT_ { $$ = make_Eselect($1, $3);  }
-  | Exp16 _SYMB_43 _IDENT_ { $$ = make_Epoint($1, $3);  }
-  | Exp16 _SYMB_40 { $$ = make_Epostinc($1);  }
-  | Exp16 _SYMB_41 { $$ = make_Epostdec($1);  }
+Exp16 : Exp16 _SYMB_19 Exp _SYMB_20 { $$ = make_Earray($1, $3);  } 
+  | Exp16 _SYMB_17 _SYMB_18 { $$ = make_Efunk($1);  }
+  | Exp16 _SYMB_17 ListExp2 _SYMB_18 { $$ = make_Efunkpar($1, $3);  }
+  | Exp16 _SYMB_43 _IDENT_ { $$ = make_Eselect($1, $3);  }
+  | Exp16 _SYMB_44 _IDENT_ { $$ = make_Epoint($1, $3);  }
+  | Exp16 _SYMB_41 { $$ = make_Epostinc($1);  }
+  | Exp16 _SYMB_42 { $$ = make_Epostdec($1);  }
   | Exp17 { $$ = $1;  }
 ;
 Exp17 : _IDENT_ { $$ = make_Evar($1);  } 
   | Constant { $$ = make_Econst($1);  }
   | _STRING_ { $$ = make_Estring($1);  }
-  | _SYMB_16 Exp _SYMB_17 { $$ = $2;  }
+  | _SYMB_17 Exp _SYMB_18 { $$ = $2;  }
 ;
 Constant : _DOUBLE_ { $$ = make_Efloat($1);  } 
   | _CHAR_ { $$ = make_Echar($1);  }
-  | _SYMB_85 { $$ = make_Eunsigned($1);  }
-  | _SYMB_86 { $$ = make_Elong($1);  }
-  | _SYMB_87 { $$ = make_Eunsignlong($1);  }
-  | _SYMB_88 { $$ = make_Ehexadec($1);  }
-  | _SYMB_89 { $$ = make_Ehexaunsign($1);  }
-  | _SYMB_90 { $$ = make_Ehexalong($1);  }
-  | _SYMB_91 { $$ = make_Ehexaunslong($1);  }
-  | _SYMB_92 { $$ = make_Eoctal($1);  }
-  | _SYMB_93 { $$ = make_Eoctalunsign($1);  }
-  | _SYMB_94 { $$ = make_Eoctallong($1);  }
-  | _SYMB_95 { $$ = make_Eoctalunslong($1);  }
-  | _SYMB_96 { $$ = make_Ecdouble($1);  }
-  | _SYMB_97 { $$ = make_Ecfloat($1);  }
-  | _SYMB_98 { $$ = make_Eclongdouble($1);  }
+  | _SYMB_86 { $$ = make_Eunsigned($1);  }
+  | _SYMB_87 { $$ = make_Elong($1);  }
+  | _SYMB_88 { $$ = make_Eunsignlong($1);  }
+  | _SYMB_89 { $$ = make_Ehexadec($1);  }
+  | _SYMB_90 { $$ = make_Ehexaunsign($1);  }
+  | _SYMB_91 { $$ = make_Ehexalong($1);  }
+  | _SYMB_92 { $$ = make_Ehexaunslong($1);  }
+  | _SYMB_93 { $$ = make_Eoctal($1);  }
+  | _SYMB_94 { $$ = make_Eoctalunsign($1);  }
+  | _SYMB_95 { $$ = make_Eoctallong($1);  }
+  | _SYMB_96 { $$ = make_Eoctalunslong($1);  }
+  | _SYMB_97 { $$ = make_Ecdouble($1);  }
+  | _SYMB_98 { $$ = make_Ecfloat($1);  }
+  | _SYMB_99 { $$ = make_Eclongdouble($1);  }
   | _INTEGER_ { $$ = make_Eint($1);  }
 ;
 Constant_expression : Exp3 { $$ = make_Especial($1);  } 
 ;
 ListExp2 : Exp2 { $$ = make_ListExp($1, 0);  } 
-  | Exp2 _SYMB_14 ListExp2 { $$ = make_ListExp($1, $3);  }
+  | Exp2 _SYMB_15 ListExp2 { $$ = make_ListExp($1, $3);  }
 ;
 

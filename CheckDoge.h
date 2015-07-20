@@ -1,15 +1,12 @@
-#ifndef DOGE_HEADER_H_
-# define DOGE_HEADER_H_
+/* This is a copy of the original Skeleton.h */
+
+#ifndef SKELETON_HEADER
+#define SKELETON_HEADER
 
 #include "Absyn.h"
 
-#ifdef __GNUC__
-# define UNUSED __attribute__ ((unused))
-#else
-# define UNUSED
-#endif
-
 void visitExternal_declaration(External_declaration p);
+void visitClassName(ClassName p);
 void visitExtends(Extends p);
 void visitJump_stm(Jump_stm p);
 void visitType_specifier(Type_specifier p);
@@ -82,4 +79,4 @@ void visitDouble(Double d);
 void visitChar(Char c);
 void visitString(String s);
 
-#endif /* !DOGE_HEADER_H_ */
+#endif

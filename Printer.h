@@ -22,6 +22,7 @@ char* printStm(Stm p);
 char* printExp(Exp p);
 
 void ppExternal_declaration(External_declaration p, int i);
+void ppClassName(ClassName p, int i);
 void ppExtends(Extends p, int i);
 void ppJump_stm(Jump_stm p, int i);
 void ppType_specifier(Type_specifier p, int i);
@@ -79,6 +80,7 @@ char* showStm(Stm p);
 char* showExp(Exp p);
 
 void shExternal_declaration(External_declaration p);
+void shClassName(ClassName p);
 void shExtends(Extends p);
 void shJump_stm(Jump_stm p);
 void shType_specifier(Type_specifier p);
@@ -175,3 +177,4 @@ void bufReset(void);
 void resizeBuffer(void);
 
 #endif
+

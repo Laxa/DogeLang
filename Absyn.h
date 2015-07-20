@@ -53,6 +53,8 @@ struct ListExp_;
 typedef struct ListExp_ *ListExp;
 struct External_declaration_;
 typedef struct External_declaration_ *External_declaration;
+struct ClassName_;
+typedef struct ClassName_ *ClassName;
 struct Extends_;
 typedef struct Extends_ *Extends;
 struct Jump_stm_;
@@ -140,28 +142,41 @@ struct External_declaration_
   enum { is_Class, is_Namespace, is_Afunc, is_Global } kind;
   union
   {
-    struct { Extends extends_; Ident ident_; ListExternal_declaration listexternal_declaration_; } class_;
-    struct { Ident ident_; } namespace_;
+    struct { ClassName classname_; Extends extends_; ListExternal_declaration listexternal_declaration_; } class_;
+    struct { Ident ident_; ListExternal_declaration listexternal_declaration_; } namespace_;
     struct { Function_def function_def_; } afunc_;
     struct { Dec dec_; } global_;
   } u;
 };
 
-External_declaration make_Class(Ident p0, Extends p1, ListExternal_declaration p2);
-External_declaration make_Namespace(Ident p0);
+External_declaration make_Class(ClassName p0, Extends p1, ListExternal_declaration p2);
+External_declaration make_Namespace(Ident p0, ListExternal_declaration p1);
 External_declaration make_Afunc(Function_def p0);
 External_declaration make_Global(Dec p0);
+
+struct ClassName_
+{
+  enum { is_ClassWithNamespace, is_ClassWithoutNamespace } kind;
+  union
+  {
+    struct { Ident ident_1, ident_2; } classwithnamespace_;
+    struct { Ident ident_; } classwithoutnamespace_;
+  } u;
+};
+
+ClassName make_ClassWithNamespace(Ident p0, Ident p1);
+ClassName make_ClassWithoutNamespace(Ident p0);
 
 struct Extends_
 {
   enum { is_Inheritance, is_NoInheritance } kind;
   union
   {
-    struct { Ident ident_; } inheritance_;
+    struct { ClassName classname_; } inheritance_;
   } u;
 };
 
-Extends make_Inheritance(Ident p0);
+Extends make_Inheritance(ClassName p0);
 Extends make_NoInheritance();
 
 struct Jump_stm_
@@ -294,7 +309,7 @@ struct Exp_
   enum { is_InitClass, is_DestroyClass, is_Ecomma, is_Eassign, is_Econdition, is_Elor, is_Eland, is_Ebitor, is_Ebitexor, is_Ebitand, is_Eeq, is_Eneq, is_Elthen, is_Egrthen, is_Ele, is_Ege, is_Eleft, is_Eright, is_Eplus, is_Eminus, is_Etimes, is_Ediv, is_Emod, is_Etypeconv, is_Epreinc, is_Epredec, is_Epreop, is_Ebytesexpr, is_Ebytestype, is_Earray, is_Efunk, is_Efunkpar, is_Eselect, is_Epoint, is_Epostinc, is_Epostdec, is_Evar, is_Econst, is_Estring } kind;
   union
   {
-    struct { Assignment_op assignment_op_; Exp exp_; Ident ident_; } initclass_;
+    struct { Assignment_op assignment_op_; ClassName classname_; Exp exp_; } initclass_;
     struct { Ident ident_; } destroyclass_;
     struct { Exp exp_1, exp_2; } ecomma_;
     struct { Assignment_op assignment_op_; Exp exp_1, exp_2; } eassign_;
@@ -336,7 +351,7 @@ struct Exp_
   } u;
 };
 
-Exp make_InitClass(Exp p0, Assignment_op p1, Ident p2);
+Exp make_InitClass(Exp p0, Assignment_op p1, ClassName p2);
 Exp make_DestroyClass(Ident p0);
 Exp make_Ecomma(Exp p0, Exp p1);
 Exp make_Eassign(Exp p0, Assignment_op p1, Exp p2);
@@ -381,16 +396,16 @@ struct Declaration_specifier_
   enum { is_DecClass, is_DecClassNoPoiter, is_Type, is_Storage, is_SpecProp } kind;
   union
   {
-    struct { Ident ident_1, ident_2; Pointer pointer_; } decclass_;
-    struct { Ident ident_1, ident_2; } decclassnopoiter_;
+    struct { ClassName classname_; Ident ident_; Pointer pointer_; } decclass_;
+    struct { ClassName classname_; Ident ident_; } decclassnopoiter_;
     struct { Type_specifier type_specifier_; } type_;
     struct { Storage_class_specifier storage_class_specifier_; } storage_;
     struct { Type_qualifier type_qualifier_; } specprop_;
   } u;
 };
 
-Declaration_specifier make_DecClass(Ident p0, Pointer p1, Ident p2);
-Declaration_specifier make_DecClassNoPoiter(Ident p0, Ident p1);
+Declaration_specifier make_DecClass(ClassName p0, Pointer p1, Ident p2);
+Declaration_specifier make_DecClassNoPoiter(ClassName p0, Ident p1);
 Declaration_specifier make_Type(Type_specifier p0);
 Declaration_specifier make_Storage(Storage_class_specifier p0);
 Declaration_specifier make_SpecProp(Type_qualifier p0);

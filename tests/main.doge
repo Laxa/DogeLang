@@ -1,38 +1,39 @@
-amaze test;
-
-such int main() {
-
-  such class1 *test;
-  such int attribute1;
-
-  attribute1 iz 9;
-  test iz new class1;
-
-  stahp test;
-
-  wow 1;
-}
-
-doge class1 very class2 {
-  such int attribute1;
-  such char attribute2;
-
-
-
-  such int methode1(such int a , such int b)
+amaze test
+{
+  such int main()
   {
-    this->attribute1 iz 2;
-    this->attribute2 iz 'a';
-    if (not a)
-    wow b;
+    such class1 *test;
+    such int attribute1;
+
+    attribute1 iz 9;
+    test iz new class1;
+
+    stahp test;
+
+    wow 1;
   }
-}
 
-doge class2 {
-  such float attribute3;
-
-  such int methode2(such int a , such int b)
+  doge class1 very class2
   {
-    this->attribute3 iz 0.5;
+    such int attribute1;
+    such char attribute2;
+
+    such int methode1(such int a , such int b)
+    {
+      this->attribute1 iz 2;
+      this->attribute2 iz 'a';
+      if (not a)
+        wow b;
+    }
+  }
+
+  doge class2
+  {
+    such float attribute3;
+
+    such int methode2(such int a , such int b)
+    {
+      this->attribute3 iz 0.5;
+    }
   }
 }

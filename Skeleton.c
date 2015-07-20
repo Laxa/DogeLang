@@ -14,12 +14,13 @@ void visitExternal_declaration(External_declaration _p_)
   {
   case is_Class:
     /* Code for Class Goes Here */
-    visitIdent(_p_->u.class_.ident_);
+    visitClassName(_p_->u.class_.classname_);
     visitExtends(_p_->u.class_.extends_);
     visitListExternal_declaration(_p_->u.class_.listexternal_declaration_);
     break;  case is_Namespace:
     /* Code for Namespace Goes Here */
     visitIdent(_p_->u.namespace_.ident_);
+    visitListExternal_declaration(_p_->u.namespace_.listexternal_declaration_);
     break;  case is_Afunc:
     /* Code for Afunc Goes Here */
     visitFunction_def(_p_->u.afunc_.function_def_);
@@ -33,13 +34,31 @@ void visitExternal_declaration(External_declaration _p_)
   }
 }
 
+void visitClassName(ClassName _p_)
+{
+  switch(_p_->kind)
+  {
+  case is_ClassWithNamespace:
+    /* Code for ClassWithNamespace Goes Here */
+    visitIdent(_p_->u.classwithnamespace_.ident_1);
+    visitIdent(_p_->u.classwithnamespace_.ident_2);
+    break;  case is_ClassWithoutNamespace:
+    /* Code for ClassWithoutNamespace Goes Here */
+    visitIdent(_p_->u.classwithoutnamespace_.ident_);
+    break;
+  default:
+    fprintf(stderr, "Error: bad kind field when printing ClassName!\n");
+    exit(1);
+  }
+}
+
 void visitExtends(Extends _p_)
 {
   switch(_p_->kind)
   {
   case is_Inheritance:
     /* Code for Inheritance Goes Here */
-    visitIdent(_p_->u.inheritance_.ident_);
+    visitClassName(_p_->u.inheritance_.classname_);
     break;  case is_NoInheritance:
     /* Code for NoInheritance Goes Here */
     break;
@@ -245,7 +264,7 @@ void visitExp(Exp _p_)
     /* Code for InitClass Goes Here */
     visitExp(_p_->u.initclass_.exp_);
     visitAssignment_op(_p_->u.initclass_.assignment_op_);
-    visitIdent(_p_->u.initclass_.ident_);
+    visitClassName(_p_->u.initclass_.classname_);
     break;  case is_DestroyClass:
     /* Code for DestroyClass Goes Here */
     visitIdent(_p_->u.destroyclass_.ident_);
@@ -402,13 +421,13 @@ void visitDeclaration_specifier(Declaration_specifier _p_)
   {
   case is_DecClass:
     /* Code for DecClass Goes Here */
-    visitIdent(_p_->u.decclass_.ident_1);
+    visitClassName(_p_->u.decclass_.classname_);
     visitPointer(_p_->u.decclass_.pointer_);
-    visitIdent(_p_->u.decclass_.ident_2);
+    visitIdent(_p_->u.decclass_.ident_);
     break;  case is_DecClassNoPoiter:
     /* Code for DecClassNoPoiter Goes Here */
-    visitIdent(_p_->u.decclassnopoiter_.ident_1);
-    visitIdent(_p_->u.decclassnopoiter_.ident_2);
+    visitClassName(_p_->u.decclassnopoiter_.classname_);
+    visitIdent(_p_->u.decclassnopoiter_.ident_);
     break;  case is_Type:
     /* Code for Type Goes Here */
     visitType_specifier(_p_->u.type_.type_specifier_);

@@ -1,6 +1,9 @@
+/* This is a copy of the original Skeleton.c */
+
 #include <stdlib.h>
 #include <stdio.h>
 
+#include "ChainedList.h"
 #include "CheckDoge.h"
 
 void visitExternal_declaration(External_declaration _p_)
@@ -9,12 +12,13 @@ void visitExternal_declaration(External_declaration _p_)
   {
   case is_Class:
     /* Code for Class Goes Here */
-    visitIdent(_p_->u.class_.ident_);
+    visitClassName(_p_->u.class_.classname_);
     visitExtends(_p_->u.class_.extends_);
     visitListExternal_declaration(_p_->u.class_.listexternal_declaration_);
     break;  case is_Namespace:
     /* Code for Namespace Goes Here */
     visitIdent(_p_->u.namespace_.ident_);
+    visitListExternal_declaration(_p_->u.namespace_.listexternal_declaration_);
     break;  case is_Afunc:
     /* Code for Afunc Goes Here */
     visitFunction_def(_p_->u.afunc_.function_def_);
@@ -28,13 +32,31 @@ void visitExternal_declaration(External_declaration _p_)
   }
 }
 
+void visitClassName(ClassName _p_)
+{
+  switch(_p_->kind)
+  {
+  case is_ClassWithNamespace:
+    /* Code for ClassWithNamespace Goes Here */
+    visitIdent(_p_->u.classwithnamespace_.ident_1);
+    visitIdent(_p_->u.classwithnamespace_.ident_2);
+    break;  case is_ClassWithoutNamespace:
+    /* Code for ClassWithoutNamespace Goes Here */
+    visitIdent(_p_->u.classwithoutnamespace_.ident_);
+    break;
+  default:
+    fprintf(stderr, "Error: bad kind field when printing ClassName!\n");
+    exit(1);
+  }
+}
+
 void visitExtends(Extends _p_)
 {
   switch(_p_->kind)
   {
   case is_Inheritance:
     /* Code for Inheritance Goes Here */
-    visitIdent(_p_->u.inheritance_.ident_);
+    visitClassName(_p_->u.inheritance_.classname_);
     break;  case is_NoInheritance:
     /* Code for NoInheritance Goes Here */
     break;
@@ -240,7 +262,7 @@ void visitExp(Exp _p_)
     /* Code for InitClass Goes Here */
     visitExp(_p_->u.initclass_.exp_);
     visitAssignment_op(_p_->u.initclass_.assignment_op_);
-    visitIdent(_p_->u.initclass_.ident_);
+    visitClassName(_p_->u.initclass_.classname_);
     break;  case is_DestroyClass:
     /* Code for DestroyClass Goes Here */
     visitIdent(_p_->u.destroyclass_.ident_);
@@ -397,13 +419,13 @@ void visitDeclaration_specifier(Declaration_specifier _p_)
   {
   case is_DecClass:
     /* Code for DecClass Goes Here */
-    visitIdent(_p_->u.decclass_.ident_1);
+    visitClassName(_p_->u.decclass_.classname_);
     visitPointer(_p_->u.decclass_.pointer_);
-    visitIdent(_p_->u.decclass_.ident_2);
+    visitIdent(_p_->u.decclass_.ident_);
     break;  case is_DecClassNoPoiter:
     /* Code for DecClassNoPoiter Goes Here */
-    visitIdent(_p_->u.decclassnopoiter_.ident_1);
-    visitIdent(_p_->u.decclassnopoiter_.ident_2);
+    visitClassName(_p_->u.decclassnopoiter_.classname_);
+    visitIdent(_p_->u.decclassnopoiter_.ident_);
     break;  case is_Type:
     /* Code for Type Goes Here */
     visitType_specifier(_p_->u.type_.type_specifier_);
@@ -1116,7 +1138,7 @@ void visitConstant(Constant _p_)
     visitLong(_p_->u.elong_.long_);
     break;  case is_Eunsignlong:
     /* Code for Eunsignlong Goes Here */
-    /* visitUnsignedLong(_p_->u.eunsignlong_.unsignedlong_); */
+    visitUnsignedLong(_p_->u.eunsignlong_.unsignedlong_);
     break;  case is_Ehexadec:
     /* Code for Ehexadec Goes Here */
     visitHexadecimal(_p_->u.ehexadec_.hexadecimal_);
@@ -1188,92 +1210,74 @@ void visitUnsigned(Unsigned UNUSED p)
 {
   /* Code for Unsigned Goes Here */
 }
-
 void visitLong(Long UNUSED p)
 {
   /* Code for Long Goes Here */
 }
-
 void visitUnsignedLong(UnsignedLong UNUSED p)
 {
   /* Code for UnsignedLong Goes Here */
 }
-
 void visitHexadecimal(Hexadecimal UNUSED p)
 {
   /* Code for Hexadecimal Goes Here */
 }
-
 void visitHexUnsigned(HexUnsigned UNUSED p)
 {
   /* Code for HexUnsigned Goes Here */
 }
-
 void visitHexLong(HexLong UNUSED p)
 {
   /* Code for HexLong Goes Here */
 }
-
 void visitHexUnsLong(HexUnsLong UNUSED p)
 {
   /* Code for HexUnsLong Goes Here */
 }
-
 void visitOctal(Octal UNUSED p)
 {
   /* Code for Octal Goes Here */
 }
-
 void visitOctalUnsigned(OctalUnsigned UNUSED p)
 {
   /* Code for OctalUnsigned Goes Here */
 }
-
 void visitOctalLong(OctalLong UNUSED p)
 {
   /* Code for OctalLong Goes Here */
 }
-
 void visitOctalUnsLong(OctalUnsLong UNUSED p)
 {
   /* Code for OctalUnsLong Goes Here */
 }
-
 void visitCDouble(CDouble UNUSED p)
 {
   /* Code for CDouble Goes Here */
 }
-
 void visitCFloat(CFloat UNUSED p)
 {
   /* Code for CFloat Goes Here */
 }
-
 void visitCLongDouble(CLongDouble UNUSED p)
 {
   /* Code for CLongDouble Goes Here */
 }
-
 void visitIdent(Ident UNUSED i)
 {
   /* Code for Ident Goes Here */
 }
-
 void visitInteger(Integer UNUSED i)
 {
   /* Code for Integer Goes Here */
 }
-
 void visitDouble(Double UNUSED d)
 {
   /* Code for Double Goes Here */
 }
-
 void visitChar(Char UNUSED c)
 {
   /* Code for Char Goes Here */
 }
-
 void visitString(String UNUSED s)
 {
   /* Code for String Goes Here */

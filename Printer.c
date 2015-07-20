@@ -5,89 +5,72 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include "CheckDoge.h"
+#include "ChainedList.h"
 
 #define INDENT_WIDTH 2
-#define MANGLING_START "_ZN"
-#define NAMESPACE_MAX_LENGTH 128
-#define CLASSNAME_MAX_LENGTH 128
 
 int _n_;
 char* buf_;
 int cur_;
 int buf_size;
-char curNameSpace[NAMESPACE_MAX_LENGTH];
-char curClassName[CLASSNAME_MAX_LENGTH];
 
 /* You may wish to change the renderC functions */
 void renderC(Char c)
 {
   if (c == '{')
   {
-    bufAppendC('\n');
-    indent();
-    bufAppendC(c);
-    _n_ = _n_ + INDENT_WIDTH;
-    bufAppendC('\n');
-    indent();
-  }
-  else if (c == '!')
-  {
-    bufAppendC('!');
-  }
-  else if (c == '"')
-  {
-    bufAppendC('"');
+     bufAppendC('\n');
+     indent();
+     bufAppendC(c);
+     _n_ = _n_ + INDENT_WIDTH;
+     bufAppendC('\n');
+     indent();
   }
   else if (c == '(' || c == '[')
-    bufAppendC(c);
+     bufAppendC(c);
   else if (c == ')' || c == ']')
   {
-    backup();
-    bufAppendC(c);
+     backup();
+     bufAppendC(c);
   }
-  else if (c == '*')
-    bufAppendC(c);
   else if (c == '}')
   {
-    int t;
-    _n_ = _n_ - INDENT_WIDTH;
-    for(t=0; t<INDENT_WIDTH; t++) {
-      backup();
-    }
-    bufAppendC(c);
-    bufAppendC('\n');
-    indent();
+     int t;
+     _n_ = _n_ - INDENT_WIDTH;
+     for(t=0; t<INDENT_WIDTH; t++) {
+       backup();
+     }
+     bufAppendC(c);
+     bufAppendC('\n');
+     indent();
   }
   else if (c == ',')
   {
-    backup();
-    bufAppendC(c);
-    bufAppendC(' ');
+     backup();
+     bufAppendC(c);
+     bufAppendC(' ');
   }
   else if (c == ';')
   {
-    backup();
-    bufAppendC(c);
-    bufAppendC('\n');
-    indent();
+     backup();
+     bufAppendC(c);
+     bufAppendC('\n');
+     indent();
   }
   else if (c == 0) return;
   else
   {
-    bufAppendC(' ');
-    bufAppendC(c);
-    bufAppendC(' ');
+     bufAppendC(' ');
+     bufAppendC(c);
+     bufAppendC(' ');
   }
 }
-
-void renderS(String s, int space)
+void renderS(String s)
 {
   if(strlen(s) > 0)
   {
     bufAppendS(s);
-    if (space)
-      bufAppendC(' ');
+    bufAppendC(' ');
   }
 }
 void indent(void)
@@ -111,8 +94,6 @@ char* printProgram(Program p)
 {
   _n_ = 0;
   bufReset();
-  memset(curNameSpace, 0, NAMESPACE_MAX_LENGTH);
-  memset(curClassName, 0, CLASSNAME_MAX_LENGTH);
   ppProgram(p, 0);
   return buf_;
 }
@@ -153,43 +134,39 @@ char* showExp(Exp p)
 }
 void ppExternal_declaration(External_declaration _p_, int _i_)
 {
-  char buf[512];
-
   switch(_p_->kind)
   {
   case is_Class:
     if (_i_ > 0) renderC(_L_PAREN);
-    renderS("struct", 1);
-    strncpy(curClassName, _p_->u.class_.ident_, CLASSNAME_MAX_LENGTH);
-    if (strlen(curNameSpace) > 0)
-      snprintf(buf, 512, "%s_%s", curNameSpace, curClassName);
-    else
-      snprintf(buf, 512, "%s", curClassName);
-    renderS(buf, 1);
+    renderS("doge");
+    ppClassName(_p_->u.class_.classname_, 0);
+    ppExtends(_p_->u.class_.extends_, 0);
     renderC('{');
-    ppListExternal_declaration(_p_->u.class_.listexternal_declaration_, 0); // On doit tout bufferiser au cas ou on herite de notre classe quelque part
+    ppListExternal_declaration(_p_->u.class_.listexternal_declaration_, 0);
     renderC('}');
-    memset(curClassName, 0, CLASSNAME_MAX_LENGTH);
 
     if (_i_ > 0) renderC(_R_PAREN);
     break;
 
   case is_Namespace:
     if (_i_ > 0) renderC(_L_PAREN);
-    /* snprintf(buf, 512, "#include \"%s.h\"\n", _p_->u.namespace_.ident_); */
-    strncpy(curNameSpace, _p_->u.namespace_.ident_, NAMESPACE_MAX_LENGTH);
-    /* memset(curNameSpace, 0, NAMESPACE_MAX_LENGTH); */ // for later when namespace fixed
+    renderS("amaze");
+    ppIdent(_p_->u.namespace_.ident_, 0);
+    renderC('{');
+    ppListExternal_declaration(_p_->u.namespace_.listexternal_declaration_, 0);
+    renderC('}');
+
     if (_i_ > 0) renderC(_R_PAREN);
     break;
 
-  case is_Afunc: // methode de class
+  case is_Afunc:
     if (_i_ > 0) renderC(_L_PAREN);
     ppFunction_def(_p_->u.afunc_.function_def_, 0);
 
     if (_i_ > 0) renderC(_R_PAREN);
     break;
 
-  case is_Global: // attribut si dans namespace + class
+  case is_Global:
     if (_i_ > 0) renderC(_L_PAREN);
     ppDec(_p_->u.global_.dec_, 0);
 
@@ -203,14 +180,41 @@ void ppExternal_declaration(External_declaration _p_, int _i_)
   }
 }
 
+void ppClassName(ClassName _p_, int _i_)
+{
+  switch(_p_->kind)
+  {
+  case is_ClassWithNamespace:
+    if (_i_ > 0) renderC(_L_PAREN);
+    ppIdent(_p_->u.classwithnamespace_.ident_1, 0);
+    renderS("::");
+    ppIdent(_p_->u.classwithnamespace_.ident_2, 0);
+
+    if (_i_ > 0) renderC(_R_PAREN);
+    break;
+
+  case is_ClassWithoutNamespace:
+    if (_i_ > 0) renderC(_L_PAREN);
+    ppIdent(_p_->u.classwithoutnamespace_.ident_, 0);
+
+    if (_i_ > 0) renderC(_R_PAREN);
+    break;
+
+
+  default:
+    fprintf(stderr, "Error: bad kind field when printing ClassName!\n");
+    exit(1);
+  }
+}
+
 void ppExtends(Extends _p_, int _i_)
 {
   switch(_p_->kind)
   {
   case is_Inheritance:
     if (_i_ > 0) renderC(_L_PAREN);
-    renderS("very", 1);
-    ppIdent(_p_->u.inheritance_.ident_, 1);
+    renderS("very");
+    ppClassName(_p_->u.inheritance_.classname_, 0);
 
     if (_i_ > 0) renderC(_R_PAREN);
     break;
@@ -234,7 +238,7 @@ void ppJump_stm(Jump_stm _p_, int _i_)
   {
   case is_SjumpFour:
     if (_i_ > 0) renderC(_L_PAREN);
-    renderS("return", 0);
+    renderS("wow");
     renderC(';');
 
     if (_i_ > 0) renderC(_R_PAREN);
@@ -242,7 +246,7 @@ void ppJump_stm(Jump_stm _p_, int _i_)
 
   case is_SjumpFive:
     if (_i_ > 0) renderC(_L_PAREN);
-    renderS("return", 1);
+    renderS("wow");
     ppExp(_p_->u.sjumpfive_.exp_, 0);
     renderC(';');
 
@@ -251,8 +255,8 @@ void ppJump_stm(Jump_stm _p_, int _i_)
 
   case is_SjumpOne:
     if (_i_ > 0) renderC(_L_PAREN);
-    renderS("goto", 1);
-    ppIdent(_p_->u.sjumpone_.ident_, 1);
+    renderS("goto");
+    ppIdent(_p_->u.sjumpone_.ident_, 0);
     renderC(';');
 
     if (_i_ > 0) renderC(_R_PAREN);
@@ -260,7 +264,7 @@ void ppJump_stm(Jump_stm _p_, int _i_)
 
   case is_SjumpTwo:
     if (_i_ > 0) renderC(_L_PAREN);
-    renderS("continue", 0);
+    renderS("continue");
     renderC(';');
 
     if (_i_ > 0) renderC(_R_PAREN);
@@ -268,7 +272,7 @@ void ppJump_stm(Jump_stm _p_, int _i_)
 
   case is_SjumpThree:
     if (_i_ > 0) renderC(_L_PAREN);
-    renderS("break", 0);
+    renderS("break");
     renderC(';');
 
     if (_i_ > 0) renderC(_R_PAREN);
@@ -287,63 +291,63 @@ void ppType_specifier(Type_specifier _p_, int _i_)
   {
   case is_Tvoid:
     if (_i_ > 0) renderC(_L_PAREN);
-    renderS("void", 1);
+    renderS("such void");
 
     if (_i_ > 0) renderC(_R_PAREN);
     break;
 
   case is_Tchar:
     if (_i_ > 0) renderC(_L_PAREN);
-    renderS("char", 1);
+    renderS("such char");
 
     if (_i_ > 0) renderC(_R_PAREN);
     break;
 
   case is_Tshort:
     if (_i_ > 0) renderC(_L_PAREN);
-    renderS("short", 1);
+    renderS("such short");
 
     if (_i_ > 0) renderC(_R_PAREN);
     break;
 
   case is_Tint:
     if (_i_ > 0) renderC(_L_PAREN);
-    renderS("int", 1);
+    renderS("such int");
 
     if (_i_ > 0) renderC(_R_PAREN);
     break;
 
   case is_Tlong:
     if (_i_ > 0) renderC(_L_PAREN);
-    renderS("long", 1);
+    renderS("such long");
 
     if (_i_ > 0) renderC(_R_PAREN);
     break;
 
   case is_Tfloat:
     if (_i_ > 0) renderC(_L_PAREN);
-    renderS("float", 1);
+    renderS("such float");
 
     if (_i_ > 0) renderC(_R_PAREN);
     break;
 
   case is_Tdouble:
     if (_i_ > 0) renderC(_L_PAREN);
-    renderS("double", 1);
+    renderS("such double");
 
     if (_i_ > 0) renderC(_R_PAREN);
     break;
 
   case is_Tsigned:
     if (_i_ > 0) renderC(_L_PAREN);
-    renderS("signed", 1);
+    renderS("such signed");
 
     if (_i_ > 0) renderC(_R_PAREN);
     break;
 
   case is_Tunsigned:
     if (_i_ > 0) renderC(_L_PAREN);
-    renderS("unsigned", 1);
+    renderS("such unsigned");
 
     if (_i_ > 0) renderC(_R_PAREN);
     break;
@@ -364,7 +368,7 @@ void ppType_specifier(Type_specifier _p_, int _i_)
 
   case is_Tname:
     if (_i_ > 0) renderC(_L_PAREN);
-    renderS("Typedef_name", 1);
+    renderS("Typedef_name");
 
     if (_i_ > 0) renderC(_R_PAREN);
     break;
@@ -382,35 +386,35 @@ void ppStorage_class_specifier(Storage_class_specifier _p_, int _i_)
   {
   case is_MyType:
     if (_i_ > 0) renderC(_L_PAREN);
-    renderS("typedef", 1);
+    renderS("such typedef");
 
     if (_i_ > 0) renderC(_R_PAREN);
     break;
 
   case is_GlobalPrograms:
     if (_i_ > 0) renderC(_L_PAREN);
-    renderS("extern", 1);
+    renderS("extern");
 
     if (_i_ > 0) renderC(_R_PAREN);
     break;
 
   case is_LocalProgram:
     if (_i_ > 0) renderC(_L_PAREN);
-    renderS("static", 1);
+    renderS("static");
 
     if (_i_ > 0) renderC(_R_PAREN);
     break;
 
   case is_LocalBlock:
     if (_i_ > 0) renderC(_L_PAREN);
-    renderS("auto", 1);
+    renderS("auto");
 
     if (_i_ > 0) renderC(_R_PAREN);
     break;
 
   case is_LocalReg:
     if (_i_ > 0) renderC(_L_PAREN);
-    renderS("register", 1);
+    renderS("register");
 
     if (_i_ > 0) renderC(_R_PAREN);
     break;
@@ -428,14 +432,14 @@ void ppType_qualifier(Type_qualifier _p_, int _i_)
   {
   case is_Const:
     if (_i_ > 0) renderC(_L_PAREN);
-    renderS("const", 1);
+    renderS("such const");
 
     if (_i_ > 0) renderC(_R_PAREN);
     break;
 
   case is_NoOptim:
     if (_i_ > 0) renderC(_L_PAREN);
-    renderS("volatile", 1);
+    renderS("volatile");
 
     if (_i_ > 0) renderC(_R_PAREN);
     break;
@@ -453,7 +457,8 @@ void ppUnary_operator(Unary_operator _p_, int _i_)
   {
   case is_Logicalneg:
     if (_i_ > 0) renderC(_L_PAREN);
-    renderC('!');
+    renderS("not");
+
     if (_i_ > 0) renderC(_R_PAREN);
     break;
 
@@ -505,77 +510,77 @@ void ppAssignment_op(Assignment_op _p_, int _i_)
   {
   case is_Assign:
     if (_i_ > 0) renderC(_L_PAREN);
-    renderS("=", 1);
+    renderS("iz");
 
     if (_i_ > 0) renderC(_R_PAREN);
     break;
 
   case is_AssignMul:
     if (_i_ > 0) renderC(_L_PAREN);
-    renderS("*=", 1);
+    renderS("*=");
 
     if (_i_ > 0) renderC(_R_PAREN);
     break;
 
   case is_AssignDiv:
     if (_i_ > 0) renderC(_L_PAREN);
-    renderS("/=", 1);
+    renderS("/=");
 
     if (_i_ > 0) renderC(_R_PAREN);
     break;
 
   case is_AssignMod:
     if (_i_ > 0) renderC(_L_PAREN);
-    renderS("%=", 1);
+    renderS("%=");
 
     if (_i_ > 0) renderC(_R_PAREN);
     break;
 
   case is_AssignAdd:
     if (_i_ > 0) renderC(_L_PAREN);
-    renderS("+=", 1);
+    renderS("+=");
 
     if (_i_ > 0) renderC(_R_PAREN);
     break;
 
   case is_AssignSub:
     if (_i_ > 0) renderC(_L_PAREN);
-    renderS("-=", 1);
+    renderS("-=");
 
     if (_i_ > 0) renderC(_R_PAREN);
     break;
 
   case is_AssignLeft:
     if (_i_ > 0) renderC(_L_PAREN);
-    renderS("<<=", 1);
+    renderS("<<=");
 
     if (_i_ > 0) renderC(_R_PAREN);
     break;
 
   case is_AssignRight:
     if (_i_ > 0) renderC(_L_PAREN);
-    renderS(">>=", 1);
+    renderS(">>=");
 
     if (_i_ > 0) renderC(_R_PAREN);
     break;
 
   case is_AssignAnd:
     if (_i_ > 0) renderC(_L_PAREN);
-    renderS("&=", 1);
+    renderS("&=");
 
     if (_i_ > 0) renderC(_R_PAREN);
     break;
 
   case is_AssignXor:
     if (_i_ > 0) renderC(_L_PAREN);
-    renderS("^=", 1);
+    renderS("^=");
 
     if (_i_ > 0) renderC(_R_PAREN);
     break;
 
   case is_AssignOr:
     if (_i_ > 0) renderC(_L_PAREN);
-    renderS("|=", 1);
+    renderS("|=");
 
     if (_i_ > 0) renderC(_R_PAREN);
     break;
@@ -594,7 +599,7 @@ void ppInit_declarator(Init_declarator _p_, int _i_)
   case is_InitDecl:
     if (_i_ > 0) renderC(_L_PAREN);
     ppDeclarator(_p_->u.initdecl_.declarator_, 0);
-    renderS("iz", 1);
+    renderS("iz");
     ppInitializer(_p_->u.initdecl_.initializer_, 0);
 
     if (_i_ > 0) renderC(_R_PAREN);
@@ -620,8 +625,8 @@ void ppEnumerator(Enumerator _p_, int _i_)
   {
   case is_EnumInit:
     if (_i_ > 0) renderC(_L_PAREN);
-    ppIdent(_p_->u.enuminit_.ident_, 1);
-    renderS("iz", 1);
+    ppIdent(_p_->u.enuminit_.ident_, 0);
+    renderS("iz");
     ppConstant_expression(_p_->u.enuminit_.constant_expression_, 0);
 
     if (_i_ > 0) renderC(_R_PAREN);
@@ -629,7 +634,7 @@ void ppEnumerator(Enumerator _p_, int _i_)
 
   case is_Plain:
     if (_i_ > 0) renderC(_L_PAREN);
-    ppIdent(_p_->u.plain_.ident_, 1);
+    ppIdent(_p_->u.plain_.ident_, 0);
 
     if (_i_ > 0) renderC(_R_PAREN);
     break;
@@ -643,23 +648,23 @@ void ppEnumerator(Enumerator _p_, int _i_)
 
 void ppExp(Exp _p_, int _i_)
 {
-  char buf[512];
-
   switch(_p_->kind)
   {
   case is_InitClass:
     if (_i_ > 2) renderC(_L_PAREN);
     ppExp(_p_->u.initclass_.exp_, 15);
     ppAssignment_op(_p_->u.initclass_.assignment_op_, 0);
-    snprintf(buf, 512, "malloc(sizeof(%s))", _p_->u.initclass_.ident_); // we need a table with class/namespaces
-    renderS(buf, 1);
+    renderS("new");
+    ppClassName(_p_->u.initclass_.classname_, 0);
+
     if (_i_ > 2) renderC(_R_PAREN);
     break;
 
   case is_DestroyClass:
     if (_i_ > 2) renderC(_L_PAREN);
-    snprintf(buf, 512, "free(%s)", _p_->u.destroyclass_.ident_); // same than above comment
-    renderS(buf, 1);
+    renderS("stahp");
+    ppIdent(_p_->u.destroyclass_.ident_, 0);
+
     if (_i_ > 2) renderC(_R_PAREN);
     break;
 
@@ -695,7 +700,7 @@ void ppExp(Exp _p_, int _i_)
   case is_Elor:
     if (_i_ > 4) renderC(_L_PAREN);
     ppExp(_p_->u.elor_.exp_1, 4);
-    renderS("||", 1);
+    renderS("||");
     ppExp(_p_->u.elor_.exp_2, 5);
 
     if (_i_ > 4) renderC(_R_PAREN);
@@ -704,7 +709,7 @@ void ppExp(Exp _p_, int _i_)
   case is_Eland:
     if (_i_ > 5) renderC(_L_PAREN);
     ppExp(_p_->u.eland_.exp_1, 5);
-    renderS("&&", 1);
+    renderS("&&");
     ppExp(_p_->u.eland_.exp_2, 6);
 
     if (_i_ > 5) renderC(_R_PAREN);
@@ -740,7 +745,7 @@ void ppExp(Exp _p_, int _i_)
   case is_Eeq:
     if (_i_ > 9) renderC(_L_PAREN);
     ppExp(_p_->u.eeq_.exp_1, 9);
-    renderS("==", 1);
+    renderS("==");
     ppExp(_p_->u.eeq_.exp_2, 10);
 
     if (_i_ > 9) renderC(_R_PAREN);
@@ -749,7 +754,7 @@ void ppExp(Exp _p_, int _i_)
   case is_Eneq:
     if (_i_ > 9) renderC(_L_PAREN);
     ppExp(_p_->u.eneq_.exp_1, 9);
-    renderS("!=", 1);
+    renderS("!=");
     ppExp(_p_->u.eneq_.exp_2, 10);
 
     if (_i_ > 9) renderC(_R_PAREN);
@@ -776,7 +781,7 @@ void ppExp(Exp _p_, int _i_)
   case is_Ele:
     if (_i_ > 10) renderC(_L_PAREN);
     ppExp(_p_->u.ele_.exp_1, 10);
-    renderS("<=", 1);
+    renderS("<=");
     ppExp(_p_->u.ele_.exp_2, 11);
 
     if (_i_ > 10) renderC(_R_PAREN);
@@ -785,7 +790,7 @@ void ppExp(Exp _p_, int _i_)
   case is_Ege:
     if (_i_ > 10) renderC(_L_PAREN);
     ppExp(_p_->u.ege_.exp_1, 10);
-    renderS(">=", 1);
+    renderS(">=");
     ppExp(_p_->u.ege_.exp_2, 11);
 
     if (_i_ > 10) renderC(_R_PAREN);
@@ -794,7 +799,7 @@ void ppExp(Exp _p_, int _i_)
   case is_Eleft:
     if (_i_ > 11) renderC(_L_PAREN);
     ppExp(_p_->u.eleft_.exp_1, 11);
-    renderS("<<", 1);
+    renderS("<<");
     ppExp(_p_->u.eleft_.exp_2, 12);
 
     if (_i_ > 11) renderC(_R_PAREN);
@@ -803,7 +808,7 @@ void ppExp(Exp _p_, int _i_)
   case is_Eright:
     if (_i_ > 11) renderC(_L_PAREN);
     ppExp(_p_->u.eright_.exp_1, 11);
-    renderS(">>", 1);
+    renderS(">>");
     ppExp(_p_->u.eright_.exp_2, 12);
 
     if (_i_ > 11) renderC(_R_PAREN);
@@ -866,7 +871,7 @@ void ppExp(Exp _p_, int _i_)
 
   case is_Epreinc:
     if (_i_ > 15) renderC(_L_PAREN);
-    renderS("++", 1);
+    renderS("++");
     ppExp(_p_->u.epreinc_.exp_, 15);
 
     if (_i_ > 15) renderC(_R_PAREN);
@@ -874,7 +879,7 @@ void ppExp(Exp _p_, int _i_)
 
   case is_Epredec:
     if (_i_ > 15) renderC(_L_PAREN);
-    renderS("--", 1);
+    renderS("--");
     ppExp(_p_->u.epredec_.exp_, 15);
 
     if (_i_ > 15) renderC(_R_PAREN);
@@ -890,7 +895,7 @@ void ppExp(Exp _p_, int _i_)
 
   case is_Ebytesexpr:
     if (_i_ > 15) renderC(_L_PAREN);
-    renderS("sizeof", 1);
+    renderS("sizeof");
     ppExp(_p_->u.ebytesexpr_.exp_, 15);
 
     if (_i_ > 15) renderC(_R_PAREN);
@@ -898,7 +903,7 @@ void ppExp(Exp _p_, int _i_)
 
   case is_Ebytestype:
     if (_i_ > 15) renderC(_L_PAREN);
-    renderS("sizeof", 1);
+    renderS("sizeof");
     renderC('(');
     ppType_name(_p_->u.ebytestype_.type_name_, 0);
     renderC(')');
@@ -939,16 +944,16 @@ void ppExp(Exp _p_, int _i_)
     if (_i_ > 16) renderC(_L_PAREN);
     ppExp(_p_->u.eselect_.exp_, 16);
     renderC('.');
-    ppIdent(_p_->u.eselect_.ident_, 1);
+    ppIdent(_p_->u.eselect_.ident_, 0);
 
     if (_i_ > 16) renderC(_R_PAREN);
     break;
 
   case is_Epoint:
     if (_i_ > 16) renderC(_L_PAREN);
-    ppExp(_p_->u.epoint_.exp_, 0);
-    renderS("->", 0);
-    ppIdent(_p_->u.epoint_.ident_, 1);
+    ppExp(_p_->u.epoint_.exp_, 16);
+    renderS("->");
+    ppIdent(_p_->u.epoint_.ident_, 0);
 
     if (_i_ > 16) renderC(_R_PAREN);
     break;
@@ -956,7 +961,7 @@ void ppExp(Exp _p_, int _i_)
   case is_Epostinc:
     if (_i_ > 16) renderC(_L_PAREN);
     ppExp(_p_->u.epostinc_.exp_, 16);
-    renderS("++", 1);
+    renderS("++");
 
     if (_i_ > 16) renderC(_R_PAREN);
     break;
@@ -964,14 +969,14 @@ void ppExp(Exp _p_, int _i_)
   case is_Epostdec:
     if (_i_ > 16) renderC(_L_PAREN);
     ppExp(_p_->u.epostdec_.exp_, 16);
-    renderS("--", 1);
+    renderS("--");
 
     if (_i_ > 16) renderC(_R_PAREN);
     break;
 
   case is_Evar:
     if (_i_ > 17) renderC(_L_PAREN);
-    ppIdent(_p_->u.evar_.ident_, _i_);
+    ppIdent(_p_->u.evar_.ident_, 0);
 
     if (_i_ > 17) renderC(_R_PAREN);
     break;
@@ -1003,16 +1008,19 @@ void ppDeclaration_specifier(Declaration_specifier _p_, int _i_)
   {
   case is_DecClass:
     if (_i_ > 0) renderC(_L_PAREN);
-    ppIdent(_p_->u.decclass_.ident_1, 1);
+    renderS("such");
+    ppClassName(_p_->u.decclass_.classname_, 0);
     ppPointer(_p_->u.decclass_.pointer_, 0);
-    ppIdent(_p_->u.decclass_.ident_2, 1);
+    ppIdent(_p_->u.decclass_.ident_, 0);
+
     if (_i_ > 0) renderC(_R_PAREN);
     break;
 
   case is_DecClassNoPoiter:
     if (_i_ > 0) renderC(_L_PAREN);
-    ppIdent(_p_->u.decclassnopoiter_.ident_1, 1);
-    ppIdent(_p_->u.decclassnopoiter_.ident_2, 1);
+    renderS("such");
+    ppClassName(_p_->u.decclassnopoiter_.classname_, 0);
+    ppIdent(_p_->u.decclassnopoiter_.ident_, 0);
 
     if (_i_ > 0) renderC(_R_PAREN);
     break;
@@ -1071,12 +1079,12 @@ void ppListExternal_declaration(ListExternal_declaration listexternal_declaratio
     {
       ppExternal_declaration(listexternal_declaration->external_declaration_, i);
 
-      listexternal_declaration = 0; // a la fin de la liste de declarations, on set a NULL
+      listexternal_declaration = 0;
     }
     else
     {
       ppExternal_declaration(listexternal_declaration->external_declaration_, i);
-      renderS("", 1);
+      renderS("");
       listexternal_declaration = listexternal_declaration->listexternal_declaration_;
     }
   }
@@ -1170,7 +1178,7 @@ void ppListDec(ListDec listdec, int i)
     else
     {
       ppDec(listdec->dec_, i);
-      renderS("", 1);
+      renderS("");
       listdec = listdec->listdec_;
     }
   }
@@ -1189,7 +1197,7 @@ void ppListDeclaration_specifier(ListDeclaration_specifier listdeclaration_speci
     else
     {
       ppDeclaration_specifier(listdeclaration_specifier->declaration_specifier_, i);
-      renderS("", 1);
+      renderS("");
       listdeclaration_specifier = listdeclaration_specifier->listdeclaration_specifier_;
     }
   }
@@ -1221,7 +1229,7 @@ void ppStruct_or_union_spec(Struct_or_union_spec _p_, int _i_)
   case is_Tag:
     if (_i_ > 0) renderC(_L_PAREN);
     ppStruct_or_union(_p_->u.tag_.struct_or_union_, 0);
-    ppIdent(_p_->u.tag_.ident_, 1);
+    ppIdent(_p_->u.tag_.ident_, 0);
     renderC('{');
     ppListStruct_dec(_p_->u.tag_.liststruct_dec_, 0);
     renderC('}');
@@ -1242,7 +1250,7 @@ void ppStruct_or_union_spec(Struct_or_union_spec _p_, int _i_)
   case is_TagType:
     if (_i_ > 0) renderC(_L_PAREN);
     ppStruct_or_union(_p_->u.tagtype_.struct_or_union_, 0);
-    ppIdent(_p_->u.tagtype_.ident_, 1);
+    ppIdent(_p_->u.tagtype_.ident_, 0);
 
     if (_i_ > 0) renderC(_R_PAREN);
     break;
@@ -1260,14 +1268,14 @@ void ppStruct_or_union(Struct_or_union _p_, int _i_)
   {
   case is_Struct:
     if (_i_ > 0) renderC(_L_PAREN);
-    renderS("struct", 1);
+    renderS("struct");
 
     if (_i_ > 0) renderC(_R_PAREN);
     break;
 
   case is_Union:
     if (_i_ > 0) renderC(_L_PAREN);
-    renderS("union", 1);
+    renderS("union");
 
     if (_i_ > 0) renderC(_R_PAREN);
     break;
@@ -1292,7 +1300,7 @@ void ppListStruct_dec(ListStruct_dec liststruct_dec, int i)
     else
     {
       ppStruct_dec(liststruct_dec->struct_dec_, i);
-      renderS("", 1);
+      renderS("");
       liststruct_dec = liststruct_dec->liststruct_dec_;
     }
   }
@@ -1331,7 +1339,7 @@ void ppListSpec_qual(ListSpec_qual listspec_qual, int i)
     else
     {
       ppSpec_qual(listspec_qual->spec_qual_, i);
-      renderS("", 1);
+      renderS("");
       listspec_qual = listspec_qual->listspec_qual_;
     }
   }
@@ -1422,7 +1430,7 @@ void ppEnum_specifier(Enum_specifier _p_, int _i_)
   {
   case is_EnumDec:
     if (_i_ > 0) renderC(_L_PAREN);
-    renderS("enum", 1);
+    renderS("enum");
     renderC('{');
     ppListEnumerator(_p_->u.enumdec_.listenumerator_, 0);
     renderC('}');
@@ -1432,8 +1440,8 @@ void ppEnum_specifier(Enum_specifier _p_, int _i_)
 
   case is_EnumName:
     if (_i_ > 0) renderC(_L_PAREN);
-    renderS("enum", 1);
-    ppIdent(_p_->u.enumname_.ident_, 1);
+    renderS("enum");
+    ppIdent(_p_->u.enumname_.ident_, 0);
     renderC('{');
     ppListEnumerator(_p_->u.enumname_.listenumerator_, 0);
     renderC('}');
@@ -1443,8 +1451,8 @@ void ppEnum_specifier(Enum_specifier _p_, int _i_)
 
   case is_EnumVar:
     if (_i_ > 0) renderC(_L_PAREN);
-    renderS("enum", 1);
-    ppIdent(_p_->u.enumvar_.ident_, 1);
+    renderS("enum");
+    ppIdent(_p_->u.enumvar_.ident_, 0);
 
     if (_i_ > 0) renderC(_R_PAREN);
     break;
@@ -1507,7 +1515,7 @@ void ppDirect_declarator(Direct_declarator _p_, int _i_)
   {
   case is_Name:
     if (_i_ > 0) renderC(_L_PAREN);
-    ppIdent(_p_->u.name_.ident_, 1);
+    ppIdent(_p_->u.name_.ident_, 0);
 
     if (_i_ > 0) renderC(_R_PAREN);
     break;
@@ -1554,7 +1562,7 @@ void ppDirect_declarator(Direct_declarator _p_, int _i_)
     if (_i_ > 0) renderC(_L_PAREN);
     ppDirect_declarator(_p_->u.oldfuncdef_.direct_declarator_, 0);
     renderC('(');
-    ppListIdent(_p_->u.oldfuncdef_.listident_, 1);
+    ppListIdent(_p_->u.oldfuncdef_.listident_, 0);
     renderC(')');
 
     if (_i_ > 0) renderC(_R_PAREN);
@@ -1632,7 +1640,7 @@ void ppListType_qualifier(ListType_qualifier listtype_qualifier, int i)
     else
     {
       ppType_qualifier(listtype_qualifier->type_qualifier_, i);
-      renderS("", 1);
+      renderS("");
       listtype_qualifier = listtype_qualifier->listtype_qualifier_;
     }
   }
@@ -1653,7 +1661,7 @@ void ppParameter_type(Parameter_type _p_, int _i_)
     if (_i_ > 0) renderC(_L_PAREN);
     ppParameter_declarations(_p_->u.more_.parameter_declarations_, 0);
     renderC(',');
-    renderS("...", 1);
+    renderS("...");
 
     if (_i_ > 0) renderC(_R_PAREN);
     break;
@@ -2019,7 +2027,7 @@ void ppLabeled_stm(Labeled_stm _p_, int _i_)
   {
   case is_SlabelOne:
     if (_i_ > 0) renderC(_L_PAREN);
-    ppIdent(_p_->u.slabelone_.ident_, 1);
+    ppIdent(_p_->u.slabelone_.ident_, 0);
     renderC(':');
     ppStm(_p_->u.slabelone_.stm_, 0);
 
@@ -2028,7 +2036,7 @@ void ppLabeled_stm(Labeled_stm _p_, int _i_)
 
   case is_SlabelTwo:
     if (_i_ > 0) renderC(_L_PAREN);
-    renderS("case", 1);
+    renderS("case");
     ppConstant_expression(_p_->u.slabeltwo_.constant_expression_, 0);
     renderC(':');
     ppStm(_p_->u.slabeltwo_.stm_, 0);
@@ -2038,7 +2046,7 @@ void ppLabeled_stm(Labeled_stm _p_, int _i_)
 
   case is_SlabelThree:
     if (_i_ > 0) renderC(_L_PAREN);
-    renderS("default", 1);
+    renderS("default");
     renderC(':');
     ppStm(_p_->u.slabelthree_.stm_, 0);
 
@@ -2131,7 +2139,7 @@ void ppSelection_stm(Selection_stm _p_, int _i_)
   {
   case is_SselOne:
     if (_i_ > 0) renderC(_L_PAREN);
-    renderS("if", 1);
+    renderS("if");
     renderC('(');
     ppExp(_p_->u.sselone_.exp_, 0);
     renderC(')');
@@ -2142,12 +2150,12 @@ void ppSelection_stm(Selection_stm _p_, int _i_)
 
   case is_SselTwo:
     if (_i_ > 0) renderC(_L_PAREN);
-    renderS("if", 1);
+    renderS("if");
     renderC('(');
     ppExp(_p_->u.sseltwo_.exp_, 0);
     renderC(')');
     ppStm(_p_->u.sseltwo_.stm_1, 0);
-    renderS("else", 1);
+    renderS("else");
     ppStm(_p_->u.sseltwo_.stm_2, 0);
 
     if (_i_ > 0) renderC(_R_PAREN);
@@ -2155,7 +2163,7 @@ void ppSelection_stm(Selection_stm _p_, int _i_)
 
   case is_SselThree:
     if (_i_ > 0) renderC(_L_PAREN);
-    renderS("switch", 1);
+    renderS("switch");
     renderC('(');
     ppExp(_p_->u.sselthree_.exp_, 0);
     renderC(')');
@@ -2177,7 +2185,7 @@ void ppIter_stm(Iter_stm _p_, int _i_)
   {
   case is_SiterOne:
     if (_i_ > 0) renderC(_L_PAREN);
-    renderS("while", 1);
+    renderS("while");
     renderC('(');
     ppExp(_p_->u.siterone_.exp_, 0);
     renderC(')');
@@ -2188,9 +2196,9 @@ void ppIter_stm(Iter_stm _p_, int _i_)
 
   case is_SiterTwo:
     if (_i_ > 0) renderC(_L_PAREN);
-    renderS("do", 1);
+    renderS("do");
     ppStm(_p_->u.sitertwo_.stm_, 0);
-    renderS("while", 1);
+    renderS("while");
     renderC('(');
     ppExp(_p_->u.sitertwo_.exp_, 0);
     renderC(')');
@@ -2201,7 +2209,7 @@ void ppIter_stm(Iter_stm _p_, int _i_)
 
   case is_SiterThree:
     if (_i_ > 0) renderC(_L_PAREN);
-    renderS("for", 1);
+    renderS("for");
     renderC('(');
     ppExpression_stm(_p_->u.siterthree_.expression_stm_1, 0);
     ppExpression_stm(_p_->u.siterthree_.expression_stm_2, 0);
@@ -2213,7 +2221,7 @@ void ppIter_stm(Iter_stm _p_, int _i_)
 
   case is_SiterFour:
     if (_i_ > 0) renderC(_L_PAREN);
-    renderS("for", 1);
+    renderS("for");
     renderC('(');
     ppExpression_stm(_p_->u.siterfour_.expression_stm_1, 0);
     ppExpression_stm(_p_->u.siterfour_.expression_stm_2, 0);
@@ -2244,7 +2252,7 @@ void ppListStm(ListStm liststm, int i)
     else
     {
       ppStm(liststm->stm_, i);
-      renderS("", 1);
+      renderS("");
       liststm = liststm->liststm_;
     }
   }
@@ -2270,98 +2278,98 @@ void ppConstant(Constant _p_, int _i_)
 
   case is_Eunsigned:
     if (_i_ > 0) renderC(_L_PAREN);
-    ppIdent(_p_->u.eunsigned_.unsigned_, 1);
+    ppIdent(_p_->u.eunsigned_.unsigned_, 0);
 
     if (_i_ > 0) renderC(_R_PAREN);
     break;
 
   case is_Elong:
     if (_i_ > 0) renderC(_L_PAREN);
-    ppIdent(_p_->u.elong_.long_, 1);
+    ppIdent(_p_->u.elong_.long_, 0);
 
     if (_i_ > 0) renderC(_R_PAREN);
     break;
 
   case is_Eunsignlong:
     if (_i_ > 0) renderC(_L_PAREN);
-    ppIdent(_p_->u.eunsignlong_.unsignedlong_, 1);
+    ppIdent(_p_->u.eunsignlong_.unsignedlong_, 0);
 
     if (_i_ > 0) renderC(_R_PAREN);
     break;
 
   case is_Ehexadec:
     if (_i_ > 0) renderC(_L_PAREN);
-    ppIdent(_p_->u.ehexadec_.hexadecimal_, 1);
+    ppIdent(_p_->u.ehexadec_.hexadecimal_, 0);
 
     if (_i_ > 0) renderC(_R_PAREN);
     break;
 
   case is_Ehexaunsign:
     if (_i_ > 0) renderC(_L_PAREN);
-    ppIdent(_p_->u.ehexaunsign_.hexunsigned_, 1);
+    ppIdent(_p_->u.ehexaunsign_.hexunsigned_, 0);
 
     if (_i_ > 0) renderC(_R_PAREN);
     break;
 
   case is_Ehexalong:
     if (_i_ > 0) renderC(_L_PAREN);
-    ppIdent(_p_->u.ehexalong_.hexlong_, 1);
+    ppIdent(_p_->u.ehexalong_.hexlong_, 0);
 
     if (_i_ > 0) renderC(_R_PAREN);
     break;
 
   case is_Ehexaunslong:
     if (_i_ > 0) renderC(_L_PAREN);
-    ppIdent(_p_->u.ehexaunslong_.hexunslong_, 1);
+    ppIdent(_p_->u.ehexaunslong_.hexunslong_, 0);
 
     if (_i_ > 0) renderC(_R_PAREN);
     break;
 
   case is_Eoctal:
     if (_i_ > 0) renderC(_L_PAREN);
-    ppIdent(_p_->u.eoctal_.octal_, 1);
+    ppIdent(_p_->u.eoctal_.octal_, 0);
 
     if (_i_ > 0) renderC(_R_PAREN);
     break;
 
   case is_Eoctalunsign:
     if (_i_ > 0) renderC(_L_PAREN);
-    ppIdent(_p_->u.eoctalunsign_.octalunsigned_, 1);
+    ppIdent(_p_->u.eoctalunsign_.octalunsigned_, 0);
 
     if (_i_ > 0) renderC(_R_PAREN);
     break;
 
   case is_Eoctallong:
     if (_i_ > 0) renderC(_L_PAREN);
-    ppIdent(_p_->u.eoctallong_.octallong_, 1);
+    ppIdent(_p_->u.eoctallong_.octallong_, 0);
 
     if (_i_ > 0) renderC(_R_PAREN);
     break;
 
   case is_Eoctalunslong:
     if (_i_ > 0) renderC(_L_PAREN);
-    ppIdent(_p_->u.eoctalunslong_.octalunslong_, 1);
+    ppIdent(_p_->u.eoctalunslong_.octalunslong_, 0);
 
     if (_i_ > 0) renderC(_R_PAREN);
     break;
 
   case is_Ecdouble:
     if (_i_ > 0) renderC(_L_PAREN);
-    ppIdent(_p_->u.ecdouble_.cdouble_, 1);
+    ppIdent(_p_->u.ecdouble_.cdouble_, 0);
 
     if (_i_ > 0) renderC(_R_PAREN);
     break;
 
   case is_Ecfloat:
     if (_i_ > 0) renderC(_L_PAREN);
-    ppIdent(_p_->u.ecfloat_.cfloat_, 1);
+    ppIdent(_p_->u.ecfloat_.cfloat_, 0);
 
     if (_i_ > 0) renderC(_R_PAREN);
     break;
 
   case is_Eclongdouble:
     if (_i_ > 0) renderC(_L_PAREN);
-    ppIdent(_p_->u.eclongdouble_.clongdouble_, 1);
+    ppIdent(_p_->u.eclongdouble_.clongdouble_, 0);
 
     if (_i_ > 0) renderC(_R_PAREN);
     break;
@@ -2439,172 +2447,186 @@ void ppInteger(Integer n, int UNUSED i)
   sprintf(tmp, "%d", n);
   bufAppendS(tmp);
 }
-
 void ppDouble(Double d, int UNUSED i)
 {
   char tmp[16];
   sprintf(tmp, "%g", d);
   bufAppendS(tmp);
 }
-
 void ppChar(Char c, int UNUSED i)
 {
   bufAppendC('\'');
   bufAppendC(c);
   bufAppendC('\'');
 }
-
 void ppString(String s, int UNUSED i)
 {
   bufAppendC('\"');
   bufAppendS(s);
   bufAppendC('\"');
 }
-
 void ppIdent(String s, int UNUSED i)
 {
-  renderS(s, i);
+  renderS(s);
 }
 
 void ppUnsigned(String s, int UNUSED i)
 {
-  renderS(s, 1);
+  renderS(s);
 }
+
 
 void ppLong(String s, int UNUSED i)
 {
-  renderS(s, 1);
+  renderS(s);
 }
+
 
 void ppUnsignedLong(String s, int UNUSED i)
 {
-  renderS(s, 1);
+  renderS(s);
 }
+
 
 void ppHexadecimal(String s, int UNUSED i)
 {
-  renderS(s, 1);
+  renderS(s);
 }
+
 
 void ppHexUnsigned(String s, int UNUSED i)
 {
-  renderS(s, 1);
+  renderS(s);
 }
+
 
 void ppHexLong(String s, int UNUSED i)
 {
-  renderS(s, 1);
+  renderS(s);
 }
+
 
 void ppHexUnsLong(String s, int UNUSED i)
 {
-  renderS(s, 1);
+  renderS(s);
 }
+
 
 void ppOctal(String s, int UNUSED i)
 {
-  renderS(s, 1);
+  renderS(s);
 }
+
 
 void ppOctalUnsigned(String s, int UNUSED i)
 {
-  renderS(s, 1);
+  renderS(s);
 }
+
 
 void ppOctalLong(String s, int UNUSED i)
 {
-  renderS(s, 1);
+  renderS(s);
 }
+
 
 void ppOctalUnsLong(String s, int UNUSED i)
 {
-  renderS(s, 1);
+  renderS(s);
 }
+
 
 void ppCDouble(String s, int UNUSED i)
 {
-  renderS(s, 1);
+  renderS(s);
 }
+
 
 void ppCFloat(String s, int UNUSED i)
 {
-  renderS(s, 1);
+  renderS(s);
 }
+
 
 void ppCLongDouble(String s, int UNUSED i)
 {
-  renderS(s, 1);
+  renderS(s);
 }
+
 
 void shExternal_declaration(External_declaration _p_)
 {
   switch(_p_->kind)
   {
   case is_Class:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("Class");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
-    shIdent(_p_->u.class_.ident_);
+    shClassName(_p_->u.class_.classname_);
     bufAppendC(']');
-    bufAppendC(' ');
+  bufAppendC(' ');
     bufAppendC('[');
     shExtends(_p_->u.class_.extends_);
     bufAppendC(']');
-    bufAppendC(' ');
+  bufAppendC(' ');
     bufAppendC('[');
     shListExternal_declaration(_p_->u.class_.listexternal_declaration_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_Namespace:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("Namespace");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shIdent(_p_->u.namespace_.ident_);
     bufAppendC(']');
+  bufAppendC(' ');
+    bufAppendC('[');
+    shListExternal_declaration(_p_->u.namespace_.listexternal_declaration_);
+    bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_Afunc:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("Afunc");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shFunction_def(_p_->u.afunc_.function_def_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_Global:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("Global");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shDec(_p_->u.global_.dec_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
@@ -2615,22 +2637,63 @@ void shExternal_declaration(External_declaration _p_)
   }
 }
 
+void shClassName(ClassName _p_)
+{
+  switch(_p_->kind)
+  {
+  case is_ClassWithNamespace:
+  bufAppendC('(');
+
+    bufAppendS("ClassWithNamespace");
+
+  bufAppendC(' ');
+
+    shIdent(_p_->u.classwithnamespace_.ident_1);
+  bufAppendC(' ');
+    shIdent(_p_->u.classwithnamespace_.ident_2);
+
+  bufAppendC(')');
+
+    break;
+
+  case is_ClassWithoutNamespace:
+  bufAppendC('(');
+
+    bufAppendS("ClassWithoutNamespace");
+
+  bufAppendC(' ');
+
+    bufAppendC('[');
+    shIdent(_p_->u.classwithoutnamespace_.ident_);
+    bufAppendC(']');
+
+  bufAppendC(')');
+
+    break;
+
+
+  default:
+    fprintf(stderr, "Error: bad kind field when showing ClassName!\n");
+    exit(1);
+  }
+}
+
 void shExtends(Extends _p_)
 {
   switch(_p_->kind)
   {
   case is_Inheritance:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("Inheritance");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
-    shIdent(_p_->u.inheritance_.ident_);
+    shClassName(_p_->u.inheritance_.classname_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
@@ -2664,32 +2727,32 @@ void shJump_stm(Jump_stm _p_)
     break;
 
   case is_SjumpFive:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("SjumpFive");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shExp(_p_->u.sjumpfive_.exp_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_SjumpOne:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("SjumpOne");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shIdent(_p_->u.sjumpone_.ident_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
@@ -2804,32 +2867,32 @@ void shType_specifier(Type_specifier _p_)
     break;
 
   case is_Tstruct:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("Tstruct");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shStruct_or_union_spec(_p_->u.tstruct_.struct_or_union_spec_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_Tenum:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("Tenum");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shEnum_specifier(_p_->u.tenum_.enum_specifier_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
@@ -3114,36 +3177,36 @@ void shInit_declarator(Init_declarator _p_)
   switch(_p_->kind)
   {
   case is_InitDecl:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("InitDecl");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shDeclarator(_p_->u.initdecl_.declarator_);
     bufAppendC(']');
-    bufAppendC(' ');
+  bufAppendC(' ');
     bufAppendC('[');
     shInitializer(_p_->u.initdecl_.initializer_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_OnlyDecl:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("OnlyDecl");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shDeclarator(_p_->u.onlydecl_.declarator_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
@@ -3159,36 +3222,36 @@ void shEnumerator(Enumerator _p_)
   switch(_p_->kind)
   {
   case is_EnumInit:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("EnumInit");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shIdent(_p_->u.enuminit_.ident_);
     bufAppendC(']');
-    bufAppendC(' ');
+  bufAppendC(' ');
     bufAppendC('[');
     shConstant_expression(_p_->u.enuminit_.constant_expression_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_Plain:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("Plain");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shIdent(_p_->u.plain_.ident_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
@@ -3204,621 +3267,621 @@ void shExp(Exp _p_)
   switch(_p_->kind)
   {
   case is_InitClass:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("InitClass");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shExp(_p_->u.initclass_.exp_);
     bufAppendC(']');
-    bufAppendC(' ');
+  bufAppendC(' ');
     bufAppendC('[');
     shAssignment_op(_p_->u.initclass_.assignment_op_);
     bufAppendC(']');
-    bufAppendC(' ');
+  bufAppendC(' ');
     bufAppendC('[');
-    shIdent(_p_->u.initclass_.ident_);
+    shClassName(_p_->u.initclass_.classname_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_DestroyClass:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("DestroyClass");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shIdent(_p_->u.destroyclass_.ident_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_Eassign:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("Eassign");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     shExp(_p_->u.eassign_.exp_1);
-    bufAppendC(' ');
+  bufAppendC(' ');
     bufAppendC('[');
     shAssignment_op(_p_->u.eassign_.assignment_op_);
     bufAppendC(']');
-    bufAppendC(' ');
+  bufAppendC(' ');
     shExp(_p_->u.eassign_.exp_2);
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_Ecomma:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("Ecomma");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     shExp(_p_->u.ecomma_.exp_1);
-    bufAppendC(' ');
+  bufAppendC(' ');
     shExp(_p_->u.ecomma_.exp_2);
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_Econdition:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("Econdition");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     shExp(_p_->u.econdition_.exp_1);
-    bufAppendC(' ');
+  bufAppendC(' ');
     shExp(_p_->u.econdition_.exp_2);
-    bufAppendC(' ');
+  bufAppendC(' ');
     shExp(_p_->u.econdition_.exp_3);
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_Elor:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("Elor");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     shExp(_p_->u.elor_.exp_1);
-    bufAppendC(' ');
+  bufAppendC(' ');
     shExp(_p_->u.elor_.exp_2);
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_Eland:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("Eland");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     shExp(_p_->u.eland_.exp_1);
-    bufAppendC(' ');
+  bufAppendC(' ');
     shExp(_p_->u.eland_.exp_2);
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_Ebitor:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("Ebitor");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     shExp(_p_->u.ebitor_.exp_1);
-    bufAppendC(' ');
+  bufAppendC(' ');
     shExp(_p_->u.ebitor_.exp_2);
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_Ebitexor:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("Ebitexor");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     shExp(_p_->u.ebitexor_.exp_1);
-    bufAppendC(' ');
+  bufAppendC(' ');
     shExp(_p_->u.ebitexor_.exp_2);
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_Ebitand:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("Ebitand");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     shExp(_p_->u.ebitand_.exp_1);
-    bufAppendC(' ');
+  bufAppendC(' ');
     shExp(_p_->u.ebitand_.exp_2);
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_Eeq:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("Eeq");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     shExp(_p_->u.eeq_.exp_1);
-    bufAppendC(' ');
+  bufAppendC(' ');
     shExp(_p_->u.eeq_.exp_2);
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_Eneq:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("Eneq");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     shExp(_p_->u.eneq_.exp_1);
-    bufAppendC(' ');
+  bufAppendC(' ');
     shExp(_p_->u.eneq_.exp_2);
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_Elthen:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("Elthen");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     shExp(_p_->u.elthen_.exp_1);
-    bufAppendC(' ');
+  bufAppendC(' ');
     shExp(_p_->u.elthen_.exp_2);
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_Egrthen:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("Egrthen");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     shExp(_p_->u.egrthen_.exp_1);
-    bufAppendC(' ');
+  bufAppendC(' ');
     shExp(_p_->u.egrthen_.exp_2);
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_Ele:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("Ele");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     shExp(_p_->u.ele_.exp_1);
-    bufAppendC(' ');
+  bufAppendC(' ');
     shExp(_p_->u.ele_.exp_2);
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_Ege:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("Ege");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     shExp(_p_->u.ege_.exp_1);
-    bufAppendC(' ');
+  bufAppendC(' ');
     shExp(_p_->u.ege_.exp_2);
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_Eleft:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("Eleft");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     shExp(_p_->u.eleft_.exp_1);
-    bufAppendC(' ');
+  bufAppendC(' ');
     shExp(_p_->u.eleft_.exp_2);
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_Eright:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("Eright");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     shExp(_p_->u.eright_.exp_1);
-    bufAppendC(' ');
+  bufAppendC(' ');
     shExp(_p_->u.eright_.exp_2);
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_Eplus:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("Eplus");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     shExp(_p_->u.eplus_.exp_1);
-    bufAppendC(' ');
+  bufAppendC(' ');
     shExp(_p_->u.eplus_.exp_2);
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_Eminus:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("Eminus");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     shExp(_p_->u.eminus_.exp_1);
-    bufAppendC(' ');
+  bufAppendC(' ');
     shExp(_p_->u.eminus_.exp_2);
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_Etimes:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("Etimes");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     shExp(_p_->u.etimes_.exp_1);
-    bufAppendC(' ');
+  bufAppendC(' ');
     shExp(_p_->u.etimes_.exp_2);
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_Ediv:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("Ediv");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     shExp(_p_->u.ediv_.exp_1);
-    bufAppendC(' ');
+  bufAppendC(' ');
     shExp(_p_->u.ediv_.exp_2);
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_Emod:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("Emod");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     shExp(_p_->u.emod_.exp_1);
-    bufAppendC(' ');
+  bufAppendC(' ');
     shExp(_p_->u.emod_.exp_2);
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_Etypeconv:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("Etypeconv");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shType_name(_p_->u.etypeconv_.type_name_);
     bufAppendC(']');
-    bufAppendC(' ');
+  bufAppendC(' ');
     bufAppendC('[');
     shExp(_p_->u.etypeconv_.exp_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_Epreinc:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("Epreinc");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shExp(_p_->u.epreinc_.exp_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_Epredec:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("Epredec");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shExp(_p_->u.epredec_.exp_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_Epreop:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("Epreop");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shUnary_operator(_p_->u.epreop_.unary_operator_);
     bufAppendC(']');
-    bufAppendC(' ');
+  bufAppendC(' ');
     bufAppendC('[');
     shExp(_p_->u.epreop_.exp_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_Ebytesexpr:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("Ebytesexpr");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shExp(_p_->u.ebytesexpr_.exp_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_Ebytestype:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("Ebytestype");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shType_name(_p_->u.ebytestype_.type_name_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_Earray:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("Earray");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     shExp(_p_->u.earray_.exp_1);
-    bufAppendC(' ');
+  bufAppendC(' ');
     shExp(_p_->u.earray_.exp_2);
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_Efunk:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("Efunk");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shExp(_p_->u.efunk_.exp_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_Efunkpar:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("Efunkpar");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shExp(_p_->u.efunkpar_.exp_);
     bufAppendC(']');
-    bufAppendC(' ');
+  bufAppendC(' ');
     bufAppendC('[');
     shListExp(_p_->u.efunkpar_.listexp_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_Eselect:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("Eselect");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shExp(_p_->u.eselect_.exp_);
     bufAppendC(']');
-    bufAppendC(' ');
+  bufAppendC(' ');
     bufAppendC('[');
     shIdent(_p_->u.eselect_.ident_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_Epoint:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("Epoint");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shExp(_p_->u.epoint_.exp_);
     bufAppendC(']');
-    bufAppendC(' ');
+  bufAppendC(' ');
     bufAppendC('[');
     shIdent(_p_->u.epoint_.ident_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_Epostinc:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("Epostinc");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shExp(_p_->u.epostinc_.exp_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_Epostdec:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("Epostdec");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shExp(_p_->u.epostdec_.exp_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_Evar:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("Evar");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shIdent(_p_->u.evar_.ident_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_Econst:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("Econst");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shConstant(_p_->u.econst_.constant_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_Estring:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("Estring");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shString(_p_->u.estring_.string_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
@@ -3834,81 +3897,89 @@ void shDeclaration_specifier(Declaration_specifier _p_)
   switch(_p_->kind)
   {
   case is_DecClass:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("DecClass");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
-    shIdent(_p_->u.decclass_.ident_1);
-    bufAppendC(' ');
+    bufAppendC('[');
+    shClassName(_p_->u.decclass_.classname_);
+    bufAppendC(']');
+  bufAppendC(' ');
     bufAppendC('[');
     shPointer(_p_->u.decclass_.pointer_);
     bufAppendC(']');
-    bufAppendC(' ');
-    shIdent(_p_->u.decclass_.ident_2);
+  bufAppendC(' ');
+    bufAppendC('[');
+    shIdent(_p_->u.decclass_.ident_);
+    bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_DecClassNoPoiter:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("DecClassNoPoiter");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
-    shIdent(_p_->u.decclassnopoiter_.ident_1);
-    bufAppendC(' ');
-    shIdent(_p_->u.decclassnopoiter_.ident_2);
+    bufAppendC('[');
+    shClassName(_p_->u.decclassnopoiter_.classname_);
+    bufAppendC(']');
+  bufAppendC(' ');
+    bufAppendC('[');
+    shIdent(_p_->u.decclassnopoiter_.ident_);
+    bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_Type:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("Type");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shType_specifier(_p_->u.type_.type_specifier_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_Storage:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("Storage");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shStorage_class_specifier(_p_->u.storage_.storage_class_specifier_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_SpecProp:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("SpecProp");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shType_qualifier(_p_->u.specprop_.type_qualifier_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
@@ -3924,17 +3995,17 @@ void shProgram(Program _p_)
   switch(_p_->kind)
   {
   case is_Progr:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("Progr");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shListExternal_declaration(_p_->u.progr_.listexternal_declaration_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
@@ -3968,94 +4039,94 @@ void shFunction_def(Function_def _p_)
   switch(_p_->kind)
   {
   case is_OldFunc:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("OldFunc");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shListDeclaration_specifier(_p_->u.oldfunc_.listdeclaration_specifier_);
     bufAppendC(']');
-    bufAppendC(' ');
+  bufAppendC(' ');
     bufAppendC('[');
     shDeclarator(_p_->u.oldfunc_.declarator_);
     bufAppendC(']');
-    bufAppendC(' ');
+  bufAppendC(' ');
     bufAppendC('[');
     shListDec(_p_->u.oldfunc_.listdec_);
     bufAppendC(']');
-    bufAppendC(' ');
+  bufAppendC(' ');
     bufAppendC('[');
     shCompound_stm(_p_->u.oldfunc_.compound_stm_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_NewFunc:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("NewFunc");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shListDeclaration_specifier(_p_->u.newfunc_.listdeclaration_specifier_);
     bufAppendC(']');
-    bufAppendC(' ');
+  bufAppendC(' ');
     bufAppendC('[');
     shDeclarator(_p_->u.newfunc_.declarator_);
     bufAppendC(']');
-    bufAppendC(' ');
+  bufAppendC(' ');
     bufAppendC('[');
     shCompound_stm(_p_->u.newfunc_.compound_stm_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_OldFuncInt:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("OldFuncInt");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shDeclarator(_p_->u.oldfuncint_.declarator_);
     bufAppendC(']');
-    bufAppendC(' ');
+  bufAppendC(' ');
     bufAppendC('[');
     shListDec(_p_->u.oldfuncint_.listdec_);
     bufAppendC(']');
-    bufAppendC(' ');
+  bufAppendC(' ');
     bufAppendC('[');
     shCompound_stm(_p_->u.oldfuncint_.compound_stm_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_NewFuncInt:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("NewFuncInt");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shDeclarator(_p_->u.newfuncint_.declarator_);
     bufAppendC(']');
-    bufAppendC(' ');
+  bufAppendC(' ');
     bufAppendC('[');
     shCompound_stm(_p_->u.newfuncint_.compound_stm_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
@@ -4071,36 +4142,36 @@ void shDec(Dec _p_)
   switch(_p_->kind)
   {
   case is_NoDeclarator:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("NoDeclarator");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shListDeclaration_specifier(_p_->u.nodeclarator_.listdeclaration_specifier_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_Declarators:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("Declarators");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shListDeclaration_specifier(_p_->u.declarators_.listdeclaration_specifier_);
     bufAppendC(']');
-    bufAppendC(' ');
+  bufAppendC(' ');
     bufAppendC('[');
     shListInit_declarator(_p_->u.declarators_.listinit_declarator_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
@@ -4170,63 +4241,63 @@ void shStruct_or_union_spec(Struct_or_union_spec _p_)
   switch(_p_->kind)
   {
   case is_Tag:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("Tag");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shStruct_or_union(_p_->u.tag_.struct_or_union_);
     bufAppendC(']');
-    bufAppendC(' ');
+  bufAppendC(' ');
     bufAppendC('[');
     shIdent(_p_->u.tag_.ident_);
     bufAppendC(']');
-    bufAppendC(' ');
+  bufAppendC(' ');
     bufAppendC('[');
     shListStruct_dec(_p_->u.tag_.liststruct_dec_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_Unique:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("Unique");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shStruct_or_union(_p_->u.unique_.struct_or_union_);
     bufAppendC(']');
-    bufAppendC(' ');
+  bufAppendC(' ');
     bufAppendC('[');
     shListStruct_dec(_p_->u.unique_.liststruct_dec_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_TagType:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("TagType");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shStruct_or_union(_p_->u.tagtype_.struct_or_union_);
     bufAppendC(']');
-    bufAppendC(' ');
+  bufAppendC(' ');
     bufAppendC('[');
     shIdent(_p_->u.tagtype_.ident_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
@@ -4289,21 +4360,21 @@ void shStruct_dec(Struct_dec _p_)
   switch(_p_->kind)
   {
   case is_Structen:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("Structen");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shListSpec_qual(_p_->u.structen_.listspec_qual_);
     bufAppendC(']');
-    bufAppendC(' ');
+  bufAppendC(' ');
     bufAppendC('[');
     shListStruct_declarator(_p_->u.structen_.liststruct_declarator_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
@@ -4337,32 +4408,32 @@ void shSpec_qual(Spec_qual _p_)
   switch(_p_->kind)
   {
   case is_TypeSpec:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("TypeSpec");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shType_specifier(_p_->u.typespec_.type_specifier_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_QualSpec:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("QualSpec");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shType_qualifier(_p_->u.qualspec_.type_qualifier_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
@@ -4396,51 +4467,51 @@ void shStruct_declarator(Struct_declarator _p_)
   switch(_p_->kind)
   {
   case is_Decl:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("Decl");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shDeclarator(_p_->u.decl_.declarator_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_Field:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("Field");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shConstant_expression(_p_->u.field_.constant_expression_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_DecField:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("DecField");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shDeclarator(_p_->u.decfield_.declarator_);
     bufAppendC(']');
-    bufAppendC(' ');
+  bufAppendC(' ');
     bufAppendC('[');
     shConstant_expression(_p_->u.decfield_.constant_expression_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
@@ -4456,51 +4527,51 @@ void shEnum_specifier(Enum_specifier _p_)
   switch(_p_->kind)
   {
   case is_EnumDec:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("EnumDec");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shListEnumerator(_p_->u.enumdec_.listenumerator_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_EnumName:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("EnumName");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shIdent(_p_->u.enumname_.ident_);
     bufAppendC(']');
-    bufAppendC(' ');
+  bufAppendC(' ');
     bufAppendC('[');
     shListEnumerator(_p_->u.enumname_.listenumerator_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_EnumVar:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("EnumVar");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shIdent(_p_->u.enumvar_.ident_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
@@ -4534,36 +4605,36 @@ void shDeclarator(Declarator _p_)
   switch(_p_->kind)
   {
   case is_BeginPointer:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("BeginPointer");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shPointer(_p_->u.beginpointer_.pointer_);
     bufAppendC(']');
-    bufAppendC(' ');
+  bufAppendC(' ');
     bufAppendC('[');
     shDirect_declarator(_p_->u.beginpointer_.direct_declarator_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_NoPointer:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("NoPointer");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shDirect_declarator(_p_->u.nopointer_.direct_declarator_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
@@ -4579,119 +4650,119 @@ void shDirect_declarator(Direct_declarator _p_)
   switch(_p_->kind)
   {
   case is_Name:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("Name");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shIdent(_p_->u.name_.ident_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_ParenDecl:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("ParenDecl");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shDeclarator(_p_->u.parendecl_.declarator_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_InnitArray:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("InnitArray");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shDirect_declarator(_p_->u.innitarray_.direct_declarator_);
     bufAppendC(']');
-    bufAppendC(' ');
+  bufAppendC(' ');
     bufAppendC('[');
     shConstant_expression(_p_->u.innitarray_.constant_expression_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_Incomplete:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("Incomplete");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shDirect_declarator(_p_->u.incomplete_.direct_declarator_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_NewFuncDec:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("NewFuncDec");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shDirect_declarator(_p_->u.newfuncdec_.direct_declarator_);
     bufAppendC(']');
-    bufAppendC(' ');
+  bufAppendC(' ');
     bufAppendC('[');
     shParameter_type(_p_->u.newfuncdec_.parameter_type_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_OldFuncDef:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("OldFuncDef");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shDirect_declarator(_p_->u.oldfuncdef_.direct_declarator_);
     bufAppendC(']');
-    bufAppendC(' ');
+  bufAppendC(' ');
     bufAppendC('[');
     shListIdent(_p_->u.oldfuncdef_.listident_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_OldFuncDec:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("OldFuncDec");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shDirect_declarator(_p_->u.oldfuncdec_.direct_declarator_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
@@ -4716,51 +4787,51 @@ void shPointer(Pointer _p_)
     break;
 
   case is_PointQual:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("PointQual");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shListType_qualifier(_p_->u.pointqual_.listtype_qualifier_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_PointPoint:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("PointPoint");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shPointer(_p_->u.pointpoint_.pointer_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_PointQualPoint:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("PointQualPoint");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shListType_qualifier(_p_->u.pointqualpoint_.listtype_qualifier_);
     bufAppendC(']');
-    bufAppendC(' ');
+  bufAppendC(' ');
     bufAppendC('[');
     shPointer(_p_->u.pointqualpoint_.pointer_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
@@ -4794,32 +4865,32 @@ void shParameter_type(Parameter_type _p_)
   switch(_p_->kind)
   {
   case is_AllSpec:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("AllSpec");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shParameter_declarations(_p_->u.allspec_.parameter_declarations_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_More:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("More");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shParameter_declarations(_p_->u.more_.parameter_declarations_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
@@ -4835,36 +4906,36 @@ void shParameter_declarations(Parameter_declarations _p_)
   switch(_p_->kind)
   {
   case is_ParamDec:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("ParamDec");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shParameter_declaration(_p_->u.paramdec_.parameter_declaration_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_MoreParamDec:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("MoreParamDec");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shParameter_declarations(_p_->u.moreparamdec_.parameter_declarations_);
     bufAppendC(']');
-    bufAppendC(' ');
+  bufAppendC(' ');
     bufAppendC('[');
     shParameter_declaration(_p_->u.moreparamdec_.parameter_declaration_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
@@ -4880,55 +4951,55 @@ void shParameter_declaration(Parameter_declaration _p_)
   switch(_p_->kind)
   {
   case is_OnlyType:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("OnlyType");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shListDeclaration_specifier(_p_->u.onlytype_.listdeclaration_specifier_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_TypeAndParam:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("TypeAndParam");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shListDeclaration_specifier(_p_->u.typeandparam_.listdeclaration_specifier_);
     bufAppendC(']');
-    bufAppendC(' ');
+  bufAppendC(' ');
     bufAppendC('[');
     shDeclarator(_p_->u.typeandparam_.declarator_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_Abstract:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("Abstract");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shListDeclaration_specifier(_p_->u.abstract_.listdeclaration_specifier_);
     bufAppendC(']');
-    bufAppendC(' ');
+  bufAppendC(' ');
     bufAppendC('[');
     shAbstract_declarator(_p_->u.abstract_.abstract_declarator_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
@@ -4962,47 +5033,47 @@ void shInitializer(Initializer _p_)
   switch(_p_->kind)
   {
   case is_InitExpr:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("InitExpr");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shExp(_p_->u.initexpr_.exp_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_InitListOne:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("InitListOne");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shInitializers(_p_->u.initlistone_.initializers_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_InitListTwo:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("InitListTwo");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shInitializers(_p_->u.initlisttwo_.initializers_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
@@ -5018,36 +5089,36 @@ void shInitializers(Initializers _p_)
   switch(_p_->kind)
   {
   case is_AnInit:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("AnInit");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shInitializer(_p_->u.aninit_.initializer_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_MoreInit:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("MoreInit");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shInitializers(_p_->u.moreinit_.initializers_);
     bufAppendC(']');
-    bufAppendC(' ');
+  bufAppendC(' ');
     bufAppendC('[');
     shInitializer(_p_->u.moreinit_.initializer_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
@@ -5063,36 +5134,36 @@ void shType_name(Type_name _p_)
   switch(_p_->kind)
   {
   case is_PlainType:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("PlainType");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shListSpec_qual(_p_->u.plaintype_.listspec_qual_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_ExtendedType:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("ExtendedType");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shListSpec_qual(_p_->u.extendedtype_.listspec_qual_);
     bufAppendC(']');
-    bufAppendC(' ');
+  bufAppendC(' ');
     bufAppendC('[');
     shAbstract_declarator(_p_->u.extendedtype_.abstract_declarator_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
@@ -5108,51 +5179,51 @@ void shAbstract_declarator(Abstract_declarator _p_)
   switch(_p_->kind)
   {
   case is_PointerStart:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("PointerStart");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shPointer(_p_->u.pointerstart_.pointer_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_Advanced:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("Advanced");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shDir_abs_dec(_p_->u.advanced_.dir_abs_dec_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_PointAdvanced:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("PointAdvanced");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shPointer(_p_->u.pointadvanced_.pointer_);
     bufAppendC(']');
-    bufAppendC(' ');
+  bufAppendC(' ');
     bufAppendC('[');
     shDir_abs_dec(_p_->u.pointadvanced_.dir_abs_dec_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
@@ -5168,17 +5239,17 @@ void shDir_abs_dec(Dir_abs_dec _p_)
   switch(_p_->kind)
   {
   case is_WithinParentes:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("WithinParentes");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shAbstract_declarator(_p_->u.withinparentes_.abstract_declarator_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
@@ -5192,51 +5263,51 @@ void shDir_abs_dec(Dir_abs_dec _p_)
     break;
 
   case is_InitiatedArray:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("InitiatedArray");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shConstant_expression(_p_->u.initiatedarray_.constant_expression_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_UnInitiated:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("UnInitiated");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shDir_abs_dec(_p_->u.uninitiated_.dir_abs_dec_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_Initiated:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("Initiated");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shDir_abs_dec(_p_->u.initiated_.dir_abs_dec_);
     bufAppendC(']');
-    bufAppendC(' ');
+  bufAppendC(' ');
     bufAppendC('[');
     shConstant_expression(_p_->u.initiated_.constant_expression_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
@@ -5250,51 +5321,51 @@ void shDir_abs_dec(Dir_abs_dec _p_)
     break;
 
   case is_NewFunction:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("NewFunction");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shParameter_type(_p_->u.newfunction_.parameter_type_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_OldFuncExpr:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("OldFuncExpr");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shDir_abs_dec(_p_->u.oldfuncexpr_.dir_abs_dec_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_NewFuncExpr:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("NewFuncExpr");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shDir_abs_dec(_p_->u.newfuncexpr_.dir_abs_dec_);
     bufAppendC(']');
-    bufAppendC(' ');
+  bufAppendC(' ');
     bufAppendC('[');
     shParameter_type(_p_->u.newfuncexpr_.parameter_type_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
@@ -5310,92 +5381,92 @@ void shStm(Stm _p_)
   switch(_p_->kind)
   {
   case is_LabelS:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("LabelS");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shLabeled_stm(_p_->u.labels_.labeled_stm_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_CompS:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("CompS");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shCompound_stm(_p_->u.comps_.compound_stm_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_ExprS:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("ExprS");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shExpression_stm(_p_->u.exprs_.expression_stm_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_SelS:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("SelS");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shSelection_stm(_p_->u.sels_.selection_stm_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_IterS:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("IterS");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shIter_stm(_p_->u.iters_.iter_stm_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_JumpS:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("JumpS");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shJump_stm(_p_->u.jumps_.jump_stm_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
@@ -5411,55 +5482,55 @@ void shLabeled_stm(Labeled_stm _p_)
   switch(_p_->kind)
   {
   case is_SlabelOne:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("SlabelOne");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shIdent(_p_->u.slabelone_.ident_);
     bufAppendC(']');
-    bufAppendC(' ');
+  bufAppendC(' ');
     bufAppendC('[');
     shStm(_p_->u.slabelone_.stm_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_SlabelTwo:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("SlabelTwo");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shConstant_expression(_p_->u.slabeltwo_.constant_expression_);
     bufAppendC(']');
-    bufAppendC(' ');
+  bufAppendC(' ');
     bufAppendC('[');
     shStm(_p_->u.slabeltwo_.stm_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_SlabelThree:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("SlabelThree");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shStm(_p_->u.slabelthree_.stm_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
@@ -5484,51 +5555,51 @@ void shCompound_stm(Compound_stm _p_)
     break;
 
   case is_ScompTwo:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("ScompTwo");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shListStm(_p_->u.scomptwo_.liststm_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_ScompThree:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("ScompThree");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shListDec(_p_->u.scompthree_.listdec_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_ScompFour:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("ScompFour");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shListDec(_p_->u.scompfour_.listdec_);
     bufAppendC(']');
-    bufAppendC(' ');
+  bufAppendC(' ');
     bufAppendC('[');
     shListStm(_p_->u.scompfour_.liststm_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
@@ -5553,17 +5624,17 @@ void shExpression_stm(Expression_stm _p_)
     break;
 
   case is_SexprTwo:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("SexprTwo");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shExp(_p_->u.sexprtwo_.exp_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
@@ -5579,59 +5650,59 @@ void shSelection_stm(Selection_stm _p_)
   switch(_p_->kind)
   {
   case is_SselOne:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("SselOne");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shExp(_p_->u.sselone_.exp_);
     bufAppendC(']');
-    bufAppendC(' ');
+  bufAppendC(' ');
     bufAppendC('[');
     shStm(_p_->u.sselone_.stm_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_SselTwo:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("SselTwo");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shExp(_p_->u.sseltwo_.exp_);
     bufAppendC(']');
-    bufAppendC(' ');
+  bufAppendC(' ');
     shStm(_p_->u.sseltwo_.stm_1);
-    bufAppendC(' ');
+  bufAppendC(' ');
     shStm(_p_->u.sseltwo_.stm_2);
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_SselThree:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("SselThree");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shExp(_p_->u.sselthree_.exp_);
     bufAppendC(']');
-    bufAppendC(' ');
+  bufAppendC(' ');
     bufAppendC('[');
     shStm(_p_->u.sselthree_.stm_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
@@ -5647,82 +5718,82 @@ void shIter_stm(Iter_stm _p_)
   switch(_p_->kind)
   {
   case is_SiterOne:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("SiterOne");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shExp(_p_->u.siterone_.exp_);
     bufAppendC(']');
-    bufAppendC(' ');
+  bufAppendC(' ');
     bufAppendC('[');
     shStm(_p_->u.siterone_.stm_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_SiterTwo:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("SiterTwo");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shStm(_p_->u.sitertwo_.stm_);
     bufAppendC(']');
-    bufAppendC(' ');
+  bufAppendC(' ');
     bufAppendC('[');
     shExp(_p_->u.sitertwo_.exp_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_SiterThree:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("SiterThree");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     shExpression_stm(_p_->u.siterthree_.expression_stm_1);
-    bufAppendC(' ');
+  bufAppendC(' ');
     shExpression_stm(_p_->u.siterthree_.expression_stm_2);
-    bufAppendC(' ');
+  bufAppendC(' ');
     bufAppendC('[');
     shStm(_p_->u.siterthree_.stm_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_SiterFour:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("SiterFour");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     shExpression_stm(_p_->u.siterfour_.expression_stm_1);
-    bufAppendC(' ');
+  bufAppendC(' ');
     shExpression_stm(_p_->u.siterfour_.expression_stm_2);
-    bufAppendC(' ');
+  bufAppendC(' ');
     bufAppendC('[');
     shExp(_p_->u.siterfour_.exp_);
     bufAppendC(']');
-    bufAppendC(' ');
+  bufAppendC(' ');
     bufAppendC('[');
     shStm(_p_->u.siterfour_.stm_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
@@ -5756,263 +5827,263 @@ void shConstant(Constant _p_)
   switch(_p_->kind)
   {
   case is_Efloat:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("Efloat");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shDouble(_p_->u.efloat_.double_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_Echar:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("Echar");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shChar(_p_->u.echar_.char_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_Eunsigned:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("Eunsigned");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     shIdent(_p_->u.eunsigned_.unsigned_);
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_Elong:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("Elong");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     shIdent(_p_->u.elong_.long_);
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_Eunsignlong:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("Eunsignlong");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     shIdent(_p_->u.eunsignlong_.unsignedlong_);
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_Ehexadec:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("Ehexadec");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     shIdent(_p_->u.ehexadec_.hexadecimal_);
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_Ehexaunsign:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("Ehexaunsign");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     shIdent(_p_->u.ehexaunsign_.hexunsigned_);
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_Ehexalong:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("Ehexalong");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     shIdent(_p_->u.ehexalong_.hexlong_);
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_Ehexaunslong:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("Ehexaunslong");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     shIdent(_p_->u.ehexaunslong_.hexunslong_);
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_Eoctal:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("Eoctal");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     shIdent(_p_->u.eoctal_.octal_);
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_Eoctalunsign:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("Eoctalunsign");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     shIdent(_p_->u.eoctalunsign_.octalunsigned_);
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_Eoctallong:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("Eoctallong");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     shIdent(_p_->u.eoctallong_.octallong_);
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_Eoctalunslong:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("Eoctalunslong");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     shIdent(_p_->u.eoctalunslong_.octalunslong_);
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_Ecdouble:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("Ecdouble");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     shIdent(_p_->u.ecdouble_.cdouble_);
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_Ecfloat:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("Ecfloat");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     shIdent(_p_->u.ecfloat_.cfloat_);
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_Eclongdouble:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("Eclongdouble");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     shIdent(_p_->u.eclongdouble_.clongdouble_);
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_Eint:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("Eint");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shInteger(_p_->u.eint_.integer_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_Elonger:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("Elonger");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     /* Internal Category */
-    bufAppendC(' ');
+  bufAppendC(' ');
     bufAppendC('[');
     shInteger(_p_->u.elonger_.integer_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
   case is_Edouble:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("Edouble");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     /* Internal Category */
-    bufAppendC(' ');
+  bufAppendC(' ');
     bufAppendC('[');
     shDouble(_p_->u.edouble_.double_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
@@ -6028,17 +6099,17 @@ void shConstant_expression(Constant_expression _p_)
   switch(_p_->kind)
   {
   case is_Especial:
-    bufAppendC('(');
+  bufAppendC('(');
 
     bufAppendS("Especial");
 
-    bufAppendC(' ');
+  bufAppendC(' ');
 
     bufAppendC('[');
     shExp(_p_->u.especial_.exp_);
     bufAppendC(']');
 
-    bufAppendC(')');
+  bufAppendC(')');
 
     break;
 
@@ -6259,6 +6330,6 @@ void resizeBuffer(void)
   }
   buf_ = temp;
 }
-
 char *buf_;
 int cur_, buf_size;
+

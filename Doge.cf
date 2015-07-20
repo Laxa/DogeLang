@@ -1,11 +1,14 @@
 -- Additions to C language to achieve classes and namespaces
 
 -- Defining Class and Namespace architecture
-Class.          External_declaration ::= "doge" Ident Extends "{" [External_declaration] "}" ;
-Namespace.      External_declaration ::= "amaze" Ident ";" ;
+Class.          External_declaration ::= "doge" ClassName Extends "{" [External_declaration] "}" ;
+Namespace.      External_declaration ::= "amaze" Ident "{" [External_declaration] "}" ;
+
+ClassWithNamespace.     ClassName    ::= Ident "::" Ident;
+ClassWithoutNamespace.  ClassName    ::= Ident;
 
 -- Defining Inheritance decleration for classes
-Inheritance.    Extends ::= "very" Ident ;
+Inheritance.    Extends ::= "very" ClassName ;
 NoInheritance.  Extends ::= ;
 
 -- changing return keyword
@@ -32,12 +35,12 @@ InitDecl.   Init_declarator ::= Declarator "iz" Initializer;
 EnumInit.        Enumerator ::= Ident "iz" Constant_expression ;
 
 -- initialization
-InitClass.     Exp2  ::= Exp15 Assignment_op "new" Ident;
+InitClass.     Exp2  ::= Exp15 Assignment_op "new" ClassName;
 DestroyClass.  Exp2  ::= "stahp" Ident;
 
 -- class Declaration
-DecClass.           Declaration_specifier ::= "such" Ident Pointer Ident ;
-DecClassNoPoiter.   Declaration_specifier ::= "such" Ident Ident ;
+DecClass.           Declaration_specifier ::= "such" ClassName Pointer Ident ;
+DecClassNoPoiter.   Declaration_specifier ::= "such" ClassName Ident ;
 
 
 

@@ -1,20 +1,20 @@
-amaze stdlib;
+amaze test
+{
+  such int main()
+  {
+    such int attribute1;
 
-such int main() {
+    attribute1 iz 9;
 
-  such int attribute1;
-
-  attribute1 iz 9;
-
-  wow 1;
-}
+    wow 1;
+  }
 
   such int methode1(such int a , such int b)
   {
     this->attribute1 iz 2;
     this->attribute2 iz 'a';
     if (not a)
-    wow b;
+      wow b;
   }
 
   such float attribute3;
@@ -23,3 +23,4 @@ such int main() {
   {
     attribute3 iz 0.5;
   }
+}

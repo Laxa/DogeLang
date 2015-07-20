@@ -3,6 +3,8 @@
 
 #include "CheckDoge.h"
 
+#define UNUSED __attribute__ ((unused))
+
 typedef struct  s_nameSpaceClassTable
 {
   char                          *nameSpace;

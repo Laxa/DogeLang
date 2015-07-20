@@ -1,11 +1,12 @@
-#ifndef SKELETON_HEADER
-#define SKELETON_HEADER
+#ifndef CHECK_DOGE_H_
+# define CHECK_DOGE_H_
 /* You might want to change the above name. */
 
 #include "Absyn.h"
 
 
 void visitExternal_declaration(External_declaration p);
+void visitClassName(ClassName p);
 void visitExtends(Extends p);
 void visitJump_stm(Jump_stm p);
 void visitType_specifier(Type_specifier p);
@@ -58,12 +59,24 @@ void visitConstant(Constant p);
 void visitConstant_expression(Constant_expression p);
 void visitListExp(ListExp p);
 
-void visitUnsigned(Unsigned p);void visitLong(Long p);void visitUnsignedlong(UnsignedLong p);void visitHexadecimal(Hexadecimal p);void visitHexunsigned(HexUnsigned p);void visitHexlong(HexLong p);void visitHexunslong(HexUnsLong p);void visitOctal(Octal p);void visitOctalunsigned(OctalUnsigned p);void visitOctallong(OctalLong p);void visitOctalunslong(OctalUnsLong p);void visitCdouble(CDouble p);void visitCfloat(CFloat p);void visitClongdouble(CLongDouble p);
+void visitUnsigned(Unsigned p);
+void visitLong(Long p);
+void visitUnsignedLong(UnsignedLong p);
+void visitHexadecimal(Hexadecimal p);
+void visitHexUnsigned(HexUnsigned p);
+void visitHexLong(HexLong p);
+void visitHexUnsLong(HexUnsLong p);
+void visitOctal(Octal p);
+void visitOctalUnsigned(OctalUnsigned p);
+void visitOctalLong(OctalLong p);
+void visitOctalUnsLong(OctalUnsLong p);
+void visitCDouble(CDouble p);
+void visitCFloat(CFloat p);
+void visitCLongDouble(CLongDouble p);
 void visitIdent(Ident i);
 void visitInteger(Integer i);
 void visitDouble(Double d);
 void visitChar(Char c);
 void visitString(String s);
 
-#endif
-
+#endif /* !CHECK_DOGE_H_ */

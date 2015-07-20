@@ -10,6 +10,7 @@ typedef union
   double double_;
   char* string_;
   External_declaration external_declaration_;
+  ClassName classname_;
   Extends extends_;
   Jump_stm jump_stm_;
   Type_specifier type_specifier_;
@@ -162,11 +163,12 @@ typedef union
 #define _SYMB_96 355
 #define _SYMB_97 356
 #define _SYMB_98 357
-#define _STRING_ 358
-#define _CHAR_ 359
-#define _INTEGER_ 360
-#define _DOUBLE_ 361
-#define _IDENT_ 362
+#define _SYMB_99 358
+#define _STRING_ 359
+#define _CHAR_ 360
+#define _INTEGER_ 361
+#define _DOUBLE_ 362
+#define _IDENT_ 363
 
 extern YYSTYPE yylval;
 Program pProgram(FILE *inp);
