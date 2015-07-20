@@ -6,3 +6,4 @@ Sanitize output : trim lines
 test unitaires : function en class / hors class / namespace / hors namespace etc...
 bonus : Constructeur / destructeur
 Ajouter le stub des fonctions en haut du fichier
+Fix all TODO in code
