@@ -154,6 +154,7 @@ void ppExternal_declaration(External_declaration _p_, int _i_)
   {
   case is_Class:
     if (_i_ > 0) renderC(_L_PAREN, 0);
+    backup();
     renderS("struct", 1);
     ppClassName(_p_->u.class_.classname_, 0);
     ppExtends(_p_->u.class_.extends_, 0);
@@ -162,11 +163,13 @@ void ppExternal_declaration(External_declaration _p_, int _i_)
     ppListExternal_declaration(_p_->u.class_.listexternal_declaration_, 0);
     renderC('}', 1);
 
-    snprintf(buf, 512, "t_%s;",
+    snprintf(buf, 512, " t_%s_%s;",
+              curNameSpace,
              _p_->u.class_.classname_->u.classwithnamespace_.ident_1
             );
     renderS(buf, 0);
 
+    renderC('\n', 0);
     renderC('\n', 0);
     indent();
 
@@ -217,7 +220,7 @@ void ppClassName(ClassName _p_, int _i_)
   {
   case is_ClassWithNamespace:
     if (_i_ > 0) renderC(_L_PAREN, 0);
-    snprintf(buf, 512, "s_%s_%s",
+    snprintf(buf, 512, "t_%s_%s",
              _p_->u.classwithnamespace_.ident_1,
              _p_->u.classwithnamespace_.ident_2
             );
@@ -709,7 +712,7 @@ void ppExp(Exp _p_, int _i_)
     ppExp(_p_->u.initclass_.exp_, 15);
     ppAssignment_op(_p_->u.initclass_.assignment_op_, 0);
     if (_p_->u.initclass_.classname_->kind == 0)
-      snprintf(buf, 512, "malloc(sizeof(%s_420_mangling_%s))",
+      snprintf(buf, 512, "malloc(sizeof(t_%s_%s))",
                _p_->u.initclass_.classname_->u.classwithnamespace_.ident_1,
                _p_->u.initclass_.classname_->u.classwithnamespace_.ident_2
               );
