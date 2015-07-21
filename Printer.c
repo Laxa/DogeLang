@@ -20,7 +20,7 @@ char curNameSpace[NAMESPACE_MAX_LENGTH];
 char curClassName[CLASSNAME_MAX_LENGTH];
 
 /* You may wish to change the renderC functions */
-void renderC(Char c)
+void renderC(Char c, int i)
 {
   if (c == '{')
   {
@@ -50,8 +50,10 @@ void renderC(Char c)
       backup();
     }
     bufAppendC(c);
-    bufAppendC('\n');
-    indent();
+    if (i == 0) {
+      bufAppendC('\n');
+      indent();
+    }
   }
   else if (c == ',')
   {
@@ -146,43 +148,58 @@ char* showExp(Exp p)
 }
 void ppExternal_declaration(External_declaration _p_, int _i_)
 {
+  char buf[512];
+
   switch(_p_->kind)
   {
   case is_Class:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     renderS("struct", 1);
     ppClassName(_p_->u.class_.classname_, 0);
     ppExtends(_p_->u.class_.extends_, 0);
-    renderC('{');
-    ppListExternal_declaration(_p_->u.class_.listexternal_declaration_, 0);
-    renderC('}');
+    renderC('{', 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    ppListExternal_declaration(_p_->u.class_.listexternal_declaration_, 0);
+    renderC('}', 1);
+
+    snprintf(buf, 512, "t_%s;",
+             _p_->u.class_.classname_->u.classwithnamespace_.ident_1
+            );
+    renderS(buf, 0);
+
+    renderC('\n', 0);
+    indent();
+
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_Namespace:
-    if (_i_ > 0) renderC(_L_PAREN);
-    renderS("namespace", 1); // TODO : replace
-    ppIdent(_p_->u.namespace_.ident_, 0);
-    renderC('{');
-    ppListExternal_declaration(_p_->u.namespace_.listexternal_declaration_, 0);
-    renderC('}');
+    if (_i_ > 0) renderC(_L_PAREN, 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    // here set namespace
+    snprintf(curNameSpace, NAMESPACE_MAX_LENGTH, "%s", _p_->u.namespace_.ident_);
+
+    ppListExternal_declaration(_p_->u.namespace_.listexternal_declaration_, 0);
+
+    // here delete namespace
+    snprintf(curNameSpace, NAMESPACE_MAX_LENGTH, "");
+
+
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_Afunc:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     ppFunction_def(_p_->u.afunc_.function_def_, 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_Global:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     ppDec(_p_->u.global_.dec_, 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
 
@@ -199,22 +216,27 @@ void ppClassName(ClassName _p_, int _i_)
   switch(_p_->kind)
   {
   case is_ClassWithNamespace:
-    if (_i_ > 0) renderC(_L_PAREN);
-    snprintf(buf, 512, "%s_420_mangling_%s",
+    if (_i_ > 0) renderC(_L_PAREN, 0);
+    snprintf(buf, 512, "s_%s_%s",
              _p_->u.classwithnamespace_.ident_1,
              _p_->u.classwithnamespace_.ident_2
             );
 
     renderS(buf, 1);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_ClassWithoutNamespace:
-    if (_i_ > 0) renderC(_L_PAREN);
-    ppIdent(_p_->u.classwithoutnamespace_.ident_, 0);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
+    snprintf(buf, 512, "s_%s_%s",
+             curNameSpace,
+             _p_->u.classwithoutnamespace_.ident_
+            );
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    renderS(buf, 0);
+
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
 
@@ -229,17 +251,18 @@ void ppExtends(Extends _p_, int _i_)
   switch(_p_->kind)
   {
   case is_Inheritance:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
+    renderS(" ", 0);
     renderS("very", 1);
     ppClassName(_p_->u.inheritance_.classname_, 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_NoInheritance:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
 
@@ -254,45 +277,45 @@ void ppJump_stm(Jump_stm _p_, int _i_)
   switch(_p_->kind)
   {
   case is_SjumpFour:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     renderS("return", 1);
-    renderC(';');
+    renderC(';', 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_SjumpFive:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     renderS("return", 1);
     ppExp(_p_->u.sjumpfive_.exp_, 0);
-    renderC(';');
+    renderC(';', 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_SjumpOne:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     renderS("goto", 1);
     ppIdent(_p_->u.sjumpone_.ident_, 0);
-    renderC(';');
+    renderC(';', 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_SjumpTwo:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     renderS("continue", 1);
-    renderC(';');
+    renderC(';', 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_SjumpThree:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     renderS("break", 1);
-    renderC(';');
+    renderC(';', 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
 
@@ -307,87 +330,87 @@ void ppType_specifier(Type_specifier _p_, int _i_)
   switch(_p_->kind)
   {
   case is_Tvoid:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     renderS("void", 1);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_Tchar:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     renderS("char", 1);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_Tshort:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     renderS("short", 1);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_Tint:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     renderS("int", 1);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_Tlong:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     renderS("long", 1);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_Tfloat:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     renderS("float", 1);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_Tdouble:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     renderS("double", 1);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_Tsigned:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     renderS("signed", 1);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_Tunsigned:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     renderS("unsigned", 1);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_Tstruct:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     ppStruct_or_union_spec(_p_->u.tstruct_.struct_or_union_spec_, 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_Tenum:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     ppEnum_specifier(_p_->u.tenum_.enum_specifier_, 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_Tname:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     renderS("Typedef_name", 1); // seems wrong
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
 
@@ -402,38 +425,38 @@ void ppStorage_class_specifier(Storage_class_specifier _p_, int _i_)
   switch(_p_->kind)
   {
   case is_MyType:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     renderS("typedef", 1);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_GlobalPrograms:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     renderS("extern", 1);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_LocalProgram:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     renderS("static", 1);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_LocalBlock:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     renderS("auto", 1);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_LocalReg:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     renderS("register", 1);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
 
@@ -448,17 +471,17 @@ void ppType_qualifier(Type_qualifier _p_, int _i_)
   switch(_p_->kind)
   {
   case is_Const:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     renderS("const", 1);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_NoOptim:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     renderS("volatile", 1);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
 
@@ -473,45 +496,45 @@ void ppUnary_operator(Unary_operator _p_, int _i_)
   switch(_p_->kind)
   {
   case is_Logicalneg:
-    if (_i_ > 0) renderC(_L_PAREN);
-    renderC('!');
+    if (_i_ > 0) renderC(_L_PAREN, 0);
+    renderC('!', 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_Address:
-    if (_i_ > 0) renderC(_L_PAREN);
-    renderC('&');
+    if (_i_ > 0) renderC(_L_PAREN, 0);
+    renderC('&', 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_Indirection:
-    if (_i_ > 0) renderC(_L_PAREN);
-    renderC('*');
+    if (_i_ > 0) renderC(_L_PAREN, 0);
+    renderC('*', 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_Plus:
-    if (_i_ > 0) renderC(_L_PAREN);
-    renderC('+');
+    if (_i_ > 0) renderC(_L_PAREN, 0);
+    renderC('+', 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_Negative:
-    if (_i_ > 0) renderC(_L_PAREN);
-    renderC('-');
+    if (_i_ > 0) renderC(_L_PAREN, 0);
+    renderC('-', 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_Complement:
-    if (_i_ > 0) renderC(_L_PAREN);
-    renderC('~');
+    if (_i_ > 0) renderC(_L_PAREN, 0);
+    renderC('~', 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
 
@@ -526,80 +549,80 @@ void ppAssignment_op(Assignment_op _p_, int _i_)
   switch(_p_->kind)
   {
   case is_Assign:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     renderS("=", 1);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_AssignMul:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     renderS("*=", 1);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_AssignDiv:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     renderS("/=", 1);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_AssignMod:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     renderS("%=", 1);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_AssignAdd:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     renderS("+=", 1);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_AssignSub:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     renderS("-=", 1);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_AssignLeft:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     renderS("<<=", 1);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_AssignRight:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     renderS(">>=", 1);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_AssignAnd:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     renderS("&=", 1);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_AssignXor:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     renderS("^=", 1);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_AssignOr:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     renderS("|=", 1);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
 
@@ -614,19 +637,19 @@ void ppInit_declarator(Init_declarator _p_, int _i_)
   switch(_p_->kind)
   {
   case is_InitDecl:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     ppDeclarator(_p_->u.initdecl_.declarator_, 0);
     renderS("=", 1);
     ppInitializer(_p_->u.initdecl_.initializer_, 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_OnlyDecl:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     ppDeclarator(_p_->u.onlydecl_.declarator_, 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
 
@@ -641,19 +664,19 @@ void ppEnumerator(Enumerator _p_, int _i_)
   switch(_p_->kind)
   {
   case is_EnumInit:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     ppIdent(_p_->u.enuminit_.ident_, 0);
     renderS("=", 1);
     ppConstant_expression(_p_->u.enuminit_.constant_expression_, 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_Plain:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     ppIdent(_p_->u.plain_.ident_, 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
 
@@ -668,21 +691,21 @@ void ppExp(Exp _p_, int _i_)
   char buf[512];
 
   /* case is_ClassWithNamespace: */
-  /*   if (_i_ > 0) renderC(_L_PAREN); */
+  /*   if (_i_ > 0) renderC(_L_PAREN); , 0*/
   /*   ppIdent(_p_->u.classwithnamespace_.ident_1, 0); */
   /*   renderS("::", 0); */
   /*   ppIdent(_p_->u.classwithnamespace_.ident_2, 0); */
 
-  /*   if (_i_ > 0) renderC(_R_PAREN); */
+  /*   if (_i_ > 0) renderC(_R_PAREN); , 0*/
   /*   break; */
 
   /* case is_ClassWithoutNamespace: */
-  /*   if (_i_ > 0) renderC(_L_PAREN); */
+  /*   if (_i_ > 0) renderC(_L_PAREN); , 0*/
   /*   ppIdent(_p_->u.classwithoutnamespace_.ident_, 0); */
   switch(_p_->kind)
   {
   case is_InitClass:
-    if (_i_ > 2) renderC(_L_PAREN);
+    if (_i_ > 2) renderC(_L_PAREN, 0);
     ppExp(_p_->u.initclass_.exp_, 15);
     ppAssignment_op(_p_->u.initclass_.assignment_op_, 0);
     if (_p_->u.initclass_.classname_->kind == 0)
@@ -695,343 +718,343 @@ void ppExp(Exp _p_, int _i_)
     renderS(buf, 0);
     /* ppClassName(_p_->u.initclass_.classname_, 0); */
 
-    if (_i_ > 2) renderC(_R_PAREN);
+    if (_i_ > 2) renderC(_R_PAREN, 0);
     break;
 
   case is_DestroyClass:
-    if (_i_ > 2) renderC(_L_PAREN);
+    if (_i_ > 2) renderC(_L_PAREN, 0);
     snprintf(buf, 512, "free(%s)", _p_->u.destroyclass_.ident_);
     renderS(buf, 0);
     /* ppIdent(_p_->u.destroyclass_.ident_, 0); */
 
-    if (_i_ > 2) renderC(_R_PAREN);
+    if (_i_ > 2) renderC(_R_PAREN, 0);
     break;
 
   case is_Eassign:
-    if (_i_ > 2) renderC(_L_PAREN);
+    if (_i_ > 2) renderC(_L_PAREN, 0);
     ppExp(_p_->u.eassign_.exp_1, 15);
     ppAssignment_op(_p_->u.eassign_.assignment_op_, 0);
     ppExp(_p_->u.eassign_.exp_2, 2);
 
-    if (_i_ > 2) renderC(_R_PAREN);
+    if (_i_ > 2) renderC(_R_PAREN, 0);
     break;
 
   case is_Ecomma:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     ppExp(_p_->u.ecomma_.exp_1, 0);
-    renderC(',');
+    renderC(',', 0);
     ppExp(_p_->u.ecomma_.exp_2, 2);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_Econdition:
-    if (_i_ > 3) renderC(_L_PAREN);
+    if (_i_ > 3) renderC(_L_PAREN, 0);
     ppExp(_p_->u.econdition_.exp_1, 4);
-    renderC('?');
+    renderC('?', 0);
     ppExp(_p_->u.econdition_.exp_2, 0);
-    renderC(':');
+    renderC(':', 0);
     ppExp(_p_->u.econdition_.exp_3, 3);
 
-    if (_i_ > 3) renderC(_R_PAREN);
+    if (_i_ > 3) renderC(_R_PAREN, 0);
     break;
 
   case is_Elor:
-    if (_i_ > 4) renderC(_L_PAREN);
+    if (_i_ > 4) renderC(_L_PAREN, 0);
     ppExp(_p_->u.elor_.exp_1, 4);
     renderS("||", 1);
     ppExp(_p_->u.elor_.exp_2, 5);
 
-    if (_i_ > 4) renderC(_R_PAREN);
+    if (_i_ > 4) renderC(_R_PAREN, 0);
     break;
 
   case is_Eland:
-    if (_i_ > 5) renderC(_L_PAREN);
+    if (_i_ > 5) renderC(_L_PAREN, 0);
     ppExp(_p_->u.eland_.exp_1, 5);
     renderS("&&", 1);
     ppExp(_p_->u.eland_.exp_2, 6);
 
-    if (_i_ > 5) renderC(_R_PAREN);
+    if (_i_ > 5) renderC(_R_PAREN, 0);
     break;
 
   case is_Ebitor:
-    if (_i_ > 6) renderC(_L_PAREN);
+    if (_i_ > 6) renderC(_L_PAREN, 0);
     ppExp(_p_->u.ebitor_.exp_1, 6);
-    renderC('|');
+    renderC('|', 0);
     ppExp(_p_->u.ebitor_.exp_2, 7);
 
-    if (_i_ > 6) renderC(_R_PAREN);
+    if (_i_ > 6) renderC(_R_PAREN, 0);
     break;
 
   case is_Ebitexor:
-    if (_i_ > 7) renderC(_L_PAREN);
+    if (_i_ > 7) renderC(_L_PAREN, 0);
     ppExp(_p_->u.ebitexor_.exp_1, 7);
-    renderC('^');
+    renderC('^', 0);
     ppExp(_p_->u.ebitexor_.exp_2, 8);
 
-    if (_i_ > 7) renderC(_R_PAREN);
+    if (_i_ > 7) renderC(_R_PAREN, 0);
     break;
 
   case is_Ebitand:
-    if (_i_ > 8) renderC(_L_PAREN);
+    if (_i_ > 8) renderC(_L_PAREN, 0);
     ppExp(_p_->u.ebitand_.exp_1, 8);
-    renderC('&');
+    renderC('&', 0);
     ppExp(_p_->u.ebitand_.exp_2, 9);
 
-    if (_i_ > 8) renderC(_R_PAREN);
+    if (_i_ > 8) renderC(_R_PAREN, 0);
     break;
 
   case is_Eeq:
-    if (_i_ > 9) renderC(_L_PAREN);
+    if (_i_ > 9) renderC(_L_PAREN, 0);
     ppExp(_p_->u.eeq_.exp_1, 9);
     renderS("==", 1);
     ppExp(_p_->u.eeq_.exp_2, 10);
 
-    if (_i_ > 9) renderC(_R_PAREN);
+    if (_i_ > 9) renderC(_R_PAREN, 0);
     break;
 
   case is_Eneq:
-    if (_i_ > 9) renderC(_L_PAREN);
+    if (_i_ > 9) renderC(_L_PAREN, 0);
     ppExp(_p_->u.eneq_.exp_1, 9);
     renderS("!=", 1);
     ppExp(_p_->u.eneq_.exp_2, 10);
 
-    if (_i_ > 9) renderC(_R_PAREN);
+    if (_i_ > 9) renderC(_R_PAREN, 0);
     break;
 
   case is_Elthen:
-    if (_i_ > 10) renderC(_L_PAREN);
+    if (_i_ > 10) renderC(_L_PAREN, 0);
     ppExp(_p_->u.elthen_.exp_1, 10);
-    renderC('<');
+    renderC('<', 0);
     ppExp(_p_->u.elthen_.exp_2, 11);
 
-    if (_i_ > 10) renderC(_R_PAREN);
+    if (_i_ > 10) renderC(_R_PAREN, 0);
     break;
 
   case is_Egrthen:
-    if (_i_ > 10) renderC(_L_PAREN);
+    if (_i_ > 10) renderC(_L_PAREN, 0);
     ppExp(_p_->u.egrthen_.exp_1, 10);
-    renderC('>');
+    renderC('>', 0);
     ppExp(_p_->u.egrthen_.exp_2, 11);
 
-    if (_i_ > 10) renderC(_R_PAREN);
+    if (_i_ > 10) renderC(_R_PAREN, 0);
     break;
 
   case is_Ele:
-    if (_i_ > 10) renderC(_L_PAREN);
+    if (_i_ > 10) renderC(_L_PAREN, 0);
     ppExp(_p_->u.ele_.exp_1, 10);
     renderS("<=", 1);
     ppExp(_p_->u.ele_.exp_2, 11);
 
-    if (_i_ > 10) renderC(_R_PAREN);
+    if (_i_ > 10) renderC(_R_PAREN, 0);
     break;
 
   case is_Ege:
-    if (_i_ > 10) renderC(_L_PAREN);
+    if (_i_ > 10) renderC(_L_PAREN, 0);
     ppExp(_p_->u.ege_.exp_1, 10);
     renderS(">=", 1);
     ppExp(_p_->u.ege_.exp_2, 11);
 
-    if (_i_ > 10) renderC(_R_PAREN);
+    if (_i_ > 10) renderC(_R_PAREN, 0);
     break;
 
   case is_Eleft:
-    if (_i_ > 11) renderC(_L_PAREN);
+    if (_i_ > 11) renderC(_L_PAREN, 0);
     ppExp(_p_->u.eleft_.exp_1, 11);
     renderS("<<", 1);
     ppExp(_p_->u.eleft_.exp_2, 12);
 
-    if (_i_ > 11) renderC(_R_PAREN);
+    if (_i_ > 11) renderC(_R_PAREN, 0);
     break;
 
   case is_Eright:
-    if (_i_ > 11) renderC(_L_PAREN);
+    if (_i_ > 11) renderC(_L_PAREN, 0);
     ppExp(_p_->u.eright_.exp_1, 11);
     renderS(">>", 1);
     ppExp(_p_->u.eright_.exp_2, 12);
 
-    if (_i_ > 11) renderC(_R_PAREN);
+    if (_i_ > 11) renderC(_R_PAREN, 0);
     break;
 
   case is_Eplus:
-    if (_i_ > 12) renderC(_L_PAREN);
+    if (_i_ > 12) renderC(_L_PAREN, 0);
     ppExp(_p_->u.eplus_.exp_1, 12);
-    renderC('+');
+    renderC('+', 0);
     ppExp(_p_->u.eplus_.exp_2, 13);
 
-    if (_i_ > 12) renderC(_R_PAREN);
+    if (_i_ > 12) renderC(_R_PAREN, 0);
     break;
 
   case is_Eminus:
-    if (_i_ > 12) renderC(_L_PAREN);
+    if (_i_ > 12) renderC(_L_PAREN, 0);
     ppExp(_p_->u.eminus_.exp_1, 12);
-    renderC('-');
+    renderC('-', 0);
     ppExp(_p_->u.eminus_.exp_2, 13);
 
-    if (_i_ > 12) renderC(_R_PAREN);
+    if (_i_ > 12) renderC(_R_PAREN, 0);
     break;
 
   case is_Etimes:
-    if (_i_ > 13) renderC(_L_PAREN);
+    if (_i_ > 13) renderC(_L_PAREN, 0);
     ppExp(_p_->u.etimes_.exp_1, 13);
-    renderC('*');
+    renderC('*', 0);
     ppExp(_p_->u.etimes_.exp_2, 14);
 
-    if (_i_ > 13) renderC(_R_PAREN);
+    if (_i_ > 13) renderC(_R_PAREN, 0);
     break;
 
   case is_Ediv:
-    if (_i_ > 13) renderC(_L_PAREN);
+    if (_i_ > 13) renderC(_L_PAREN, 0);
     ppExp(_p_->u.ediv_.exp_1, 13);
-    renderC('/');
+    renderC('/', 0);
     ppExp(_p_->u.ediv_.exp_2, 14);
 
-    if (_i_ > 13) renderC(_R_PAREN);
+    if (_i_ > 13) renderC(_R_PAREN, 0);
     break;
 
   case is_Emod:
-    if (_i_ > 13) renderC(_L_PAREN);
+    if (_i_ > 13) renderC(_L_PAREN, 0);
     ppExp(_p_->u.emod_.exp_1, 13);
-    renderC('%');
+    renderC('%', 0);
     ppExp(_p_->u.emod_.exp_2, 14);
 
-    if (_i_ > 13) renderC(_R_PAREN);
+    if (_i_ > 13) renderC(_R_PAREN, 0);
     break;
 
   case is_Etypeconv:
-    if (_i_ > 14) renderC(_L_PAREN);
-    renderC('(');
+    if (_i_ > 14) renderC(_L_PAREN, 0);
+    renderC('(', 0);
     ppType_name(_p_->u.etypeconv_.type_name_, 0);
-    renderC(')');
+    renderC(')', 0);
     ppExp(_p_->u.etypeconv_.exp_, 14);
 
-    if (_i_ > 14) renderC(_R_PAREN);
+    if (_i_ > 14) renderC(_R_PAREN, 0);
     break;
 
   case is_Epreinc:
-    if (_i_ > 15) renderC(_L_PAREN);
+    if (_i_ > 15) renderC(_L_PAREN, 0);
     renderS("++", 1);
     ppExp(_p_->u.epreinc_.exp_, 15);
 
-    if (_i_ > 15) renderC(_R_PAREN);
+    if (_i_ > 15) renderC(_R_PAREN, 0);
     break;
 
   case is_Epredec:
-    if (_i_ > 15) renderC(_L_PAREN);
+    if (_i_ > 15) renderC(_L_PAREN, 0);
     renderS("--", 1);
     ppExp(_p_->u.epredec_.exp_, 15);
 
-    if (_i_ > 15) renderC(_R_PAREN);
+    if (_i_ > 15) renderC(_R_PAREN, 0);
     break;
 
   case is_Epreop:
-    if (_i_ > 15) renderC(_L_PAREN);
+    if (_i_ > 15) renderC(_L_PAREN, 0);
     ppUnary_operator(_p_->u.epreop_.unary_operator_, 0);
     ppExp(_p_->u.epreop_.exp_, 14);
 
-    if (_i_ > 15) renderC(_R_PAREN);
+    if (_i_ > 15) renderC(_R_PAREN, 0);
     break;
 
   case is_Ebytesexpr:
-    if (_i_ > 15) renderC(_L_PAREN);
+    if (_i_ > 15) renderC(_L_PAREN, 0);
     renderS("sizeof", 1);
     ppExp(_p_->u.ebytesexpr_.exp_, 15);
 
-    if (_i_ > 15) renderC(_R_PAREN);
+    if (_i_ > 15) renderC(_R_PAREN, 0);
     break;
 
   case is_Ebytestype:
-    if (_i_ > 15) renderC(_L_PAREN);
+    if (_i_ > 15) renderC(_L_PAREN, 0);
     renderS("sizeof", 0);
-    renderC('(');
+    renderC('(', 0);
     ppType_name(_p_->u.ebytestype_.type_name_, 0);
-    renderC(')');
+    renderC(')', 0);
 
-    if (_i_ > 15) renderC(_R_PAREN);
+    if (_i_ > 15) renderC(_R_PAREN, 0);
     break;
 
   case is_Earray:
-    if (_i_ > 16) renderC(_L_PAREN);
+    if (_i_ > 16) renderC(_L_PAREN, 0);
     ppExp(_p_->u.earray_.exp_1, 16);
-    renderC('[');
+    renderC('[', 0);
     ppExp(_p_->u.earray_.exp_2, 0);
-    renderC(']');
+    renderC(']', 0);
 
-    if (_i_ > 16) renderC(_R_PAREN);
+    if (_i_ > 16) renderC(_R_PAREN, 0);
     break;
 
   case is_Efunk:
-    if (_i_ > 16) renderC(_L_PAREN);
+    if (_i_ > 16) renderC(_L_PAREN, 0);
     ppExp(_p_->u.efunk_.exp_, 16);
-    renderC('(');
-    renderC(')');
+    renderC('(', 0);
+    renderC(')', 0);
 
-    if (_i_ > 16) renderC(_R_PAREN);
+    if (_i_ > 16) renderC(_R_PAREN, 0);
     break;
 
   case is_Efunkpar:
-    if (_i_ > 16) renderC(_L_PAREN);
+    if (_i_ > 16) renderC(_L_PAREN, 0);
     ppExp(_p_->u.efunkpar_.exp_, 16);
-    renderC('(');
+    renderC('(', 0);
     ppListExp(_p_->u.efunkpar_.listexp_, 2);
-    renderC(')');
+    renderC(')', 0);
 
-    if (_i_ > 16) renderC(_R_PAREN);
+    if (_i_ > 16) renderC(_R_PAREN, 0);
     break;
 
   case is_Eselect:
-    if (_i_ > 16) renderC(_L_PAREN);
+    if (_i_ > 16) renderC(_L_PAREN, 0);
     ppExp(_p_->u.eselect_.exp_, 16);
-    renderC('.');
+    renderC('.', 0);
     ppIdent(_p_->u.eselect_.ident_, 0);
 
-    if (_i_ > 16) renderC(_R_PAREN);
+    if (_i_ > 16) renderC(_R_PAREN, 0);
     break;
 
   case is_Epoint:
-    if (_i_ > 16) renderC(_L_PAREN);
+    if (_i_ > 16) renderC(_L_PAREN, 0);
     ppExp(_p_->u.epoint_.exp_, 16);
     renderS("->", -1);
     ppIdent(_p_->u.epoint_.ident_, 0);
 
-    if (_i_ > 16) renderC(_R_PAREN);
+    if (_i_ > 16) renderC(_R_PAREN, 0);
     break;
 
   case is_Epostinc:
-    if (_i_ > 16) renderC(_L_PAREN);
+    if (_i_ > 16) renderC(_L_PAREN, 0);
     ppExp(_p_->u.epostinc_.exp_, 16);
     renderS("++", 0);
 
-    if (_i_ > 16) renderC(_R_PAREN);
+    if (_i_ > 16) renderC(_R_PAREN, 0);
     break;
 
   case is_Epostdec:
-    if (_i_ > 16) renderC(_L_PAREN);
+    if (_i_ > 16) renderC(_L_PAREN, 0);
     ppExp(_p_->u.epostdec_.exp_, 16);
     renderS("--", 0);
 
-    if (_i_ > 16) renderC(_R_PAREN);
+    if (_i_ > 16) renderC(_R_PAREN, 0);
     break;
 
   case is_Evar:
-    if (_i_ > 17) renderC(_L_PAREN);
+    if (_i_ > 17) renderC(_L_PAREN, 0);
     ppIdent(_p_->u.evar_.ident_, 0);
 
-    if (_i_ > 17) renderC(_R_PAREN);
+    if (_i_ > 17) renderC(_R_PAREN, 0);
     break;
 
   case is_Econst:
-    if (_i_ > 17) renderC(_L_PAREN);
+    if (_i_ > 17) renderC(_L_PAREN, 0);
     ppConstant(_p_->u.econst_.constant_, 0);
 
-    if (_i_ > 17) renderC(_R_PAREN);
+    if (_i_ > 17) renderC(_R_PAREN, 0);
     break;
 
   case is_Estring:
-    if (_i_ > 17) renderC(_L_PAREN);
+    if (_i_ > 17) renderC(_L_PAREN, 0);
     ppString(_p_->u.estring_.string_, 0);
 
-    if (_i_ > 17) renderC(_R_PAREN);
+    if (_i_ > 17) renderC(_R_PAREN, 0);
     break;
 
 
@@ -1046,41 +1069,41 @@ void ppDeclaration_specifier(Declaration_specifier _p_, int _i_)
   switch(_p_->kind)
   {
   case is_DecClass:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     ppClassName(_p_->u.decclass_.classname_, 0);
     ppPointer(_p_->u.decclass_.pointer_, 0);
     ppIdent(_p_->u.decclass_.ident_, 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_DecClassNoPoiter:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     ppClassName(_p_->u.decclassnopoiter_.classname_, 0);
     ppIdent(_p_->u.decclassnopoiter_.ident_, 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_Type:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     ppType_specifier(_p_->u.type_.type_specifier_, 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_Storage:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     ppStorage_class_specifier(_p_->u.storage_.storage_class_specifier_, 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_SpecProp:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     ppType_qualifier(_p_->u.specprop_.type_qualifier_, 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
 
@@ -1095,10 +1118,10 @@ void ppProgram(Program _p_, int _i_)
   switch(_p_->kind)
   {
   case is_Progr:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     ppListExternal_declaration(_p_->u.progr_.listexternal_declaration_, 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
 
@@ -1132,39 +1155,39 @@ void ppFunction_def(Function_def _p_, int _i_)
   switch(_p_->kind)
   {
   case is_OldFunc:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     ppListDeclaration_specifier(_p_->u.oldfunc_.listdeclaration_specifier_, 0);
     ppDeclarator(_p_->u.oldfunc_.declarator_, 0);
     ppListDec(_p_->u.oldfunc_.listdec_, 0);
     ppCompound_stm(_p_->u.oldfunc_.compound_stm_, 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_NewFunc:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     ppListDeclaration_specifier(_p_->u.newfunc_.listdeclaration_specifier_, 0);
     ppDeclarator(_p_->u.newfunc_.declarator_, 0);
     ppCompound_stm(_p_->u.newfunc_.compound_stm_, 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_OldFuncInt:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     ppDeclarator(_p_->u.oldfuncint_.declarator_, 0);
     ppListDec(_p_->u.oldfuncint_.listdec_, 0);
     ppCompound_stm(_p_->u.oldfuncint_.compound_stm_, 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_NewFuncInt:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     ppDeclarator(_p_->u.newfuncint_.declarator_, 0);
     ppCompound_stm(_p_->u.newfuncint_.compound_stm_, 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
 
@@ -1179,20 +1202,20 @@ void ppDec(Dec _p_, int _i_)
   switch(_p_->kind)
   {
   case is_NoDeclarator:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     ppListDeclaration_specifier(_p_->u.nodeclarator_.listdeclaration_specifier_, 0);
-    renderC(';');
+    renderC(';', 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_Declarators:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     ppListDeclaration_specifier(_p_->u.declarators_.listdeclaration_specifier_, 0);
     ppListInit_declarator(_p_->u.declarators_.listinit_declarator_, 0);
-    renderC(';');
+    renderC(';', 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
 
@@ -1253,7 +1276,7 @@ void ppListInit_declarator(ListInit_declarator listinit_declarator, int i)
     else
     {
       ppInit_declarator(listinit_declarator->init_declarator_, i);
-      renderC(',');
+      renderC(',', 0);
       listinit_declarator = listinit_declarator->listinit_declarator_;
     }
   }
@@ -1264,32 +1287,32 @@ void ppStruct_or_union_spec(Struct_or_union_spec _p_, int _i_)
   switch(_p_->kind)
   {
   case is_Tag:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     ppStruct_or_union(_p_->u.tag_.struct_or_union_, 0);
     ppIdent(_p_->u.tag_.ident_, 0);
-    renderC('{');
+    renderC('{', 0);
     ppListStruct_dec(_p_->u.tag_.liststruct_dec_, 0);
-    renderC('}');
+    renderC('}', 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_Unique:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     ppStruct_or_union(_p_->u.unique_.struct_or_union_, 0);
-    renderC('{');
+    renderC('{', 0);
     ppListStruct_dec(_p_->u.unique_.liststruct_dec_, 0);
-    renderC('}');
+    renderC('}', 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_TagType:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     ppStruct_or_union(_p_->u.tagtype_.struct_or_union_, 0);
     ppIdent(_p_->u.tagtype_.ident_, 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
 
@@ -1304,17 +1327,17 @@ void ppStruct_or_union(Struct_or_union _p_, int _i_)
   switch(_p_->kind)
   {
   case is_Struct:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     renderS("struct", 1);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_Union:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     renderS("union", 1);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
 
@@ -1348,12 +1371,12 @@ void ppStruct_dec(Struct_dec _p_, int _i_)
   switch(_p_->kind)
   {
   case is_Structen:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     ppListSpec_qual(_p_->u.structen_.listspec_qual_, 0);
     ppListStruct_declarator(_p_->u.structen_.liststruct_declarator_, 0);
-    renderC(';');
+    renderC(';', 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
 
@@ -1387,17 +1410,17 @@ void ppSpec_qual(Spec_qual _p_, int _i_)
   switch(_p_->kind)
   {
   case is_TypeSpec:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     ppType_specifier(_p_->u.typespec_.type_specifier_, 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_QualSpec:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     ppType_qualifier(_p_->u.qualspec_.type_qualifier_, 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
 
@@ -1420,7 +1443,7 @@ void ppListStruct_declarator(ListStruct_declarator liststruct_declarator, int i)
     else
     {
       ppStruct_declarator(liststruct_declarator->struct_declarator_, i);
-      renderC(',');
+      renderC(',', 0);
       liststruct_declarator = liststruct_declarator->liststruct_declarator_;
     }
   }
@@ -1431,27 +1454,27 @@ void ppStruct_declarator(Struct_declarator _p_, int _i_)
   switch(_p_->kind)
   {
   case is_Decl:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     ppDeclarator(_p_->u.decl_.declarator_, 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_Field:
-    if (_i_ > 0) renderC(_L_PAREN);
-    renderC(':');
+    if (_i_ > 0) renderC(_L_PAREN, 0);
+    renderC(':', 0);
     ppConstant_expression(_p_->u.field_.constant_expression_, 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_DecField:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     ppDeclarator(_p_->u.decfield_.declarator_, 0);
-    renderC(':');
+    renderC(':', 0);
     ppConstant_expression(_p_->u.decfield_.constant_expression_, 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
 
@@ -1466,32 +1489,32 @@ void ppEnum_specifier(Enum_specifier _p_, int _i_)
   switch(_p_->kind)
   {
   case is_EnumDec:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     renderS("enum", 1);
-    renderC('{');
+    renderC('{', 0);
     ppListEnumerator(_p_->u.enumdec_.listenumerator_, 0);
-    renderC('}');
+    renderC('}', 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_EnumName:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     renderS("enum", 1);
     ppIdent(_p_->u.enumname_.ident_, 0);
-    renderC('{');
+    renderC('{', 0);
     ppListEnumerator(_p_->u.enumname_.listenumerator_, 0);
-    renderC('}');
+    renderC('}', 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_EnumVar:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     renderS("enum", 1);
     ppIdent(_p_->u.enumvar_.ident_, 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
 
@@ -1514,7 +1537,7 @@ void ppListEnumerator(ListEnumerator listenumerator, int i)
     else
     {
       ppEnumerator(listenumerator->enumerator_, i);
-      renderC(',');
+      renderC(',', 0);
       listenumerator = listenumerator->listenumerator_;
     }
   }
@@ -1525,18 +1548,18 @@ void ppDeclarator(Declarator _p_, int _i_)
   switch(_p_->kind)
   {
   case is_BeginPointer:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     ppPointer(_p_->u.beginpointer_.pointer_, 0);
     ppDirect_declarator(_p_->u.beginpointer_.direct_declarator_, 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_NoPointer:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     ppDirect_declarator(_p_->u.nopointer_.direct_declarator_, 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
 
@@ -1551,67 +1574,67 @@ void ppDirect_declarator(Direct_declarator _p_, int _i_)
   switch(_p_->kind)
   {
   case is_Name:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     ppIdent(_p_->u.name_.ident_, 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_ParenDecl:
-    if (_i_ > 0) renderC(_L_PAREN);
-    renderC('(');
+    if (_i_ > 0) renderC(_L_PAREN, 0);
+    renderC('(', 0);
     ppDeclarator(_p_->u.parendecl_.declarator_, 0);
-    renderC(')');
+    renderC(')', 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_InnitArray:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     ppDirect_declarator(_p_->u.innitarray_.direct_declarator_, 0);
-    renderC('[');
+    renderC('[', 0);
     ppConstant_expression(_p_->u.innitarray_.constant_expression_, 0);
-    renderC(']');
+    renderC(']', 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_Incomplete:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     ppDirect_declarator(_p_->u.incomplete_.direct_declarator_, 0);
-    renderC('[');
-    renderC(']');
+    renderC('[', 0);
+    renderC(']', 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_NewFuncDec:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     ppDirect_declarator(_p_->u.newfuncdec_.direct_declarator_, 0);
-    renderC('(');
+    renderC('(', 0);
     ppParameter_type(_p_->u.newfuncdec_.parameter_type_, 0);
-    renderC(')');
+    renderC(')', 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_OldFuncDef:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     ppDirect_declarator(_p_->u.oldfuncdef_.direct_declarator_, 0);
-    renderC('(');
+    renderC('(', 0);
     ppListIdent(_p_->u.oldfuncdef_.listident_, 0);
-    renderC(')');
+    renderC(')', 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_OldFuncDec:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     ppDirect_declarator(_p_->u.oldfuncdec_.direct_declarator_, 0);
-    renderC('(');
-    renderC(')');
+    renderC('(', 0);
+    renderC(')', 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
 
@@ -1626,35 +1649,35 @@ void ppPointer(Pointer _p_, int _i_)
   switch(_p_->kind)
   {
   case is_Point:
-    if (_i_ > 0) renderC(_L_PAREN);
-    renderC('*');
+    if (_i_ > 0) renderC(_L_PAREN, 0);
+    renderC('*', 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_PointQual:
-    if (_i_ > 0) renderC(_L_PAREN);
-    renderC('*');
+    if (_i_ > 0) renderC(_L_PAREN, 0);
+    renderC('*', 0);
     ppListType_qualifier(_p_->u.pointqual_.listtype_qualifier_, 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_PointPoint:
-    if (_i_ > 0) renderC(_L_PAREN);
-    renderC('*');
+    if (_i_ > 0) renderC(_L_PAREN, 0);
+    renderC('*', 0);
     ppPointer(_p_->u.pointpoint_.pointer_, 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_PointQualPoint:
-    if (_i_ > 0) renderC(_L_PAREN);
-    renderC('*');
+    if (_i_ > 0) renderC(_L_PAREN, 0);
+    renderC('*', 0);
     ppListType_qualifier(_p_->u.pointqualpoint_.listtype_qualifier_, 0);
     ppPointer(_p_->u.pointqualpoint_.pointer_, 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
 
@@ -1688,19 +1711,19 @@ void ppParameter_type(Parameter_type _p_, int _i_)
   switch(_p_->kind)
   {
   case is_AllSpec:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     ppParameter_declarations(_p_->u.allspec_.parameter_declarations_, 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_More:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     ppParameter_declarations(_p_->u.more_.parameter_declarations_, 0);
-    renderC(',');
+    renderC(',', 0);
     renderS("...", 0); // va_args
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
 
@@ -1715,19 +1738,19 @@ void ppParameter_declarations(Parameter_declarations _p_, int _i_)
   switch(_p_->kind)
   {
   case is_ParamDec:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     ppParameter_declaration(_p_->u.paramdec_.parameter_declaration_, 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_MoreParamDec:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     ppParameter_declarations(_p_->u.moreparamdec_.parameter_declarations_, 0);
-    renderC(',');
+    renderC(',', 0);
     ppParameter_declaration(_p_->u.moreparamdec_.parameter_declaration_, 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
 
@@ -1742,26 +1765,26 @@ void ppParameter_declaration(Parameter_declaration _p_, int _i_)
   switch(_p_->kind)
   {
   case is_OnlyType:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     ppListDeclaration_specifier(_p_->u.onlytype_.listdeclaration_specifier_, 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_TypeAndParam:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     ppListDeclaration_specifier(_p_->u.typeandparam_.listdeclaration_specifier_, 0);
     ppDeclarator(_p_->u.typeandparam_.declarator_, 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_Abstract:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     ppListDeclaration_specifier(_p_->u.abstract_.listdeclaration_specifier_, 0);
     ppAbstract_declarator(_p_->u.abstract_.abstract_declarator_, 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
 
@@ -1784,7 +1807,7 @@ void ppListIdent(ListIdent listident, int i)
     else
     {
       ppIdent(listident->ident_, i);
-      renderC(',');
+      renderC(',', 0);
       listident = listident->listident_;
     }
   }
@@ -1795,29 +1818,29 @@ void ppInitializer(Initializer _p_, int _i_)
   switch(_p_->kind)
   {
   case is_InitExpr:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     ppExp(_p_->u.initexpr_.exp_, 2);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_InitListOne:
-    if (_i_ > 0) renderC(_L_PAREN);
-    renderC('{');
+    if (_i_ > 0) renderC(_L_PAREN, 0);
+    renderC('{', 0);
     ppInitializers(_p_->u.initlistone_.initializers_, 0);
-    renderC('}');
+    renderC('}', 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_InitListTwo:
-    if (_i_ > 0) renderC(_L_PAREN);
-    renderC('{');
+    if (_i_ > 0) renderC(_L_PAREN, 0);
+    renderC('{', 0);
     ppInitializers(_p_->u.initlisttwo_.initializers_, 0);
-    renderC(',');
-    renderC('}');
+    renderC(',', 0);
+    renderC('}', 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
 
@@ -1832,19 +1855,19 @@ void ppInitializers(Initializers _p_, int _i_)
   switch(_p_->kind)
   {
   case is_AnInit:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     ppInitializer(_p_->u.aninit_.initializer_, 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_MoreInit:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     ppInitializers(_p_->u.moreinit_.initializers_, 0);
-    renderC(',');
+    renderC(',', 0);
     ppInitializer(_p_->u.moreinit_.initializer_, 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
 
@@ -1859,18 +1882,18 @@ void ppType_name(Type_name _p_, int _i_)
   switch(_p_->kind)
   {
   case is_PlainType:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     ppListSpec_qual(_p_->u.plaintype_.listspec_qual_, 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_ExtendedType:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     ppListSpec_qual(_p_->u.extendedtype_.listspec_qual_, 0);
     ppAbstract_declarator(_p_->u.extendedtype_.abstract_declarator_, 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
 
@@ -1885,25 +1908,25 @@ void ppAbstract_declarator(Abstract_declarator _p_, int _i_)
   switch(_p_->kind)
   {
   case is_PointerStart:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     ppPointer(_p_->u.pointerstart_.pointer_, 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_Advanced:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     ppDir_abs_dec(_p_->u.advanced_.dir_abs_dec_, 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_PointAdvanced:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     ppPointer(_p_->u.pointadvanced_.pointer_, 0);
     ppDir_abs_dec(_p_->u.pointadvanced_.dir_abs_dec_, 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
 
@@ -1918,84 +1941,84 @@ void ppDir_abs_dec(Dir_abs_dec _p_, int _i_)
   switch(_p_->kind)
   {
   case is_WithinParentes:
-    if (_i_ > 0) renderC(_L_PAREN);
-    renderC('(');
+    if (_i_ > 0) renderC(_L_PAREN, 0);
+    renderC('(', 0);
     ppAbstract_declarator(_p_->u.withinparentes_.abstract_declarator_, 0);
-    renderC(')');
+    renderC(')', 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_Array:
-    if (_i_ > 0) renderC(_L_PAREN);
-    renderC('[');
-    renderC(']');
+    if (_i_ > 0) renderC(_L_PAREN, 0);
+    renderC('[', 0);
+    renderC(']', 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_InitiatedArray:
-    if (_i_ > 0) renderC(_L_PAREN);
-    renderC('[');
+    if (_i_ > 0) renderC(_L_PAREN, 0);
+    renderC('[', 0);
     ppConstant_expression(_p_->u.initiatedarray_.constant_expression_, 0);
-    renderC(']');
+    renderC(']', 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_UnInitiated:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     ppDir_abs_dec(_p_->u.uninitiated_.dir_abs_dec_, 0);
-    renderC('[');
-    renderC(']');
+    renderC('[', 0);
+    renderC(']', 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_Initiated:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     ppDir_abs_dec(_p_->u.initiated_.dir_abs_dec_, 0);
-    renderC('[');
+    renderC('[', 0);
     ppConstant_expression(_p_->u.initiated_.constant_expression_, 0);
-    renderC(']');
+    renderC(']', 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_OldFunction:
-    if (_i_ > 0) renderC(_L_PAREN);
-    renderC('(');
-    renderC(')');
+    if (_i_ > 0) renderC(_L_PAREN, 0);
+    renderC('(', 0);
+    renderC(')', 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_NewFunction:
-    if (_i_ > 0) renderC(_L_PAREN);
-    renderC('(');
+    if (_i_ > 0) renderC(_L_PAREN, 0);
+    renderC('(', 0);
     ppParameter_type(_p_->u.newfunction_.parameter_type_, 0);
-    renderC(')');
+    renderC(')', 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_OldFuncExpr:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     ppDir_abs_dec(_p_->u.oldfuncexpr_.dir_abs_dec_, 0);
-    renderC('(');
-    renderC(')');
+    renderC('(', 0);
+    renderC(')', 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_NewFuncExpr:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     ppDir_abs_dec(_p_->u.newfuncexpr_.dir_abs_dec_, 0);
-    renderC('(');
+    renderC('(', 0);
     ppParameter_type(_p_->u.newfuncexpr_.parameter_type_, 0);
-    renderC(')');
+    renderC(')', 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
 
@@ -2010,45 +2033,45 @@ void ppStm(Stm _p_, int _i_)
   switch(_p_->kind)
   {
   case is_LabelS:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     ppLabeled_stm(_p_->u.labels_.labeled_stm_, 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_CompS:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     ppCompound_stm(_p_->u.comps_.compound_stm_, 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_ExprS:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     ppExpression_stm(_p_->u.exprs_.expression_stm_, 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_SelS:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     ppSelection_stm(_p_->u.sels_.selection_stm_, 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_IterS:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     ppIter_stm(_p_->u.iters_.iter_stm_, 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_JumpS:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     ppJump_stm(_p_->u.jumps_.jump_stm_, 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
 
@@ -2063,31 +2086,31 @@ void ppLabeled_stm(Labeled_stm _p_, int _i_)
   switch(_p_->kind)
   {
   case is_SlabelOne:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     ppIdent(_p_->u.slabelone_.ident_, 0);
-    renderC(':');
+    renderC(':', 0);
     ppStm(_p_->u.slabelone_.stm_, 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_SlabelTwo:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     renderS("case", 1);
     ppConstant_expression(_p_->u.slabeltwo_.constant_expression_, 0);
-    renderC(':');
+    renderC(':', 0);
     ppStm(_p_->u.slabeltwo_.stm_, 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_SlabelThree:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     renderS("default", 0);
-    renderC(':');
+    renderC(':', 0);
     ppStm(_p_->u.slabelthree_.stm_, 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
 
@@ -2102,39 +2125,39 @@ void ppCompound_stm(Compound_stm _p_, int _i_)
   switch(_p_->kind)
   {
   case is_ScompOne:
-    if (_i_ > 0) renderC(_L_PAREN);
-    renderC('{');
-    renderC('}');
+    if (_i_ > 0) renderC(_L_PAREN, 0);
+    renderC('{', 0);
+    renderC('}', 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_ScompTwo:
-    if (_i_ > 0) renderC(_L_PAREN);
-    renderC('{');
+    if (_i_ > 0) renderC(_L_PAREN, 0);
+    renderC('{', 0);
     ppListStm(_p_->u.scomptwo_.liststm_, 0);
-    renderC('}');
+    renderC('}', 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_ScompThree:
-    if (_i_ > 0) renderC(_L_PAREN);
-    renderC('{');
+    if (_i_ > 0) renderC(_L_PAREN, 0);
+    renderC('{', 0);
     ppListDec(_p_->u.scompthree_.listdec_, 0);
-    renderC('}');
+    renderC('}', 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_ScompFour:
-    if (_i_ > 0) renderC(_L_PAREN);
-    renderC('{');
+    if (_i_ > 0) renderC(_L_PAREN, 0);
+    renderC('{', 0);
     ppListDec(_p_->u.scompfour_.listdec_, 0);
     ppListStm(_p_->u.scompfour_.liststm_, 0);
-    renderC('}');
+    renderC('}', 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
 
@@ -2149,18 +2172,18 @@ void ppExpression_stm(Expression_stm _p_, int _i_)
   switch(_p_->kind)
   {
   case is_SexprOne:
-    if (_i_ > 0) renderC(_L_PAREN);
-    renderC(';');
+    if (_i_ > 0) renderC(_L_PAREN, 0);
+    renderC(';', 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_SexprTwo:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     ppExp(_p_->u.sexprtwo_.exp_, 0);
-    renderC(';');
+    renderC(';', 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
 
@@ -2175,38 +2198,38 @@ void ppSelection_stm(Selection_stm _p_, int _i_)
   switch(_p_->kind)
   {
   case is_SselOne:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     renderS("if", 0);
-    renderC('(');
+    renderC('(', 0);
     ppExp(_p_->u.sselone_.exp_, 0);
-    renderC(')');
+    renderC(')', 0);
     ppStm(_p_->u.sselone_.stm_, 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_SselTwo:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     renderS("if", 0);
-    renderC('(');
+    renderC('(', 0);
     ppExp(_p_->u.sseltwo_.exp_, 0);
-    renderC(')');
+    renderC(')', 0);
     ppStm(_p_->u.sseltwo_.stm_1, 0);
     renderS("else", 0);
     ppStm(_p_->u.sseltwo_.stm_2, 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_SselThree:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     renderS("switch", 1);
-    renderC('(');
+    renderC('(', 0);
     ppExp(_p_->u.sselthree_.exp_, 0);
-    renderC(')');
+    renderC(')', 0);
     ppStm(_p_->u.sselthree_.stm_, 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
 
@@ -2221,52 +2244,52 @@ void ppIter_stm(Iter_stm _p_, int _i_)
   switch(_p_->kind)
   {
   case is_SiterOne:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     renderS("while", 1);
-    renderC('(');
+    renderC('(', 0);
     ppExp(_p_->u.siterone_.exp_, 0);
-    renderC(')');
+    renderC(')', 0);
     ppStm(_p_->u.siterone_.stm_, 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_SiterTwo:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     renderS("do", 1);
     ppStm(_p_->u.sitertwo_.stm_, 0);
     renderS("while", 1);
-    renderC('(');
+    renderC('(', 0);
     ppExp(_p_->u.sitertwo_.exp_, 0);
-    renderC(')');
-    renderC(';');
+    renderC(')', 0);
+    renderC(';', 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_SiterThree:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     renderS("for", 1);
-    renderC('(');
+    renderC('(', 0);
     ppExpression_stm(_p_->u.siterthree_.expression_stm_1, 0);
     ppExpression_stm(_p_->u.siterthree_.expression_stm_2, 0);
-    renderC(')');
+    renderC(')', 0);
     ppStm(_p_->u.siterthree_.stm_, 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_SiterFour:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     renderS("for", 1);
-    renderC('(');
+    renderC('(', 0);
     ppExpression_stm(_p_->u.siterfour_.expression_stm_1, 0);
     ppExpression_stm(_p_->u.siterfour_.expression_stm_2, 0);
     ppExp(_p_->u.siterfour_.exp_, 0);
-    renderC(')');
+    renderC(')', 0);
     ppStm(_p_->u.siterfour_.stm_, 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
 
@@ -2300,138 +2323,138 @@ void ppConstant(Constant _p_, int _i_)
   switch(_p_->kind)
   {
   case is_Efloat:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     ppDouble(_p_->u.efloat_.double_, 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_Echar:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     ppChar(_p_->u.echar_.char_, 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_Eunsigned:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     ppIdent(_p_->u.eunsigned_.unsigned_, 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_Elong:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     ppIdent(_p_->u.elong_.long_, 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_Eunsignlong:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     ppIdent(_p_->u.eunsignlong_.unsignedlong_, 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_Ehexadec:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     ppIdent(_p_->u.ehexadec_.hexadecimal_, 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_Ehexaunsign:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     ppIdent(_p_->u.ehexaunsign_.hexunsigned_, 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_Ehexalong:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     ppIdent(_p_->u.ehexalong_.hexlong_, 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_Ehexaunslong:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     ppIdent(_p_->u.ehexaunslong_.hexunslong_, 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_Eoctal:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     ppIdent(_p_->u.eoctal_.octal_, 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_Eoctalunsign:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     ppIdent(_p_->u.eoctalunsign_.octalunsigned_, 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_Eoctallong:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     ppIdent(_p_->u.eoctallong_.octallong_, 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_Eoctalunslong:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     ppIdent(_p_->u.eoctalunslong_.octalunslong_, 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_Ecdouble:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     ppIdent(_p_->u.ecdouble_.cdouble_, 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_Ecfloat:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     ppIdent(_p_->u.ecfloat_.cfloat_, 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_Eclongdouble:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     ppIdent(_p_->u.eclongdouble_.clongdouble_, 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_Eint:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     ppInteger(_p_->u.eint_.integer_, 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_Elonger:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     /* Internal Category */
     ppInteger(_p_->u.elonger_.integer_, 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
   case is_Edouble:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     /* Internal Category */
     ppDouble(_p_->u.edouble_.double_, 0);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
 
@@ -2446,10 +2469,10 @@ void ppConstant_expression(Constant_expression _p_, int _i_)
   switch(_p_->kind)
   {
   case is_Especial:
-    if (_i_ > 0) renderC(_L_PAREN);
+    if (_i_ > 0) renderC(_L_PAREN, 0);
     ppExp(_p_->u.especial_.exp_, 3);
 
-    if (_i_ > 0) renderC(_R_PAREN);
+    if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
 
@@ -2472,7 +2495,7 @@ void ppListExp(ListExp listexp, int i)
     else
     {
       ppExp(listexp->exp_, i);
-      renderC(',');
+      renderC(',', 0);
       listexp = listexp->listexp_;
     }
   }
