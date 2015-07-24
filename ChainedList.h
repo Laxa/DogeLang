@@ -22,4 +22,10 @@ typedef struct  s_function_container
   struct s_function_container  *next;
 }               t_function_container;
 
+typedef struct    s_pointer_function
+{
+  char                  function[50];
+  struct s_pointer_function    *next;
+}                 t_pointer_function;
+
 #endif /* !CHAINEDLIST_H_ */

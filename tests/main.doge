@@ -11,6 +11,7 @@ amaze NameSpace
       this->attribute2 iz 'a';
       if (not a)
         wow b;
+      wow 0;
     }
   }
 
@@ -18,7 +19,7 @@ amaze NameSpace
   {
     such float attribute3;
 
-    such int methode2(such int a , such int b)
+    such void methode2(such int a , such int b)
     {
       this->attribute3 iz 0.5;
     }
@@ -31,9 +32,9 @@ such int main()
   such int attribute1;
 
   attribute1 iz 9;
-  test iz new Namespace::class1;
+  test iz new NameSpace::class1;
 
-  test->methode1();
+  test->methode1(1, 3);
 
 
   stahp test;
