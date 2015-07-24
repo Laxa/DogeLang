@@ -23,9 +23,8 @@ char curClassName[CLASSNAME_MAX_LENGTH];
 // for class parsing
 int inStructure = 0;
 char initStruct[512];
-char structFunctions[512];
-
-
+t_function_container* structFunctions;
+int ignoreMethodName;
 
 /* You may wish to change the renderC functions */
 void renderC(Char c, int i)
@@ -174,14 +173,10 @@ void ppExternal_declaration(External_declaration _p_, int _i_)
     renderC('{', 0);
 
     inStructure = 1;
+    ignoreMethodName = 0;
 
+    structFunctions = NULL;
 
-
-
-
-
-
-    initStruct[0] = '\0';
     snprintf(initStruct, 512, "\nvoid init_%s_%lu_%s_%lu(t_%s_%lu_%s_%lu* this) {",
               curNameSpace,
               strlen(curNameSpace),
@@ -193,26 +188,9 @@ void ppExternal_declaration(External_declaration _p_, int _i_)
               strlen(curClassName)
             );
 
-
-
-    structFunctions[0] = '\0';
-
-
-
-
-
-
-
-
-
-
     ppListExternal_declaration(_p_->u.class_.listexternal_declaration_, 0);
-    inStructure = 0;
+
     renderC('}', 1);
-
-
-    // Reset buffer since we go out of the class
-    curClassName[0] = '\0';
 
     snprintf(buf, 512, " t_%s_%s",
               curNameSpace,
@@ -224,9 +202,36 @@ void ppExternal_declaration(External_declaration _p_, int _i_)
     // closing init structure function
     snprintf(initStruct, 512, "%s\n}\n", initStruct);
 
+
+
+
+    t_function_container* tmp;
+
+    ignoreMethodName = 1;
+
     // rendering functions
-    renderS(structFunctions, 1);
+    while(structFunctions != NULL) {
+      tmp = structFunctions;
+      renderS("\n", 0);
+
+      // YOLO
+
+      ppListDeclaration_specifier(structFunctions->type, 0);
+      renderS(structFunctions->name, 1);
+
+      ppDeclarator(structFunctions->declarator, 0);
+
+      ppCompound_stm(structFunctions->content, 0);
+      structFunctions = structFunctions->next;
+      free(tmp);
+    }
+
     renderS(initStruct, 1);
+
+    // Reset buffer since we go out of the class
+    curClassName[0] = '\0';
+    ignoreMethodName = 0;
+    inStructure = 0;
 
     renderC('\n', 0);
     renderC('\n', 0);
@@ -1234,6 +1239,8 @@ void ppListExternal_declaration(ListExternal_declaration listexternal_declaratio
 
 void ppFunction_def(Function_def _p_, int _i_)
 {
+  t_function_container* functionContainer;
+
   if (cur_ > 2 && buf_[cur_ - 1] == ' ' && buf_[cur_ - 2] == '\n')
     cur_--;
   switch(_p_->kind)
@@ -1268,29 +1275,23 @@ void ppFunction_def(Function_def _p_, int _i_)
                 strlen(_p_->u.newfunc_.declarator_->u.nopointer_.direct_declarator_->u.newfuncdec_.direct_declarator_->u.name_.ident_)
               );
 
+      functionContainer = malloc(sizeof(t_function_container));
+      snprintf(functionContainer->name, 50, "%s_%lu_%s_%lu_%s_%lu",
+                curNameSpace,
+                strlen(curNameSpace),
+                curClassName,
+                strlen(curClassName),
+                _p_->u.newfunc_.declarator_->u.nopointer_.direct_declarator_->u.newfuncdec_.direct_declarator_->u.name_.ident_,
+                strlen(_p_->u.newfunc_.declarator_->u.nopointer_.direct_declarator_->u.newfuncdec_.direct_declarator_->u.name_.ident_)
+              );
 
-
-
-
-      // put this in functions ...
-
-      // snprintf(structFunctions, 512, "%s\n %s %s_%lu_%s_%lu_%s_%lu",
-      //           structFunctions,
-      //           _p_->u.newfunc_.declarator_->u.nopointer_.direct_declarator_->u.newfuncdec_.direct_declarator_->u.name_.ident_,
-      //           curNameSpace,
-      //           strlen(curNameSpace),
-      //           curClassName,
-      //           strlen(curClassName),
-      //           _p_->u.newfunc_.declarator_->u.nopointer_.direct_declarator_->u.newfuncdec_.direct_declarator_->u.name_.ident_,
-      //           strlen(_p_->u.newfunc_.declarator_->u.nopointer_.direct_declarator_->u.newfuncdec_.direct_declarator_->u.name_.ident_)
-      //         );
-
+      functionContainer->type = _p_->u.newfunc_.listdeclaration_specifier_;
+      functionContainer->declarator = _p_->u.newfunc_.declarator_;
+      functionContainer->content = _p_->u.newfunc_.compound_stm_;
+      functionContainer->next = structFunctions;
+      structFunctions = functionContainer;
 
       // ppCompound_stm(_p_->u.newfunc_.compound_stm_, 0);
-
-
-
-
     }
     else {
       ppListDeclaration_specifier(_p_->u.newfunc_.listdeclaration_specifier_, 0);
@@ -1740,7 +1741,8 @@ void ppDirect_declarator(Direct_declarator _p_, int _i_)
 
   case is_NewFuncDec:
     if (_i_ > 0) renderC(_L_PAREN, 0);
-    ppDirect_declarator(_p_->u.newfuncdec_.direct_declarator_, 0);
+    if (ignoreMethodName == 0)
+      ppDirect_declarator(_p_->u.newfuncdec_.direct_declarator_, 0);
 
     renderC('(', 0);
     if (inStructure) {

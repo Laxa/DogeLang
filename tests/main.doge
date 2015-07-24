@@ -33,6 +33,9 @@ such int main()
   attribute1 iz 9;
   test iz new Namespace::class1;
 
+  test->methode1();
+
+
   stahp test;
 
   wow 1;
