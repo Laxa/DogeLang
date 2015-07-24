@@ -8,7 +8,6 @@
 typedef struct  s_nameSpaceClassTable
 {
   char                          *nameSpace;
-  int                           bufPos;
   ListExternal_declaration      *list;
   struct s_nameSpaceClassTable  *next;
 }               t_nameSpaceClassTable;

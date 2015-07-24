@@ -78,7 +78,7 @@ void renderC(Char c, int i)
 }
 void renderS(String s, int space)
 {
-  if (space == -1) // ugly thing to remove space between this and pointer
+  if (space == -1)
     cur_--;
   if(strlen(s) > 0)
   {
@@ -104,7 +104,7 @@ void backup(void)
     cur_--;
   }
 }
-char* printProgram(Program p)
+char* printProgram(Program p) // this is main function to print code
 {
   _n_ = 0;
   bufReset();
@@ -125,7 +125,7 @@ char* printExp(Exp p)
   ppExp(p, 0);
   return buf_;
 }
-char* showProgram(Program p)
+char* showProgram(Program p) // this is main function to print AST
 {
   _n_ = 0;
   bufReset();
@@ -146,10 +146,9 @@ char* showExp(Exp p)
   shExp(p);
   return buf_;
 }
+// the function we need to bufferise
 void ppExternal_declaration(External_declaration _p_, int _i_)
 {
-  char buf[512];
-
   switch(_p_->kind)
   {
   case is_Class:
@@ -157,17 +156,25 @@ void ppExternal_declaration(External_declaration _p_, int _i_)
     backup();
     renderS("struct", 1);
     ppClassName(_p_->u.class_.classname_, 0);
+    // Setting current class name inside global
+    if (_p_->u.class_.classname_->kind == is_ClassWithNamespace)
+      strncpy(curClassName, _p_->u.class_.classname_->u.classwithnamespace_.ident_1, CLASSNAME_MAX_LENGTH);
+    else
+      strncpy(curClassName, _p_->u.class_.classname_->u.classwithoutnamespace_.ident_, CLASSNAME_MAX_LENGTH);
     ppExtends(_p_->u.class_.extends_, 0);
     renderC('{', 0);
 
     ppListExternal_declaration(_p_->u.class_.listexternal_declaration_, 0);
     renderC('}', 1);
+    // Reset buffer since we go out of the class
+    curClassName[0] = '\0';
 
-    snprintf(buf, 512, " t_%s_%s;",
-              curNameSpace,
-             _p_->u.class_.classname_->u.classwithnamespace_.ident_1
-            );
-    renderS(buf, 0);
+    // dont understand what it is used for
+    /* snprintf(buf, 512, " t_%s_%s;", */
+    /*           curNameSpace, */
+    /*          _p_->u.class_.classname_->u.classwithnamespace_.ident_1 */
+    /*         ); */
+    /* renderS(buf, 0); */
 
     renderC('\n', 0);
     renderC('\n', 0);
@@ -179,18 +186,18 @@ void ppExternal_declaration(External_declaration _p_, int _i_)
   case is_Namespace:
     if (_i_ > 0) renderC(_L_PAREN, 0);
 
-    // here set namespace
-    snprintf(curNameSpace, NAMESPACE_MAX_LENGTH, "%s", _p_->u.namespace_.ident_);
+    // Setting current class name inside global
+    strncpy(curNameSpace, _p_->u.namespace_.ident_, NAMESPACE_MAX_LENGTH);
 
     ppListExternal_declaration(_p_->u.namespace_.listexternal_declaration_, 0);
 
     // here delete namespace
-    snprintf(curNameSpace, NAMESPACE_MAX_LENGTH, "");
-
+    curNameSpace[0] = '\0';
 
     if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
+    // do mangling with globals namespace + classname
   case is_Afunc:
     if (_i_ > 0) renderC(_L_PAREN, 0);
     ppFunction_def(_p_->u.afunc_.function_def_, 0);
@@ -198,6 +205,7 @@ void ppExternal_declaration(External_declaration _p_, int _i_)
     if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
+    // attributes are there, we need to mangle them to in case of inheritance
   case is_Global:
     if (_i_ > 0) renderC(_L_PAREN, 0);
     ppDec(_p_->u.global_.dec_, 0);
@@ -1132,13 +1140,18 @@ void ppProgram(Program _p_, int _i_)
     fprintf(stderr, "Error: bad kind field when printing Program!\n");
     exit(1);
   }
+  // here deal with heritage
+  // print function stubs
+  // print struct
+  // print functions
 }
 
+// called recursively for each container containing block of codes
 void ppListExternal_declaration(ListExternal_declaration listexternal_declaration, int i)
 {
-  while(listexternal_declaration!= 0)
+  while(listexternal_declaration != 0)
   {
-    if (listexternal_declaration->listexternal_declaration_ == 0)
+    if (listexternal_declaration->listexternal_declaration_ == 0) // last elem of the chained list
     {
       ppExternal_declaration(listexternal_declaration->external_declaration_, i);
 
