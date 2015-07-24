@@ -19,6 +19,14 @@ int buf_size;
 char curNameSpace[NAMESPACE_MAX_LENGTH];
 char curClassName[CLASSNAME_MAX_LENGTH];
 
+
+// for class parsing
+int inStructure = 0;
+char initStruct[512];
+char structFunctions[512];
+
+
+
 /* You may wish to change the renderC functions */
 void renderC(Char c, int i)
 {
@@ -165,16 +173,60 @@ void ppExternal_declaration(External_declaration _p_, int _i_)
     ppExtends(_p_->u.class_.extends_, 0);
     renderC('{', 0);
 
+    inStructure = 1;
+
+
+
+
+
+
+
+    initStruct[0] = '\0';
+    snprintf(initStruct, 512, "\nvoid init_%s_%lu_%s_%lu(t_%s_%lu_%s_%lu* this) {",
+              curNameSpace,
+              strlen(curNameSpace),
+              curClassName,
+              strlen(curClassName),
+              curNameSpace,
+              strlen(curNameSpace),
+              curClassName,
+              strlen(curClassName)
+            );
+
+
+
+    structFunctions[0] = '\0';
+
+
+
+
+
+
+
+
+
+
     ppListExternal_declaration(_p_->u.class_.listexternal_declaration_, 0);
+    inStructure = 0;
     renderC('}', 1);
+
+
     // Reset buffer since we go out of the class
     curClassName[0] = '\0';
 
-    snprintf(buf, 512, " t_%s_%s;",
+    snprintf(buf, 512, " t_%s_%s",
               curNameSpace,
              _p_->u.class_.classname_->u.classwithnamespace_.ident_1
             );
     renderS(buf, 0);
+    renderC(';', 0);
+
+    // closing init structure function
+    snprintf(initStruct, 512, "%s\n}\n", initStruct);
+
+    // rendering functions
+    renderS(structFunctions, 1);
+    renderS(initStruct, 1);
 
     renderC('\n', 0);
     renderC('\n', 0);
@@ -720,13 +772,27 @@ void ppExp(Exp _p_, int _i_)
     ppExp(_p_->u.initclass_.exp_, 15);
     ppAssignment_op(_p_->u.initclass_.assignment_op_, 0);
     if (_p_->u.initclass_.classname_->kind == 0)
-      snprintf(buf, 512, "malloc(sizeof(t_%s_%s))",
+      snprintf(buf, 512, "malloc(sizeof(t_%s_%s));",
                _p_->u.initclass_.classname_->u.classwithnamespace_.ident_1,
                _p_->u.initclass_.classname_->u.classwithnamespace_.ident_2
               );
     else
       snprintf(buf, 512, "malloc(sizeof(%s))", _p_->u.initclass_.classname_->u.classwithoutnamespace_.ident_);
+
     renderS(buf, 0);
+    renderS("\n", 0);
+    indent();
+    if (_p_->u.initclass_.classname_->kind == 0) {
+      snprintf(buf, 512, "init_%s_%lu_%s_%lu(%s)",
+                _p_->u.initclass_.classname_->u.classwithnamespace_.ident_1,
+                strlen(_p_->u.initclass_.classname_->u.classwithnamespace_.ident_1),
+                _p_->u.initclass_.classname_->u.classwithnamespace_.ident_2,
+                strlen(_p_->u.initclass_.classname_->u.classwithnamespace_.ident_2),
+                _p_->u.initclass_.exp_->u.evar_.ident_);
+
+      renderS(buf, 0);
+    }
+
     /* ppClassName(_p_->u.initclass_.classname_, 0); */
 
     if (_i_ > 2) renderC(_R_PAREN, 0);
@@ -1184,9 +1250,53 @@ void ppFunction_def(Function_def _p_, int _i_)
 
   case is_NewFunc:
     if (_i_ > 0) renderC(_L_PAREN, 0);
-    ppListDeclaration_specifier(_p_->u.newfunc_.listdeclaration_specifier_, 0);
-    ppDeclarator(_p_->u.newfunc_.declarator_, 0);
-    ppCompound_stm(_p_->u.newfunc_.compound_stm_, 0);
+
+    if (inStructure) {
+      ppListDeclaration_specifier(_p_->u.newfunc_.listdeclaration_specifier_, 0);
+      ppDeclarator(_p_->u.newfunc_.declarator_, 0);
+      renderS(";\n", 1);
+
+      // add a line to function initializer
+      snprintf(initStruct, 512, "%s \n this->%s = %s_%lu_%s_%lu_%s_%lu;",
+                initStruct,
+                _p_->u.newfunc_.declarator_->u.nopointer_.direct_declarator_->u.newfuncdec_.direct_declarator_->u.name_.ident_,
+                curNameSpace,
+                strlen(curNameSpace),
+                curClassName,
+                strlen(curClassName),
+                _p_->u.newfunc_.declarator_->u.nopointer_.direct_declarator_->u.newfuncdec_.direct_declarator_->u.name_.ident_,
+                strlen(_p_->u.newfunc_.declarator_->u.nopointer_.direct_declarator_->u.newfuncdec_.direct_declarator_->u.name_.ident_)
+              );
+
+
+
+
+
+      // put this in functions ...
+
+      // snprintf(structFunctions, 512, "%s\n %s %s_%lu_%s_%lu_%s_%lu",
+      //           structFunctions,
+      //           _p_->u.newfunc_.declarator_->u.nopointer_.direct_declarator_->u.newfuncdec_.direct_declarator_->u.name_.ident_,
+      //           curNameSpace,
+      //           strlen(curNameSpace),
+      //           curClassName,
+      //           strlen(curClassName),
+      //           _p_->u.newfunc_.declarator_->u.nopointer_.direct_declarator_->u.newfuncdec_.direct_declarator_->u.name_.ident_,
+      //           strlen(_p_->u.newfunc_.declarator_->u.nopointer_.direct_declarator_->u.newfuncdec_.direct_declarator_->u.name_.ident_)
+      //         );
+
+
+      // ppCompound_stm(_p_->u.newfunc_.compound_stm_, 0);
+
+
+
+
+    }
+    else {
+      ppListDeclaration_specifier(_p_->u.newfunc_.listdeclaration_specifier_, 0);
+      ppDeclarator(_p_->u.newfunc_.declarator_, 0);
+      ppCompound_stm(_p_->u.newfunc_.compound_stm_, 0);
+    }
 
     if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
@@ -1589,6 +1699,8 @@ void ppDeclarator(Declarator _p_, int _i_)
 
 void ppDirect_declarator(Direct_declarator _p_, int _i_)
 {
+  char buf[512];
+
   switch(_p_->kind)
   {
   case is_Name:
@@ -1629,7 +1741,12 @@ void ppDirect_declarator(Direct_declarator _p_, int _i_)
   case is_NewFuncDec:
     if (_i_ > 0) renderC(_L_PAREN, 0);
     ppDirect_declarator(_p_->u.newfuncdec_.direct_declarator_, 0);
+
     renderC('(', 0);
+    if (inStructure) {
+      snprintf(buf, 512, "t_%s_%s* this, ", curNameSpace, curClassName);
+      renderS(buf, 0);
+    }
     ppParameter_type(_p_->u.newfuncdec_.parameter_type_, 0);
     renderC(')', 0);
 
