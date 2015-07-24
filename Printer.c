@@ -149,12 +149,13 @@ char* showExp(Exp p)
 // the function we need to bufferise
 void ppExternal_declaration(External_declaration _p_, int _i_)
 {
+  char buf[512];
   switch(_p_->kind)
   {
   case is_Class:
     if (_i_ > 0) renderC(_L_PAREN, 0);
     backup();
-    renderS("struct", 1);
+    renderS("typedef struct", 1);
     ppClassName(_p_->u.class_.classname_, 0);
     // Setting current class name inside global
     if (_p_->u.class_.classname_->kind == is_ClassWithNamespace)
@@ -169,14 +170,12 @@ void ppExternal_declaration(External_declaration _p_, int _i_)
     // Reset buffer since we go out of the class
     curClassName[0] = '\0';
 
-    // dont understand what it is used for
-    /* snprintf(buf, 512, " t_%s_%s;", */
-    /*           curNameSpace, */
-    /*          _p_->u.class_.classname_->u.classwithnamespace_.ident_1 */
-    /*         ); */
-    /* renderS(buf, 0); */
+    snprintf(buf, 512, " t_%s_%s;",
+              curNameSpace,
+             _p_->u.class_.classname_->u.classwithnamespace_.ident_1
+            );
+    renderS(buf, 0);
 
-    renderC(';', 0);
     renderC('\n', 0);
     renderC('\n', 0);
     indent();
