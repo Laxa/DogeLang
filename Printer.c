@@ -176,6 +176,7 @@ void ppExternal_declaration(External_declaration _p_, int _i_)
     /*         ); */
     /* renderS(buf, 0); */
 
+    renderC(';', 0);
     renderC('\n', 0);
     renderC('\n', 0);
     indent();
