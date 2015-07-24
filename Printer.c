@@ -1168,6 +1168,8 @@ void ppListExternal_declaration(ListExternal_declaration listexternal_declaratio
 
 void ppFunction_def(Function_def _p_, int _i_)
 {
+  if (cur_ > 2 && buf_[cur_ - 1] == ' ' && buf_[cur_ - 2] == '\n')
+    cur_--;
   switch(_p_->kind)
   {
   case is_OldFunc:
