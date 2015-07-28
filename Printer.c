@@ -193,7 +193,7 @@ void ppExternal_declaration(External_declaration _p_, int _i_)
     backup();
     renderS("typedef struct", 1);
     ppClassName(_p_->u.class_.classname_, 0);
-    // Setting current class name inside global
+    /* Setting current class name inside global */
     if (_p_->u.class_.classname_->kind == is_ClassWithNamespace)
       strncpy(curClassName, _p_->u.class_.classname_->u.classwithnamespace_.ident_1, CLASSNAME_MAX_LENGTH);
     else
@@ -241,15 +241,12 @@ void ppExternal_declaration(External_declaration _p_, int _i_)
     // closing init structure function
     snprintf(initStruct, 512, "%s\n}\n", initStruct);
 
-
-
-
     t_function_container* tmp;
 
     ignoreMethodName = 1;
 
     // rendering functions
-    while(structFunctions != NULL) {
+    while (structFunctions != NULL) {
       tmp = structFunctions;
       renderS("\n", 0);
 
@@ -1256,6 +1253,7 @@ void ppDeclaration_specifier(Declaration_specifier _p_, int _i_)
 
 void ppProgram(Program _p_, int _i_)
 {
+  doHeritage(_p_->u.progr_.listexternal_declaration_);
   switch(_p_->kind)
   {
   case is_Progr:
@@ -1265,26 +1263,21 @@ void ppProgram(Program _p_, int _i_)
     if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
-
   default:
     fprintf(stderr, "Error: bad kind field when printing Program!\n");
     exit(1);
   }
-  // here deal with heritage
-  // print function stubs
-  // print struct
-  // print functions
 }
 
-// called recursively for each container containing block of codes
+/* called recursively for each container containing block of codes */
 void ppListExternal_declaration(ListExternal_declaration listexternal_declaration, int i)
 {
-  while(listexternal_declaration != 0)
+  while (listexternal_declaration != 0)
   {
-    if (listexternal_declaration->listexternal_declaration_ == 0) // last elem of the chained list
+    /* last elem of the chained list */
+    if (listexternal_declaration->listexternal_declaration_ == 0)
     {
       ppExternal_declaration(listexternal_declaration->external_declaration_, i);
-
       listexternal_declaration = 0;
     }
     else
@@ -1321,7 +1314,7 @@ void ppFunction_def(Function_def _p_, int _i_)
     if (inStructure) {
       ppListDeclaration_specifier(_p_->u.newfunc_.listdeclaration_specifier_, 0);
 
-      // using this to add parenthesis to function names #hackityHack
+      /* using this to add parenthesis to function names #hackityHack */
       tmp = ignoreMethodName;
       ignoreMethodName = 10;
       ppDeclarator(_p_->u.newfunc_.declarator_, 0);
@@ -1329,7 +1322,7 @@ void ppFunction_def(Function_def _p_, int _i_)
 
       renderS(";\n", 1);
 
-      // add a line to function initializer
+      /* add a line to function initializer */
       snprintf(initStruct, 512, "%s \n this->%s = &%s_%lu_%s_%lu_%s_%lu;",
                 initStruct,
                 _p_->u.newfunc_.declarator_->u.nopointer_.direct_declarator_->u.newfuncdec_.direct_declarator_->u.name_.ident_,

@@ -5,13 +5,18 @@
 
 #define UNUSED __attribute__ ((unused))
 
+void doHeritage(ListExternal_declaration list);
+char *getClassName(ClassName class);
+char *getClassInheritance(ClassName class);
+void mergeClasses(ListExternal_declaration class, ListExternal_declaration extend);
+ListExternal_declaration findClassPtr(char *className);
+
 typedef struct  s_nameSpaceClassTable
 {
   char                          *nameSpace;
   ListExternal_declaration      *list;
   struct s_nameSpaceClassTable  *next;
 }               t_nameSpaceClassTable;
-
 
 typedef struct  s_function_container
 {

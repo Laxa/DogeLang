@@ -1,0 +1,46 @@
+amaze NameSpace
+{
+  doge class2 very class1
+  {
+    such float attribute3;
+
+    such void methode2(such int a , such int b)
+    {
+      this->attribute3 iz 0.5;
+    }
+  }
+}
+
+amaze NameSpace2
+{
+  doge class1 very class2
+  {
+    such int attribute1;
+    such char attribute2;
+
+    such int methode1(such int a , such int b)
+    {
+      this->attribute1 iz 2;
+      this->attribute2 iz 'a';
+      if (not a)
+        wow b;
+      wow 0;
+    }
+  }
+}
+
+such int main()
+{
+  such NameSpace::class1 *test;
+  such int attribute1;
+
+  attribute1 iz 9;
+  test iz new NameSpace::class1;
+
+  test->methode1(1, 3);
+
+
+  stahp test;
+
+  wow 1;
+}
