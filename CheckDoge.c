@@ -3,8 +3,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "Inheritance.h"
 #include "CheckDoge.h"
+#include "Doge.h"
 
 void visitExternal_declaration(External_declaration _p_)
 {

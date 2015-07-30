@@ -45,7 +45,7 @@
 
 /* project specific headers */
 
-#include "Inheritance.h"
+#include "Doge.h"
 
 /* flex integer type definitions */
 

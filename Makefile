@@ -40,7 +40,7 @@ Lexer.o: Lexer.c Parser.h
 Parser.o: Parser.c Absyn.h
 	${CC} ${CCFLAGS} -c Parser.c
 
-Inheritance.o: Inheritance.c Absyn.h Inheritance.h
+Inheritance.o: Inheritance.c Absyn.h Doge.h
 	${CC} ${CCFLAGS} -c Inheritance.c
 
 Printer.o: Printer.c Printer.h Absyn.h

@@ -1,5 +1,5 @@
-#ifndef INHERITANCE_H_
-# define INHERITANCE_H_
+#ifndef DOGE_H_
+# define DOGE_H_
 
 #include "CheckDoge.h"
 
@@ -33,4 +33,4 @@ typedef struct    s_pointer_function
   struct s_pointer_function    *next;
 }                 t_pointer_function;
 
-#endif /* !INHERITANCE_H_ */
+#endif /* !DOGE_H_ */

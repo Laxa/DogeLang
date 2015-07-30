@@ -5,7 +5,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include "Inheritance.h"
+#include "Doge.h"
 
 #define INDENT_WIDTH 2
 #define MANGLING_START "_ZN"

@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-#include "Inheritance.h"
+#include "Doge.h"
 
 static ListExternal_declaration program = NULL;
 
