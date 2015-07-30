@@ -59,6 +59,8 @@ int main(int argc, char ** argv)
       printf("[Linearized Tree]\n");
       printf("%s\n\n", str);
     }
+    if (str)
+      free(str);
     return 0;
   }
   return 1;

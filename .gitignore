@@ -4,3 +4,4 @@
 TestDoge
 tests/*.c
 obj/*
+a.out
