@@ -7,37 +7,20 @@
 
 #include "Doge.h"
 
-#define INDENT_WIDTH 2
-#define MANGLING_START "_Z"
-#define NAMESPACE_MAX_LENGTH 128
-#define CLASSNAME_MAX_LENGTH 128
-
-int _n_;
-char* buf_;
-int cur_;
-int buf_size;
-char curNameSpace[NAMESPACE_MAX_LENGTH];
-char curClassName[CLASSNAME_MAX_LENGTH];
-char header[4096];
+static int _n_;
+static char* buf_;
+static int cur_;
+static int buf_size;
+static char curNameSpace[NAMESPACE_MAX_LENGTH];
+static char curClassName[CLASSNAME_MAX_LENGTH];
+static char header[HEADER_SIZE];
 
 /* for class parsing */
-int inStructure = 0;
-char initStruct[512];
-t_function_container* structFunctions;
-int ignoreMethodName;
-t_pointer_function* functionNameList;
-
-/*
-  t_pointer_function* funcDec;
-
-  funcDec = malloc(sizeof(t_pointer_function));
-
-  funcDec->function
-  funcDec->next = ;
-  = funcDec;*/
-
-
-
+static int inStructure = 0;
+static char initStruct[STRUCT_BUFFER_SIZE];
+static t_function_container *structFunctions;
+static int ignoreMethodName;
+static t_pointer_function *functionNameList;
 
 /* You may wish to change the renderC functions */
 void renderC(Char c, int i)
@@ -131,7 +114,7 @@ char* printProgram(Program p)
 
   _n_ = 0;
   bufReset();
-  snprintf(header, 512, "#include <stdio.h>\n#include <stdlib.h>\n");
+  snprintf(header, STANDART_BUFFER_SIZE, "#include <stdio.h>\n#include <stdlib.h>\n");
   functionNameList = NULL;
   ppProgram(p, 0);
 
@@ -152,6 +135,7 @@ char* printProgram(Program p)
            header,
            buf_
     );
+  free(buf_);
   return new;
 }
 char* printStm(Stm p)
@@ -192,7 +176,7 @@ char* showExp(Exp p)
 }
 void ppExternal_declaration(External_declaration _p_, int _i_)
 {
-  char buf[512];
+  char buf[STANDART_BUFFER_SIZE];
 
   switch(_p_->kind)
   {
@@ -214,7 +198,7 @@ void ppExternal_declaration(External_declaration _p_, int _i_)
 
     structFunctions = NULL;
 
-    snprintf(initStruct, 512, "\nvoid %sNinit%lu%s%lu%s(struct s_%lu%s%lu%s *this) {",
+    snprintf(initStruct, STRUCT_BUFFER_SIZE, "\nvoid %sNinit%lu%s%lu%s(struct s_%lu%s%lu%s *this) {",
              MANGLING_START,
              strlen(curNameSpace),
              curNameSpace,
@@ -226,7 +210,7 @@ void ppExternal_declaration(External_declaration _p_, int _i_)
              curClassName
       );
 
-    snprintf(header, 512, "%sstruct s_%lu%s%lu%s;\n",
+    snprintf(header, STANDART_BUFFER_SIZE, "%sstruct s_%lu%s%lu%s;\n",
              header,
              strlen(curNameSpace),
              curNameSpace,
@@ -238,7 +222,7 @@ void ppExternal_declaration(External_declaration _p_, int _i_)
 
     renderC('}', 1);
 
-    snprintf(buf, 512, " t_%lu%s%lu%s",
+    snprintf(buf, STANDART_BUFFER_SIZE, " t_%lu%s%lu%s",
              strlen(curNameSpace),
              curNameSpace,
              strlen(curClassName),
@@ -248,7 +232,7 @@ void ppExternal_declaration(External_declaration _p_, int _i_)
     renderC(';', 0);
 
     /* closing init structure function */
-    snprintf(initStruct, 512, "%s\n}\n", initStruct);
+    snprintf(initStruct, STRUCT_BUFFER_SIZE, "%s\n}\n", initStruct);
 
     t_function_container* tmp;
 
@@ -297,7 +281,6 @@ void ppExternal_declaration(External_declaration _p_, int _i_)
     if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
-    /* do mangling with globals namespace + classname */
   case is_Afunc:
     if (_i_ > 0) renderC(_L_PAREN, 0);
     ppFunction_def(_p_->u.afunc_.function_def_, 0);
@@ -305,7 +288,6 @@ void ppExternal_declaration(External_declaration _p_, int _i_)
     if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
-    /* attributes are there, we need to mangle them to in case of inheritance */
   case is_Global:
     if (_i_ > 0) renderC(_L_PAREN, 0);
     ppDec(_p_->u.global_.dec_, 0);
@@ -322,13 +304,13 @@ void ppExternal_declaration(External_declaration _p_, int _i_)
 
 void ppClassName(ClassName _p_, int _i_)
 {
-  char buf[512];
+  char buf[STANDART_BUFFER_SIZE];
 
   switch(_p_->kind)
   {
   case is_ClassWithNamespace:
     if (_i_ > 0) renderC(_L_PAREN, 0);
-    snprintf(buf, 512, "struct s_%lu%s%lu%s",
+    snprintf(buf, STANDART_BUFFER_SIZE, "struct s_%lu%s%lu%s",
              strlen(_p_->u.classwithnamespace_.ident_1),
              _p_->u.classwithnamespace_.ident_1,
              strlen(_p_->u.classwithnamespace_.ident_2),
@@ -342,7 +324,7 @@ void ppClassName(ClassName _p_, int _i_)
 
   case is_ClassWithoutNamespace:
     if (_i_ > 0) renderC(_L_PAREN, 0);
-    snprintf(buf, 512, "s_%lu%s%lu%s",
+    snprintf(buf, STANDART_BUFFER_SIZE, "s_%lu%s%lu%s",
              strlen(curNameSpace),
              curNameSpace,
              strlen(_p_->u.classwithoutnamespace_.ident_),
@@ -805,7 +787,7 @@ void ppEnumerator(Enumerator _p_, int _i_)
 
 void ppExp(Exp _p_, int _i_)
 {
-  char buf[512];
+  char buf[STANDART_BUFFER_SIZE];
 
   /* case is_ClassWithNamespace: */
   /*   if (_i_ > 0) renderC(_L_PAREN); , 0*/
@@ -826,20 +808,20 @@ void ppExp(Exp _p_, int _i_)
     ppExp(_p_->u.initclass_.exp_, 15);
     ppAssignment_op(_p_->u.initclass_.assignment_op_, 0);
     if (_p_->u.initclass_.classname_->kind == 0)
-      snprintf(buf, 512, "malloc(sizeof(t_%lu%s%lu%s));",
+      snprintf(buf, STANDART_BUFFER_SIZE, "malloc(sizeof(t_%lu%s%lu%s));",
                strlen(_p_->u.initclass_.classname_->u.classwithnamespace_.ident_1),
                _p_->u.initclass_.classname_->u.classwithnamespace_.ident_1,
                strlen(_p_->u.initclass_.classname_->u.classwithnamespace_.ident_2),
                _p_->u.initclass_.classname_->u.classwithnamespace_.ident_2
         );
     else
-      snprintf(buf, 512, "malloc(sizeof(%s))", _p_->u.initclass_.classname_->u.classwithoutnamespace_.ident_);
+      snprintf(buf, STANDART_BUFFER_SIZE, "malloc(sizeof(%s))", _p_->u.initclass_.classname_->u.classwithoutnamespace_.ident_);
 
     renderS(buf, 0);
     renderS("\n", 0);
     indent();
     if (_p_->u.initclass_.classname_->kind == 0) {
-      snprintf(buf, 512, "%sNinit%lu%s%lu%s(%s)",
+      snprintf(buf, STANDART_BUFFER_SIZE, "%sNinit%lu%s%lu%s(%s)",
                MANGLING_START,
                strlen(_p_->u.initclass_.classname_->u.classwithnamespace_.ident_1),
                _p_->u.initclass_.classname_->u.classwithnamespace_.ident_1,
@@ -857,7 +839,7 @@ void ppExp(Exp _p_, int _i_)
 
   case is_DestroyClass:
     if (_i_ > 2) renderC(_L_PAREN, 0);
-    snprintf(buf, 512, "free(%s)", _p_->u.destroyclass_.ident_);
+    snprintf(buf, STANDART_BUFFER_SIZE, "free(%s)", _p_->u.destroyclass_.ident_);
     renderS(buf, 0);
     /* ppIdent(_p_->u.destroyclass_.ident_, 0); */
 
@@ -1126,23 +1108,26 @@ void ppExp(Exp _p_, int _i_)
     if (_i_ > 16) renderC(_R_PAREN, 0);
     break;
 
+    /* Rendering functions outside classes */
   case is_Efunkpar:
     if (_i_ > 16) renderC(_L_PAREN, 0);
 
     ppExp(_p_->u.efunkpar_.exp_, 16);
+    backup();
 
     renderC('(', 0);
 
-
-    while (functionNameList != NULL) {
+    t_pointer_function *tmp = functionNameList;
+    while (functionNameList != NULL)
+    {
       if (strcmp(functionNameList->function, _p_->u.efunkpar_.exp_->u.epoint_.ident_) == 0) {
         renderS(_p_->u.efunkpar_.exp_->u.epoint_.exp_->u.evar_.ident_, 0);
         renderS(",", 1);
         break;
       }
-
       functionNameList = functionNameList->next;
     }
+    functionNameList = tmp;
 
     ppListExp(_p_->u.efunkpar_.listexp_, 2);
     renderC(')', 0);
@@ -1318,6 +1303,7 @@ void ppFunction_def(Function_def _p_, int _i_)
     if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
+    /* MANGLING HERE */
   case is_NewFunc:
     if (_i_ > 0) renderC(_L_PAREN, 0);
 
@@ -1333,7 +1319,7 @@ void ppFunction_def(Function_def _p_, int _i_)
       renderS(";\n", 1);
 
       /* add a line to function initializer */
-      snprintf(initStruct, 512, "%s \n this->%s = &%sN%lu%s%lu%s%lu%s;",
+      snprintf(initStruct, STRUCT_BUFFER_SIZE, "%s \n this->%s = &%sN%lu%s%lu%s%lu%s;",
                initStruct,
                _p_->u.newfunc_.declarator_->u.nopointer_.direct_declarator_->u.newfuncdec_.direct_declarator_->u.name_.ident_,
                MANGLING_START,
@@ -1347,14 +1333,14 @@ void ppFunction_def(Function_def _p_, int _i_)
 
       t_pointer_function* funcName;
       funcName = malloc(sizeof(t_pointer_function));
-      snprintf(funcName->function, 50, "%s",
+      snprintf(funcName->function, FUNCTION_BUFFER_SIZE, "%s",
                _p_->u.newfunc_.declarator_->u.nopointer_.direct_declarator_->u.newfuncdec_.direct_declarator_->u.name_.ident_
         );
       funcName->next = functionNameList;
       functionNameList = funcName;
 
       functionContainer = malloc(sizeof(t_function_container));
-      snprintf(functionContainer->name, 50, "%sN%lu%s%lu%s%lu%s",
+      snprintf(functionContainer->name, FUNCTION_BUFFER_SIZE, "%sN%lu%s%lu%s%lu%s",
                MANGLING_START,
                strlen(curNameSpace),
                curNameSpace,
@@ -1780,7 +1766,7 @@ void ppDeclarator(Declarator _p_, int _i_)
 
 void ppDirect_declarator(Direct_declarator _p_, int _i_)
 {
-  char buf[512];
+  char buf[STANDART_BUFFER_SIZE];
 
   switch(_p_->kind)
   {
@@ -1833,7 +1819,7 @@ void ppDirect_declarator(Direct_declarator _p_, int _i_)
 
     renderC('(', 0);
     if (inStructure) {
-      snprintf(buf, 512, "struct s_%lu%s%lu%s *this, ",
+      snprintf(buf, STANDART_BUFFER_SIZE, "struct s_%lu%s%lu%s *this, ",
                strlen(curNameSpace),
                curNameSpace,
                strlen(curClassName),
@@ -2361,6 +2347,7 @@ void ppCompound_stm(Compound_stm _p_, int _i_)
     if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
+    /* apparently called inside method */
   case is_ScompTwo:
     if (_i_ > 0) renderC(_L_PAREN, 0);
     renderC('{', 0);
@@ -2379,6 +2366,7 @@ void ppCompound_stm(Compound_stm _p_, int _i_)
     if (_i_ > 0) renderC(_R_PAREN, 0);
     break;
 
+    /* apparently called when procedural */
   case is_ScompFour:
     if (_i_ > 0) renderC(_L_PAREN, 0);
     renderC('{', 0);
