@@ -5,7 +5,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include "ChainedList.h"
+#include "Inheritance.h"
 
 #define INDENT_WIDTH 2
 #define MANGLING_START "_ZN"

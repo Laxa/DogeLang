@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "ChainedList.h"
+#include "Inheritance.h"
 #include "CheckDoge.h"
 
 void visitExternal_declaration(External_declaration _p_)

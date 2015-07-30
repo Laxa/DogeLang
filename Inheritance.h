@@ -1,5 +1,5 @@
-#ifndef CHAINEDLIST_H_
-# define CHAINEDLIST_H_
+#ifndef INHERITANCE_H_
+# define INHERITANCE_H_
 
 #include "CheckDoge.h"
 
@@ -33,4 +33,4 @@ typedef struct    s_pointer_function
   struct s_pointer_function    *next;
 }                 t_pointer_function;
 
-#endif /* !CHAINEDLIST_H_ */
+#endif /* !INHERITANCE_H_ */

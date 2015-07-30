@@ -45,7 +45,7 @@
 
 /* project specific headers */
 
-#include "ChainedList.h"
+#include "Inheritance.h"
 
 /* flex integer type definitions */
 

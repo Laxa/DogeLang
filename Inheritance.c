@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-#include "ChainedList.h"
+#include "Inheritance.h"
 
 static ListExternal_declaration program = NULL;
 
