@@ -11,7 +11,7 @@
 #define CLASSNAME_MAX_LENGTH 128
 #define HEADER_SIZE 4096
 #define STRUCT_BUFFER_SIZE 1024
-#define STANDART_BUFFER_SIZE 512
+#define STANDARD_BUFFER_SIZE 512
 
 void doHeritage(ListExternal_declaration list);
 char *getClassName(ClassName class);
@@ -30,7 +30,8 @@ typedef struct  s_function_container
 {
   char                      name[FUNCTION_BUFFER_SIZE];
   ListDeclaration_specifier     type;
-  struct Declarator_ *    declarator;
+  int                           number;
+  struct Declarator_     *declarator;
   struct Compound_stm_      *content;
   struct s_function_container  *next;
 }               t_function_container;

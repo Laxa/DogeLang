@@ -114,7 +114,7 @@ char* printProgram(Program p)
 
   _n_ = 0;
   bufReset();
-  snprintf(header, STANDART_BUFFER_SIZE, "#include <stdio.h>\n#include <stdlib.h>\n");
+  snprintf(header, STANDARD_BUFFER_SIZE, "#include <stdio.h>\n#include <stdlib.h>\n");
   functionNameList = NULL;
   ppProgram(p, 0);
 
@@ -176,7 +176,7 @@ char* showExp(Exp p)
 }
 void ppExternal_declaration(External_declaration _p_, int _i_)
 {
-  char buf[STANDART_BUFFER_SIZE];
+  char buf[STANDARD_BUFFER_SIZE];
 
   switch(_p_->kind)
   {
@@ -210,7 +210,7 @@ void ppExternal_declaration(External_declaration _p_, int _i_)
              curClassName
       );
 
-    snprintf(header, STANDART_BUFFER_SIZE, "%sstruct s_%lu%s%lu%s;\n",
+    snprintf(header, STANDARD_BUFFER_SIZE, "%sstruct s_%lu%s%lu%s;\n",
              header,
              strlen(curNameSpace),
              curNameSpace,
@@ -222,7 +222,7 @@ void ppExternal_declaration(External_declaration _p_, int _i_)
 
     renderC('}', 1);
 
-    snprintf(buf, STANDART_BUFFER_SIZE, " t_%lu%s%lu%s",
+    snprintf(buf, STANDARD_BUFFER_SIZE, " t_%lu%s%lu%s",
              strlen(curNameSpace),
              curNameSpace,
              strlen(curClassName),
@@ -304,13 +304,13 @@ void ppExternal_declaration(External_declaration _p_, int _i_)
 
 void ppClassName(ClassName _p_, int _i_)
 {
-  char buf[STANDART_BUFFER_SIZE];
+  char buf[STANDARD_BUFFER_SIZE];
 
   switch(_p_->kind)
   {
   case is_ClassWithNamespace:
     if (_i_ > 0) renderC(_L_PAREN, 0);
-    snprintf(buf, STANDART_BUFFER_SIZE, "struct s_%lu%s%lu%s",
+    snprintf(buf, STANDARD_BUFFER_SIZE, "struct s_%lu%s%lu%s",
              strlen(_p_->u.classwithnamespace_.ident_1),
              _p_->u.classwithnamespace_.ident_1,
              strlen(_p_->u.classwithnamespace_.ident_2),
@@ -324,7 +324,7 @@ void ppClassName(ClassName _p_, int _i_)
 
   case is_ClassWithoutNamespace:
     if (_i_ > 0) renderC(_L_PAREN, 0);
-    snprintf(buf, STANDART_BUFFER_SIZE, "s_%lu%s%lu%s",
+    snprintf(buf, STANDARD_BUFFER_SIZE, "s_%lu%s%lu%s",
              strlen(curNameSpace),
              curNameSpace,
              strlen(_p_->u.classwithoutnamespace_.ident_),
@@ -787,7 +787,7 @@ void ppEnumerator(Enumerator _p_, int _i_)
 
 void ppExp(Exp _p_, int _i_)
 {
-  char buf[STANDART_BUFFER_SIZE];
+  char buf[STANDARD_BUFFER_SIZE];
 
   /* case is_ClassWithNamespace: */
   /*   if (_i_ > 0) renderC(_L_PAREN); , 0*/
@@ -808,20 +808,20 @@ void ppExp(Exp _p_, int _i_)
     ppExp(_p_->u.initclass_.exp_, 15);
     ppAssignment_op(_p_->u.initclass_.assignment_op_, 0);
     if (_p_->u.initclass_.classname_->kind == 0)
-      snprintf(buf, STANDART_BUFFER_SIZE, "malloc(sizeof(t_%lu%s%lu%s));",
+      snprintf(buf, STANDARD_BUFFER_SIZE, "malloc(sizeof(t_%lu%s%lu%s));",
                strlen(_p_->u.initclass_.classname_->u.classwithnamespace_.ident_1),
                _p_->u.initclass_.classname_->u.classwithnamespace_.ident_1,
                strlen(_p_->u.initclass_.classname_->u.classwithnamespace_.ident_2),
                _p_->u.initclass_.classname_->u.classwithnamespace_.ident_2
         );
     else
-      snprintf(buf, STANDART_BUFFER_SIZE, "malloc(sizeof(%s))", _p_->u.initclass_.classname_->u.classwithoutnamespace_.ident_);
+      snprintf(buf, STANDARD_BUFFER_SIZE, "malloc(sizeof(%s))", _p_->u.initclass_.classname_->u.classwithoutnamespace_.ident_);
 
     renderS(buf, 0);
     renderS("\n", 0);
     indent();
     if (_p_->u.initclass_.classname_->kind == 0) {
-      snprintf(buf, STANDART_BUFFER_SIZE, "%sNinit%lu%s%lu%s(%s)",
+      snprintf(buf, STANDARD_BUFFER_SIZE, "%sNinit%lu%s%lu%s(%s)",
                MANGLING_START,
                strlen(_p_->u.initclass_.classname_->u.classwithnamespace_.ident_1),
                _p_->u.initclass_.classname_->u.classwithnamespace_.ident_1,
@@ -839,7 +839,7 @@ void ppExp(Exp _p_, int _i_)
 
   case is_DestroyClass:
     if (_i_ > 2) renderC(_L_PAREN, 0);
-    snprintf(buf, STANDART_BUFFER_SIZE, "free(%s)", _p_->u.destroyclass_.ident_);
+    snprintf(buf, STANDARD_BUFFER_SIZE, "free(%s)", _p_->u.destroyclass_.ident_);
     renderS(buf, 0);
     /* ppIdent(_p_->u.destroyclass_.ident_, 0); */
 
@@ -1766,7 +1766,7 @@ void ppDeclarator(Declarator _p_, int _i_)
 
 void ppDirect_declarator(Direct_declarator _p_, int _i_)
 {
-  char buf[STANDART_BUFFER_SIZE];
+  char buf[STANDARD_BUFFER_SIZE];
 
   switch(_p_->kind)
   {
@@ -1819,7 +1819,7 @@ void ppDirect_declarator(Direct_declarator _p_, int _i_)
 
     renderC('(', 0);
     if (inStructure) {
-      snprintf(buf, STANDART_BUFFER_SIZE, "struct s_%lu%s%lu%s *this, ",
+      snprintf(buf, STANDARD_BUFFER_SIZE, "struct s_%lu%s%lu%s *this, ",
                strlen(curNameSpace),
                curNameSpace,
                strlen(curClassName),
