@@ -1,6 +1,6 @@
-# MyCPP
+# DogeLang
 
-MyCPP is a school project for ETNA
+DogeLang is a school project for ETNA
 We needed to invente our own language which would implement procedural and object paradigms.
 We needed to handle some object basics like : inheritance, polymorphism, attributes and methods.
 We implemented LBNF grammar and used [BNFC](https://github.com/BNFC/bnfc) to generate a Parser/Lexer.
