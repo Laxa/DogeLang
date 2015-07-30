@@ -1278,6 +1278,7 @@ ListExternal_declaration make_ListExternal_declaration(External_declaration p1, 
   }
   tmp->external_declaration_ = p1;
   tmp->listexternal_declaration_ = p2;
+  tmp->extendedFlag = 0;
   return tmp;
 }/********************   OldFunc    ********************/
 Function_def make_OldFunc(ListDeclaration_specifier p1, Declarator p2, ListDec p3, Compound_stm p4)

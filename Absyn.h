@@ -423,6 +423,7 @@ Program make_Progr(ListExternal_declaration p0);
 
 struct ListExternal_declaration_
 {
+  int   extendedFlag;
   External_declaration external_declaration_;
   ListExternal_declaration listexternal_declaration_;
 };

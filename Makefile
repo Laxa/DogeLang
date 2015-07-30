@@ -16,7 +16,7 @@ all:	TestDoge
 re:	clean all
 
 clean:
-	rm -f *.o TestDoge Doge.aux Doge.log Doge.dvi Doge.ps Doge
+	rm -f *.o TestDoge
 
 distclean: clean
 	rm -f Absyn.h Absyn.c Test.c Parser.c Parser.h Lexer.c Skeleton.c Skeleton.h Printer.c Printer.h Makefile Doge.l Doge.y Doge.tex

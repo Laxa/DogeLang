@@ -9,7 +9,7 @@ void doHeritage(ListExternal_declaration list);
 char *getClassName(ClassName class);
 char *getClassInheritance(ClassName class);
 void mergeClasses(ListExternal_declaration class, ListExternal_declaration extend);
-ListExternal_declaration findClassPtr(char *className);
+ListExternal_declaration findClassPtr(ListExternal_declaration list, char *className);
 
 typedef struct  s_nameSpaceClassTable
 {

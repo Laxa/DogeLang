@@ -5,40 +5,56 @@
 
 static ListExternal_declaration program = NULL;
 
-void mergeClasses(ListExternal_declaration class, ListExternal_declaration extend)
+void mergeClasses(ListExternal_declaration class,
+                  ListExternal_declaration extend)
 {
   ListExternal_declaration ptr;
 
-  printf("%p:%p\n", class, extend);
-  if (!extend || !class) return;
-  ptr = class;
-  int elem = 0;
-  while (class->listexternal_declaration_)
+  if (!class || !extend)
   {
-    class = class->listexternal_declaration_;
-    elem++;
+    printf("Could not find a matching class for inheritance, aborting convertion\n");
+    printf("Exiting...\n");
+    exit(-1);
   }
-  printf("Found %d elem\n", elem);
+  ptr = class;
+  while (class->listexternal_declaration_)
+    class = class->listexternal_declaration_;
+  /* Need to flag the struct as extended to avoid any infinite loop */
+  class->extendedFlag = 1;
   class->listexternal_declaration_ = extend;
   class = ptr;
 }
 
-/* find and return pointer on ListExternal_declaration from the corresponding class */
-ListExternal_declaration findClassPtr(char *className)
+ListExternal_declaration findClassPtr(ListExternal_declaration list, char *className)
 {
-  if (!program) return NULL;
-  className = NULL;
+  External_declaration cur;
+
+  if (!list || !className) return NULL;
+  /* only classes and namespace can contain classes, we ignore the rest */
+  while (list)
+  {
+    cur = list->external_declaration_;
+    if (cur->kind == is_Class)
+    {
+      if (!strcmp(className, getClassName(cur->u.class_.classname_)) && !list->extendedFlag)
+        return cur->u.class_.listexternal_declaration_;
+    }
+    else if (cur->kind == is_Namespace)
+      return findClassPtr(cur->u.namespace_.listexternal_declaration_, className);
+    list = list->listexternal_declaration_;
+  }
   return NULL;
 }
 
 /* Recursive function to handle inheritance */
 void doHeritage(ListExternal_declaration list)
 {
-  /* We set the global on first call */
-  if (!program) program = list;
   External_declaration cur;
   ListExternal_declaration ptr;
   ListExternal_declaration extend;
+
+  /* We set the global on first call */
+  if (!program) program = list;
 
   /* saving list pointer */
   ptr = list;
@@ -53,21 +69,10 @@ void doHeritage(ListExternal_declaration list)
       {
         printf("%s inherit from %s\n", getClassName(cur->u.class_.classname_),
                getClassInheritance(cur->u.class_.extends_->u.inheritance_.classname_));
-        if (list->listexternal_declaration_)
-        {
-          printf("Doing inheritance now\n");
-          extend = findClassPtr(getClassInheritance(cur->u.class_.extends_->u.inheritance_.classname_));
-          /* maybe pass cur->list->listexternal_declaration and set it to the adress of the */
-          /*   of the extend, that might work */
-          mergeClasses(cur->u.class_.listexternal_declaration_, extend);
-          /* No classes inside classes */
-          /* doHeritage(list->listexternal_declaration_); */
-        }
-        else
-        {
-          printf("No class found to do inheritance\n");
-          exit(-1);
-        }
+        printf("Doing inheritance now\n");
+        extend = findClassPtr(program, getClassInheritance(cur->u.class_.extends_->u.inheritance_.classname_));
+        /* mergeClasses will make the last listexternal_declaration pointer point onto the inherited class */
+        mergeClasses(cur->u.class_.listexternal_declaration_, extend);
       }
     }
     else if (cur->kind == is_Namespace)
